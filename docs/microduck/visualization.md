@@ -42,12 +42,12 @@ docker build -f deploy/microduck/fastwam/Dockerfile \
 export FASTWAM_DATA=/absolute/path/to/microduck-data
 export GPU_ID=0                    # 指定一张可用 GPU
 
-# 获取固定版本的官方本体、ONNX 和公开骨干：
+# 获取固定版本的导航权重、骨干组件、官方本体和 ONNX：
 GPU_ID=none deploy/microduck/fastwam/run.sh \
   python scripts/microduck/fastwam_handoff.py fetch --component all
 ```
 
-从负责人处取得已训练工件，按[权重部署说明](deployment.md)放入：
+模型由 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck) 发布。上述命令会下载并校验已训练工件，按[权重部署说明](deployment.md)形成目录：
 
 ```text
 $FASTWAM_DATA/
@@ -62,7 +62,7 @@ $FASTWAM_DATA/
     microduck-policies/
 ```
 
-权重约 12.04GB，包含骨干的最小部署总文件量约 26.24GB；权重没有上传到本仓库。
+导航权重约 12.04GB，包含骨干的最小部署总文件量约 26.24GB；权重位于 Hugging Face，不随 GitHub 源码下载。
 
 启动：
 

@@ -1,6 +1,10 @@
 {
   "schema": "microduck_fastwam_inference_files_v1",
   "model_id": "clear-room-realtime-control-pilot-v1-step250",
+  "published_bundle": {
+    "repo": "lightx2v/microduck",
+    "revision": "dad4beaf998780df1f7c17aba46c63ecf2a4e72d"
+  },
   "public_backbone": {
     "repo": "Wan-AI/Wan2.2-TI2V-5B",
     "revision": "921dbaf3f1674a56f47e83fb80a34bac8a8f203e"
@@ -9,17 +13,17 @@
     "models/microduck/model.pt": {
       "bytes": 12042063744,
       "sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
-      "distribution": "obtain_from_project_owner"
+      "distribution": "published_microduck"
     },
     "models/microduck/navigation_checkpoint.json": {
       "bytes": 4148,
       "sha256": "8e08e832159d58a78d88942db8b9ee6683b944d2256938d69271643f5b716d12",
-      "distribution": "obtain_from_project_owner"
+      "distribution": "published_microduck"
     },
     "models/microduck/dataset_stats.json": {
       "bytes": 27434,
       "sha256": "f8805f43eeba0dc79daa30481e96e6721c41f9c5eb6e24b37798d5c0719c0b87",
-      "distribution": "obtain_from_project_owner"
+      "distribution": "published_microduck"
     },
     "models/Wan2.2-TI2V-5B/config.json": {
       "bytes": 251,

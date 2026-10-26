@@ -31,9 +31,9 @@ GPU_ID=none deploy/microduck/fastwam/run.sh \
   python scripts/microduck/fastwam_handoff.py fetch
 ```
 
-下载固定版本的官方本体、ONNX 策略，以及 Wan 配置、UMT5、tokenizer、VAE。原生 FastWAM 从已训练 checkpoint 加载视频/动作专家，**不需要 Wan 原始 diffusion 分片、完整训练数据、优化器/DeepSpeed 状态或 TinyVLA 权重**。
+该命令从 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck) 的固定 commit 下载训练好的导航模型、原始归一化与 receipt，以及 Wan 配置、UMT5、tokenizer、VAE；官方本体和 ONNX 策略从其固定上游版本获取。模型文件会核对大小和 SHA256。原生 FastWAM 从已训练 checkpoint 加载视频/动作专家，**不需要 Wan 原始 diffusion 分片、完整训练数据、优化器/DeepSpeed 状态或 TinyVLA 权重**。
 
-向项目负责人取得下列三个文件，保持原始字节。当前没有公开权重下载地址，不能用公开 LIBERO 权重替代。
+无需向负责人手动拷贝文件。下载后目录如下；不能用公开 LIBERO 权重替代本项目的导航模型。
 
 ```text
 $FASTWAM_DATA/
@@ -53,6 +53,17 @@ $FASTWAM_DATA/
 ```
 
 来源、大小、SHA256 见 [weight-inventory.json](weight-inventory.json)。不要重算统计或替换 checkpoint receipt。
+
+已有官方资产和骨干时，可只下载约 12.04GB 的任务模型及两个绑定文件：
+
+```bash
+GPU_ID=none deploy/microduck/fastwam/run.sh \
+  python scripts/microduck/fastwam_handoff.py fetch --component model
+```
+
+`--component sim` 只获取官方仿真资产；`--component backbone` 从原 Wan 仓库获取最小骨干；默认 `all` 获取部署全套。发布地址与完整 commit 固定在 [model-files.lock.json](../../deploy/microduck/fastwam/model-files.lock.json) 的 `published_bundle` 中，不跟随浮动 `main`。
+
+网络受限时，先在当前 shell 设置可用的 `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY`；`run.sh` 会把已设置的代理变量传入容器，代理凭据不写入代码。若代理仅监听 Linux 宿主机的 `127.0.0.1`，再设置 `export FASTWAM_NETWORK=host`，让下载容器能够访问它。代理需要允许 Hugging Face、其文件存储域名，以及官方仿真资产的 GitHub 来源。公共权重下载无需登录；不要关闭 TLS 验证或替换为未经校验的权重。
 
 ```bash
 GPU_ID=none deploy/microduck/fastwam/run.sh \

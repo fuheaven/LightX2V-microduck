@@ -15,7 +15,7 @@
 
 真实 H200 报告在 `evidence/handoff-benchmark-{plain,optimized}.json` 与 `evidence/handoff-offline-smoke.json`；保存逐次计时、GPU/软件版本、模型/输入/源码哈希。`deployment-installed-packages.txt` 为观察到的安装清单，不是独立 pip 安装文件。冷加载、稳态和历史实时延迟分开解释。
 
-本地交接目录与原开发目录隔离，原训练工作树和已有服务未修改。权重仍在 H200 原路径；验证目录使用同卷硬链接构造最小模型集合，没有将权重传到本机或 GitHub。
+本地交接目录与原开发目录隔离，原训练工作树和已有服务未修改。原始权重保留在 H200 原路径；验证目录使用同卷硬链接构造最小模型集合，没有将权重传到本机或 GitHub。Hugging Face 发布记录见下文。
 
 ## 固定输入结果
 
@@ -35,3 +35,14 @@
 其中 `data/results/{plain,optimized}` 保存动作数组和报告，优化版包含 `trace.json`；`data/inputs/startup.npz` 是相同输入。它们不是权重发布目录。测试结束后不保留占用 GPU 的模型服务。
 
 本次没有重新跑完整 60 集实时开发评测或 200 布局独立验收，也未验证新导出版本的 EGL 实时质量。记录相机已成功导出为 MP4（25fps、按真实 camera_ticks 保留缺帧间隔）。OSMesa 短集只用于部署链路检查，不用其速度代替实时指标。
+
+## Hugging Face 发布与下载验证
+
+部署文件已发布至 [lightx2v/microduck 的固定版本](https://huggingface.co/lightx2v/microduck/tree/dad4beaf998780df1f7c17aba46c63ecf2a4e72d)。10 个模型文件共 26,244,309,246 bytes；另有模型卡、清单和许可声明。`fetch` 使用同一完整 commit，并逐文件核对大小、SHA256 及 checkpoint/history/statistics 绑定。
+
+- 上传前已计算全部模型文件的 SHA256；上传后核对 18 个发布文件，大文件使用 Hub 的 LFS SHA256/大小，普通文件下载后重算哈希。
+- 使用部署镜像原有的 `huggingface-hub==0.29.2`，在没有 token 的独立 CPU 容器中运行实际 `fetch --component model`。两个绑定 JSON 从远端重新下载，其余 8 个文件用本地硬链接复用；随后全部 10 个模型文件通过完整本地哈希校验。
+- 额外匿名读取任务模型、UMT5、VAE 各前 1MiB，验证 HTTP 206、文件总大小及内容与本地一致。这是公开下载可用性抽查，没有声称重新下载了完整 26GB。
+- 下载相关回归测试 9 项通过，覆盖固定 revision、完整/部分下载、目录布局与损坏文件拒绝；启动脚本通过语法检查和代理/网络参数转发检查。
+
+完整记录见 [hf-release-verification.json](evidence/hf-release-verification.json)。这次发布没有使用 GPU、启动训练或新增能力验收；官方本体与 ONNX 策略仍由脚本从固定上游获取。

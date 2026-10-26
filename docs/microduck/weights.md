@@ -1,6 +1,8 @@
 # 权重与部署文件清单
 
-2026-10-26 通过现有 SSH 连接在 H200 上逐文件计算 SHA256、核对字节大小。**没有将任何权重上传 GitHub，也没有移动原文件。** 结构化记录见 [weight-inventory.json](weight-inventory.json)，部署期预期哈希见 [model-files.lock.json](../../deploy/microduck/fastwam/model-files.lock.json)。
+部署文件发布在 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck/tree/main)，按 `models/microduck/` 与 `models/Wan2.2-TI2V-5B/` 保留目录结构。`fastwam_handoff.py fetch` 使用锁文件中的固定 commit，自动下载并校验。
+
+2026-10-26 在 H200 上逐文件计算 SHA256、核对字节大小。**没有将权重上传 GitHub，也没有移动原训练文件。** 结构化来源记录见 [weight-inventory.json](weight-inventory.json)，部署期预期哈希及 Hugging Face 发布版本见 [model-files.lock.json](../../deploy/microduck/fastwam/model-files.lock.json)。
 
 以下都是 H200 服务器上的路径。项目根：
 
@@ -16,7 +18,7 @@
 | 归一化统计 | 27,434 | 0.0000 GB | 配套必需 |
 | 训练工件绑定 receipt | 4,148 | 0.0000 GB | 配套必需 |
 
-最小推理集合合计 **26,244,309,246 bytes，26.24GB / 24.44GiB**（另含 tokenizer/架构配置）。原骨干目录合计 34.20GB，其中约 20GB 原始 diffusion 分片不用于此 native 导航权重的加载。官方 ONNX 与仿真资产另外由获取脚本下载。
+最小推理集合合计 **26,244,309,246 bytes，26.24GB / 24.44GiB**（已含 tokenizer/架构配置）。原骨干目录合计 34.20GB，其中约 20GB 原始 diffusion 分片不用于此 native 导航权重的加载。官方 ONNX 与仿真资产另外由获取脚本下载。
 
 ## 已训练模型和绑定文件
 
@@ -42,7 +44,7 @@
 /mtc/fuhaiwen1/microduck-tinyvla/world-action/models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer_config.json
 ```
 
-公共来源固定为 Wan-AI/Wan2.2-TI2V-5B 的 `921dbaf3f1674a56f47e83fb80a34bac8a8f203e`。获取命令只拉取最小允许列表；本项目训练权重由用户另定分发位置。
+公共来源固定为 Wan-AI/Wan2.2-TI2V-5B 的 `921dbaf3f1674a56f47e83fb80a34bac8a8f203e`。本次发布镜像这些最小必需文件，保持原始字节和上游许可；获取命令只拉取锁定允许列表。Hugging Face 中同时提供模型卡、文件清单、SHA256SUMS 与第三方声明。
 
 ## 不需要交给推理优化同事的文件
 

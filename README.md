@@ -2,7 +2,7 @@
 
 给希望复现、分析和优化 **FastWAM 在 MicroDuck 上的视觉寻球决策** 的开发者。模型接收头部相机历史、指令和自身状态，输出移动、转头、停止命令；官方 ONNX 策略继续负责 50Hz 行走和平衡。
 
-**本仓库交接已训练模型的推理与仿真代码，不启动新训练。权重不在 Git 中，分发位置待项目负责人决定。** 所有能力证据来自仿真开发集，尚未完成独立正式验收或真机验证。
+**本仓库交接已训练模型的推理与仿真代码，不启动新训练。部署权重由 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck) 分发，不放入 Git。** 所有能力证据来自仿真开发集，尚未完成独立正式验收或真机验证。
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ docker build -f deploy/microduck/fastwam/Dockerfile -t lightx2v-microduck:fastwa
 export FASTWAM_DATA=/absolute/path/to/microduck-data
 export GPU_ID=0
 GPU_ID=none deploy/microduck/fastwam/run.sh python scripts/microduck/fastwam_handoff.py fetch
-# 放入 model.pt、dataset_stats.json、navigation_checkpoint.json 后：
+# fetch 自动获取固定版本的模型、归一化、骨干组件和官方仿真资产。
 GPU_ID=none deploy/microduck/fastwam/run.sh python scripts/microduck/fastwam_handoff.py verify
 ```
 

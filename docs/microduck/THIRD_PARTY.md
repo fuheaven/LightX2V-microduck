@@ -9,7 +9,7 @@
 | 官方 ONNX 策略 | pollen-robotics/microduck-policies `088524a64e2557dc453256b6071dbb9d23888802` | 按 upstream.lock.json 下载并校验，保留上游模型说明 |
 | BAM | Rhoban/bam `62bd8ce12154340be97e06f7f41a0ca8f116d967` | Apache-2.0，保留固定 CPU Python 源码（third_party/bam），获取时校验 archive SHA256，构建时再校验逐文件哈希；保留声明/README/元数据 |
 | Wan2.2 TI2V 5B | Wan-AI/Wan2.2-TI2V-5B `921dbaf3f1674a56f47e83fb80a34bac8a8f203e` | 公共骨干按固定版本获取，模型卡标注 Apache-2.0 |
-| 本项目训练的导航 checkpoint | clear-room-realtime-control-pilot-v1 / step 250 | 暂不上传；由负责人决定发布渠道及适用条款，不因仓库 LICENSE 自动扩展权重许可 |
+| 本项目训练的导航 checkpoint | clear-room-realtime-control-pilot-v1 / step 250；[lightx2v/microduck](https://huggingface.co/lightx2v/microduck) | 由负责人指定仓库发布；尚未单独指定权重许可证，不因代码仓库 LICENSE 自动扩展权重许可；归一化与 receipt 保持原字节 |
 
 第三方代码和资产仍适用其各自条款。共享 MicroDuck 包中保留的 TinyVLA 参考代码有独立 NOTICE；本部署不加载 TinyVLA。此文档没有将机器人非商业资产改为 Apache 许可。
 

@@ -1,0 +1,205 @@
+{
+  "schema": "microduck_hf_release_verification_v1",
+  "repo_id": "lightx2v/microduck",
+  "repo_type": "model",
+  "commit_sha": "dad4beaf998780df1f7c17aba46c63ecf2a4e72d",
+  "published_unix": 1793007550.5214653,
+  "verified_unix": 1793007561.8797102,
+  "model_files": 10,
+  "model_bytes": 26244309246,
+  "remote_files": [
+    {
+      "path": "NOTICE.md",
+      "bytes": 2452,
+      "sha256": "49a628442e027ae709c68c3d995764d4147df52aa679ce7c9768491d55abd787",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6906,
+      "sha256": "12eed51b82e4c451276e94e42d7d30366cfa8879e3c7a3ebc490f8bdbfceab5c",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 1117,
+      "sha256": "256197b10e770f64c88f412c42aa63c874d3678b69ae2741c5bdcb38b4701e76",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "licenses/Apache-2.0.txt",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "licenses/FastWAM-MIT.txt",
+      "bytes": 1210,
+      "sha256": "8379dddfbbb1154ad9cc57f008f1f8d4a8d26c3de99bd6b36aa4d8067888aa92",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "licenses/Wan2.2-UPSTREAM-README.md",
+      "bytes": 15935,
+      "sha256": "e357cb3ac077f8739755b0fb38fe8424c76534b19b4a84f6138856abb00abf69",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "model-files.lock.json",
+      "bytes": 2410,
+      "sha256": "a059232cfe6cfdfe65707a686e7059acdb1b6cfc8b64f2b3e0523d7824db8e23",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+      "bytes": 2818839170,
+      "sha256": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36",
+      "method": "hub_lfs_sha256_and_size"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/config.json",
+      "bytes": 251,
+      "sha256": "d1fea36899d00c2501b836c13ad65af56e2f9529ba622e50886d3f5c3e6c02bc",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/google/umt5-xxl/special_tokens_map.json",
+      "bytes": 6623,
+      "sha256": "7b8a9f5040adb67b5805abdfd42c1f8d0f3d0e711f10726580eb3789cd0ad61d",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/google/umt5-xxl/spiece.model",
+      "bytes": 4548313,
+      "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+      "method": "hub_lfs_sha256_and_size"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer.json",
+      "bytes": 16837417,
+      "sha256": "6e197b4d3dbd71da14b4eb255f4fa91c9c1f2068b20a2de2472967ca3d22602b",
+      "method": "hub_lfs_sha256_and_size"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer_config.json",
+      "bytes": 61728,
+      "sha256": "ed9a3a8b0faa71a70a32847e0435fe036e6e112d4df4edb7bb48a921e344dc05",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth",
+      "bytes": 11361920418,
+      "sha256": "7cace0da2b446bbbbc57d031ab6cf163a3d59b366da94e5afe36745b746fd81d",
+      "method": "hub_lfs_sha256_and_size"
+    },
+    {
+      "path": "models/microduck/dataset_stats.json",
+      "bytes": 27434,
+      "sha256": "f8805f43eeba0dc79daa30481e96e6721c41f9c5eb6e24b37798d5c0719c0b87",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "models/microduck/model.pt",
+      "bytes": 12042063744,
+      "sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+      "method": "hub_lfs_sha256_and_size"
+    },
+    {
+      "path": "models/microduck/navigation_checkpoint.json",
+      "bytes": 4148,
+      "sha256": "8e08e832159d58a78d88942db8b9ee6683b944d2256938d69271643f5b716d12",
+      "method": "downloaded_sha256"
+    },
+    {
+      "path": "release-manifest.json",
+      "bytes": 2508,
+      "sha256": "535bfcc1d03dd864a64451c442f3072ce2e13d2a9c502b12dec3d10f15e832ac",
+      "method": "downloaded_sha256"
+    }
+  ],
+  "anonymous_download_smoke": {
+    "schema": "microduck_hf_download_smoke_v1",
+    "repo_id": "lightx2v/microduck",
+    "revision": "dad4beaf998780df1f7c17aba46c63ecf2a4e72d",
+    "anonymous": true,
+    "gpu_used": false,
+    "huggingface_hub_version": "0.29.2",
+    "finished_unix": 1793007732.4498372,
+    "elapsed_seconds": 146.28848600387573,
+    "downloaded_files": [
+      "models/microduck/navigation_checkpoint.json",
+      "models/microduck/dataset_stats.json"
+    ],
+    "preseeded_files": [
+      "models/microduck/model.pt",
+      "models/Wan2.2-TI2V-5B/config.json",
+      "models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+      "models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/special_tokens_map.json",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/spiece.model",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer.json",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer_config.json"
+    ],
+    "verified_files": {
+      "models/microduck/model.pt": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+      "models/microduck/navigation_checkpoint.json": "8e08e832159d58a78d88942db8b9ee6683b944d2256938d69271643f5b716d12",
+      "models/microduck/dataset_stats.json": "f8805f43eeba0dc79daa30481e96e6721c41f9c5eb6e24b37798d5c0719c0b87",
+      "models/Wan2.2-TI2V-5B/config.json": "d1fea36899d00c2501b836c13ad65af56e2f9529ba622e50886d3f5c3e6c02bc",
+      "models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36",
+      "models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth": "7cace0da2b446bbbbc57d031ab6cf163a3d59b366da94e5afe36745b746fd81d",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/special_tokens_map.json": "7b8a9f5040adb67b5805abdfd42c1f8d0f3d0e711f10726580eb3789cd0ad61d",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/spiece.model": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer.json": "6e197b4d3dbd71da14b4eb255f4fa91c9c1f2068b20a2de2472967ca3d22602b",
+      "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer_config.json": "ed9a3a8b0faa71a70a32847e0435fe036e6e112d4df4edb7bb48a921e344dc05"
+    },
+    "remote_weight_range_samples": [
+      {
+        "path": "models/microduck/model.pt",
+        "bytes": 1048576,
+        "offset": 0,
+        "sample_sha256": "f06ec8cdf2a7f57de154d938f173d50b775aa0ac847a1750a29836e6cac314cb",
+        "matches_local": true
+      },
+      {
+        "path": "models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+        "bytes": 1048576,
+        "offset": 0,
+        "sample_sha256": "1277dcbcfe007d6ba68f58cfca7862a01a8519d7fac26b5b7ee848cddf09763b",
+        "matches_local": true
+      },
+      {
+        "path": "models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth",
+        "bytes": 1048576,
+        "offset": 0,
+        "sample_sha256": "e7a1158f3de9f700ef6630a2e0684cd0038b6d9b7a257aaa3ae422b7c193b600",
+        "matches_local": true
+      }
+    ],
+    "scope": "Two metadata files downloaded fresh; eight local files reused and fully hashed. Three large weights range-read anonymously. Not a fresh 26 GB download or a new inference benchmark."
+  },
+  "deployment_tests": {
+    "pytest_file": "tests/test_fastwam_handoff.py",
+    "passed": 9,
+    "failed": 0,
+    "elapsed_seconds": 0.76,
+    "image": "lightx2v-microduck:fastwam-v1",
+    "image_id": "sha256:f377997ed4d437dc3bb505a75d2e52f33c2a84e9d327a97263f79b1f6b0f5b38",
+    "source_sha256": {
+      "scripts/microduck/fastwam_handoff.py": "44c46d8137d9b87b14f1f447bc6734af0b6bfa47cd62f8a34c0cb51742104380",
+      "tests/test_fastwam_handoff.py": "9e710b80e3b5e1c45b6fb9118f3bd51404f29efc6a43c27ab65c2a295850616d"
+    },
+    "launcher_checks": [
+      "bash -n passed",
+      "mock Docker verified proxy names are forwarded without putting values in argv",
+      "mock Docker verified opt-in host network and no GPU allocation for GPU_ID=none"
+    ]
+  },
+  "scope": {
+    "new_training": false,
+    "new_gpu_inference": false,
+    "fresh_full_model_redownload": false,
+    "formal_acceptance": false,
+    "hardware_validated": false
+  },
+  "official_simulator_assets": "Fetched from original pinned upstream sources, not republished in this Hugging Face bundle."
+}

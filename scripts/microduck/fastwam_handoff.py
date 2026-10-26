@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -56,6 +57,11 @@ def verify(data, *, include_backbone=True):
 
 
 def fetch(args):
+    lock = json.loads(LOCK.read_text())
+    if args.component in ("model", "all"):
+        bundle = lock.get("published_bundle", {})
+        if not bundle.get("repo") or not re.fullmatch(r"[0-9a-f]{40}", bundle.get("revision", "")):
+            raise ValueError("No pinned model release in model-files.lock.json; update the deployment checkout")
     if args.component in ("sim", "all"):
         from lightx2v_microduck.assets import fetch_source
         for source in ("microduck_rl", "microduck-policies"):
@@ -63,9 +69,16 @@ def fetch(args):
             if not result["ok"]:
                 raise ValueError(result)
             print(f"Verified {source}", flush=True)
-    if args.component in ("backbone", "all"):
+    if args.component in ("model", "all"):
         from huggingface_hub import snapshot_download
-        lock = json.loads(LOCK.read_text())
+        names = [name for name, spec in lock["files"].items()
+                 if args.component == "all" or spec["distribution"] != "public_backbone"]
+        snapshot_download(repo_id=bundle["repo"], revision=bundle["revision"],
+                          allow_patterns=names, local_dir=args.data)
+        checked = verify(args.data, include_backbone=args.component == "all")
+        print(f"Verified {len(checked)} model files from {bundle['repo']}@{bundle['revision']}", flush=True)
+    if args.component == "backbone":
+        from huggingface_hub import snapshot_download
         names = [p.removeprefix("models/Wan2.2-TI2V-5B/") for p, spec in lock["files"].items()
                  if spec["distribution"] == "public_backbone"]
         snapshot_download(repo_id=lock["public_backbone"]["repo"],
@@ -74,7 +87,7 @@ def fetch(args):
         for name, spec in lock["files"].items():
             if spec["distribution"] == "public_backbone" and sha256(args.data / name) != spec["sha256"]:
                 raise ValueError(f"Backbone checksum mismatch: {name}")
-        print("Verified minimal public backbone. Obtain MicroDuck checkpoint/stats/receipt separately.")
+        print("Verified minimal public backbone. Use fetch --component model for the MicroDuck checkpoint.")
 
 
 def inputs(args):
@@ -235,8 +248,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("/data"), help="Portable model/cache/result root")
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("fetch", help="Pinned simulator assets and/or minimal public backbone; no private model download")
-    p.add_argument("--component", choices=("sim", "backbone", "all"), default="all")
+    p = sub.add_parser("fetch", help="Download pinned simulator assets and the published inference bundle")
+    p.add_argument("--component", choices=("sim", "model", "backbone", "all"), default="all")
     sub.add_parser("verify", help="SHA256 every required model file and check trained history/statistics")
     p = sub.add_parser("inputs", help="Generate real simulator startup inputs for optimization checks")
     p.add_argument("--output", type=Path, required=True)
