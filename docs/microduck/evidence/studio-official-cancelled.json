@@ -1,0 +1,47 @@
+{
+  "id": "af28d8772190",
+  "status": "cancelled",
+  "config": {
+    "policy": "official",
+    "scene": "flat",
+    "color": null,
+    "seed": 2000,
+    "seconds": 30,
+    "variant": null
+  },
+  "created_unix": 1793001144.4472592,
+  "finished_unix": 1793001148.2883606,
+  "exit_code": 0,
+  "stop_requested": true,
+  "report": {
+    "policy": "official_onnx",
+    "mode": "realtime",
+    "sim_s": 2.16,
+    "wall_s": 2.2006033696234226,
+    "real_time_factor": 0.981548983254365,
+    "strict_model_success": null,
+    "realtime_success": null,
+    "scope": "official ONNX walking demo; not a visual navigation capability test",
+    "viewer": {
+      "frames": 5,
+      "dropped_frames": 5,
+      "error": null,
+      "worker_stopped": true,
+      "observer_source": "mj_copyData_without_forward",
+      "observer_size": 448,
+      "head_camera_source": "original_policy_camera",
+      "display_is_policy_input": false,
+      "render_device": "llvmpipe (LLVM 15.0.7, 256 bits)"
+    },
+    "formal_acceptance": false,
+    "hardware_validated": false,
+    "runtime_source_sha256": {
+      "scripts/microduck/fastwam_visual_worker.py": "265d91fe6de39ddcc1ae7e5350257e6c45cc12a95d7076c9ea6e1432de0571bd",
+      "embodied/microduck/src/lightx2v_microduck/navigation_viewer.py": "02c5e6414c2308725115563d6bee325bdec15a10e0322ab9201ebf6eb2ba4ab2",
+      "embodied/microduck/src/lightx2v_microduck/navigation_eval.py": "6c32f082f549094b7e7f74ad3172bc7187f5f6b060bfe82755e5d6d726b90919",
+      "embodied/microduck/src/lightx2v_microduck/navigation.py": "a878e0aa85987386e905326777b85f7515b6723e93bc8cb92e5cb8d15bf83069",
+      "embodied/microduck/src/lightx2v_microduck/env.py": "e23b3568d7958a3abda26dea5dd3de3d1c722ad72d759a525ad1db09d88c8ab6",
+      "deploy/microduck/fastwam/10_nvidia.json": "b007d23230b6289d28445a0047301101c21ba735b58ad8b2409504639b3fd535"
+    }
+  }
+}

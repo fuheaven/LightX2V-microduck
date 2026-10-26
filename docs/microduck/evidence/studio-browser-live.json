@@ -1,0 +1,22 @@
+{
+  "id": "af28d8772190",
+  "frames": [
+    {
+      "sequence": 1,
+      "tick": 1,
+      "real_time_factor": 7.490648906165086
+    },
+    {
+      "sequence": 2,
+      "tick": 23,
+      "real_time_factor": 1.0404768779725282
+    },
+    {
+      "sequence": 4,
+      "tick": 65,
+      "real_time_factor": 1.0138962441077735
+    }
+  ],
+  "stopped": true,
+  "errors": []
+}

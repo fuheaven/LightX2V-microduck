@@ -1,0 +1,385 @@
+{
+  "mode": "realtime",
+  "task": "find_red_ball",
+  "seed": 2400,
+  "initialization": "reset_and_warmup",
+  "policy": {
+    "model_id": "clear-room-realtime-control-pilot-v1",
+    "artifact_sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+    "contract": "microduck_navigation_v1",
+    "hardware_validated": false,
+    "input": "head_rgb_history_grid+instruction+proprio48",
+    "history_contract": {
+      "schema": "microduck_causal_rgb_grid_v1",
+      "offsets_ticks": [
+        300,
+        150,
+        50,
+        0
+      ],
+      "camera_size": 256,
+      "output_size": 512,
+      "max_sample_age_ticks": 5,
+      "layout": "row_major_oldest_to_current",
+      "startup_padding": "repeat_episode_first_frame",
+      "selector": "fixed_timestamps_only",
+      "control_hz": 50
+    },
+    "uses_privileged_state": false
+  },
+  "task_success": false,
+  "strict_model_success": false,
+  "cancelled": false,
+  "realtime_timing_qualified": true,
+  "realtime_success": false,
+  "timing_gate": {
+    "min_real_time_factor": 0.95,
+    "max_clock_lag_s": 0.1
+  },
+  "fallback_control_ticks": 0,
+  "rejected_plans": 0,
+  "execution_clock": {
+    "schema": "microduck_navigation_execution_clock_v2",
+    "expiry_basis": "fresh_monotonic_at_admission_and_consumption",
+    "max_age_ticks": 25,
+    "max_wall_age_ns": 500000000,
+    "source_capture_timestamp_preserved": true
+  },
+  "warmup_inference_ms": [
+    2691.313670948148
+  ],
+  "worker_warmup_inference_ms": [
+    300.4472181200981
+  ],
+  "startup_inference_ms": 192.87587516009808,
+  "injected_delay_ms": 0.0,
+  "model_latency_p50_ms": 171.55527975410223,
+  "model_latency_p95_ms": 177.03676279634237,
+  "observation_age_p95_ms": 420.0515101,
+  "camera_capture_p95_ms": 11.2601008,
+  "request_preparation_p95_ms": 1.4813227578997612,
+  "request_preparation_errors": 0,
+  "wall_s": 30.000065134838223,
+  "sim_s": 30.0,
+  "real_time_factor": 0.9999978288434398,
+  "maximum_clock_lag_s": 0.037964690104127286,
+  "control_overruns": 2,
+  "inference_worker_stopped": true,
+  "evaluator": {
+    "episode_id": "5abba30e55594ea2bc179ad1dac9a05f",
+    "tick": 1500,
+    "sim_time_s": 30.999999999998117,
+    "evaluator_source_sha256": "d90f3764dfd24e7cffba849fc7fada6a709e872b76a17ac5846516bbadfd6c6c",
+    "tasks_source_sha256": "6dfd055676482cc11c1e710db618c17a983c07e931e8f2d3faa0209d5d73c24b",
+    "evaluation_origin_s": 1.0000000000000007,
+    "evaluation_elapsed_s": 29.999999999998117,
+    "robot_position": [
+      -0.6070382105022001,
+      0.6718786094829449,
+      0.11609965641321361
+    ],
+    "robot_yaw": 2.8717399613802734,
+    "robot_velocity": [
+      1.0955222985278861e-05,
+      -4.552627355056653e-05,
+      0.0001821045197192333
+    ],
+    "balls": {
+      "red": [
+        -0.9698751052815178,
+        0.5992710978904578,
+        0.034632818157539845
+      ],
+      "blue": [
+        0.9697321436740899,
+        -0.4468435565068719,
+        0.034632818157539845
+      ],
+      "yellow": [
+        0.1824326784064421,
+        1.1528281762079324,
+        0.034632818157539845
+      ]
+    },
+    "obstacles": [
+      {
+        "name": "random_0",
+        "xy": [
+          0.6278842504653899,
+          -0.2893232253698499
+        ],
+        "half_size": [
+          0.13295784256312815,
+          0.1378330769266206
+        ],
+        "height": 0.26803405727154517
+      },
+      {
+        "name": "random_1",
+        "xy": [
+          0.12352958593529184,
+          0.7806078850864189
+        ],
+        "half_size": [
+          0.08014524140168235,
+          0.14504718344144435
+        ],
+        "height": 0.1638657118315886
+      },
+      {
+        "name": "random_2",
+        "xy": [
+          -0.31442143876317674,
+          -0.6761126631721837
+        ],
+        "half_size": [
+          0.10755508631063454,
+          0.11250357666503856
+        ],
+        "height": 0.2372655802064521
+      },
+      {
+        "name": "random_3",
+        "xy": [
+          0.7069521424299818,
+          0.6934411518691448
+        ],
+        "half_size": [
+          0.12366090852334702,
+          0.10645887277242438
+        ],
+        "height": 0.20738480552269012
+      }
+    ],
+    "room_bounds": [
+      -1.5,
+      1.5,
+      -1.5,
+      1.5
+    ],
+    "target_color": "red",
+    "projected_gravity": [
+      0.007342881710078929,
+      -0.0014596395084012592,
+      -0.9999719753776596
+    ],
+    "joint_targets": [
+      -0.011140509508550167,
+      -0.2906773090362549,
+      -0.4011041224002838,
+      -0.11654586344957352,
+      0.5246055126190186,
+      0.27197539806365967,
+      0.35549479722976685,
+      -0.030991047620773315,
+      0.02222459390759468,
+      -0.0014123618602752686,
+      0.31063112616539,
+      0.3708769679069519,
+      0.11785680055618286,
+      -0.4656442701816559
+    ],
+    "applied_action": [
+      -0.011140509508550167,
+      -0.20337729156017303,
+      0.05679585784673691,
+      -0.11164586246013641,
+      0.07160548865795135,
+      -0.07712461054325104,
+      0.006394790485501289,
+      -0.030991047620773315,
+      0.02222459390759468,
+      -0.0014123618602752686,
+      0.22333112359046936,
+      -0.08702303469181061,
+      0.11295679956674576,
+      -0.01264425553381443
+    ],
+    "previous_raw_action": [
+      -0.011140509508550167,
+      -0.20337729156017303,
+      0.05679585784673691,
+      -0.11164586246013641,
+      0.07160548865795135,
+      -0.07712461054325104,
+      0.006394790485501289,
+      -0.030991047620773315,
+      0.02222459390759468,
+      -0.0014123618602752686,
+      0.22333112359046936,
+      -0.08702303469181061,
+      0.11295679956674576,
+      -0.01264425553381443
+    ],
+    "motor_torques": [
+      -0.007840291797777791,
+      -0.10930749396219283,
+      0.019841413243053923,
+      -0.08190447385017353,
+      0.03357021687821488,
+      0.024976793786299235,
+      -0.04628531896712705,
+      -0.006928059339217131,
+      -0.00918660560085644,
+      0.005408207699417369,
+      0.11673191533945634,
+      -0.015233138552387985,
+      0.0897949106285435,
+      -0.013943726178331554
+    ],
+    "success": false,
+    "terminated": true,
+    "fallen": false,
+    "author_success": null,
+    "strict_success": false,
+    "strict_preset_result": null,
+    "ever_fallen": false,
+    "contact_events": [],
+    "wheel_rotation_rad": 0.0,
+    "collision": true,
+    "fault": "",
+    "goal_hold_ticks": 0,
+    "follow_in_band_fraction": null,
+    "off_ball": false,
+    "termination_reason": "",
+    "recovery_active": false,
+    "recovery_events": 0,
+    "task_start_tick": 0,
+    "task_context": [
+      "stand",
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "planar_displacement_m": 0.9072287834174779,
+    "planar_path_length_m": 2.6911451700847624,
+    "minimum_height_m": 0.11335768486247522,
+    "integrated_abs_pitch_rate_rad": 2.7266040301754355,
+    "model_signature": "40a7acdbb9867de5878b61f2f60af286d2cae54c9e4289550a0458d6376b1a2d",
+    "actuator_profile": "bam_m6_xl330",
+    "robot_signature": {
+      "sha256": "c84586273415452a4f4b87dfb525506cc31938b84d1c07b69ee4d0512e179c29",
+      "bodies": 15,
+      "profile": "official_bam",
+      "normalized_prefix": ""
+    },
+    "scene": {
+      "name": "room_randomized",
+      "source_xml": "/mtc/fuhaiwen1/microduck-tinyvla/world-action/assets/upstream/microduck_rl/src/mjlab_microduck/robot/microduck/scene.xml",
+      "embodiment": "legs",
+      "obstacles": [
+        {
+          "name": "random_0",
+          "xy": [
+            0.6278842504653899,
+            -0.2893232253698499
+          ],
+          "half_size": [
+            0.13295784256312815,
+            0.1378330769266206
+          ],
+          "height": 0.26803405727154517
+        },
+        {
+          "name": "random_1",
+          "xy": [
+            0.12352958593529184,
+            0.7806078850864189
+          ],
+          "half_size": [
+            0.08014524140168235,
+            0.14504718344144435
+          ],
+          "height": 0.1638657118315886
+        },
+        {
+          "name": "random_2",
+          "xy": [
+            -0.31442143876317674,
+            -0.6761126631721837
+          ],
+          "half_size": [
+            0.10755508631063454,
+            0.11250357666503856
+          ],
+          "height": 0.2372655802064521
+        },
+        {
+          "name": "random_3",
+          "xy": [
+            0.7069521424299818,
+            0.6934411518691448
+          ],
+          "half_size": [
+            0.12366090852334702,
+            0.10645887277242438
+          ],
+          "height": 0.20738480552269012
+        }
+      ],
+      "room_bounds": [
+        -1.5,
+        1.5,
+        -1.5,
+        1.5
+      ],
+      "target_colors": [
+        "red",
+        "blue",
+        "yellow"
+      ],
+      "robot_prefix": "",
+      "robot_source_xml": "/mtc/fuhaiwen1/microduck-tinyvla/world-action/assets/upstream/microduck_rl/src/mjlab_microduck/robot/microduck/robot_groundcontact.xml",
+      "original_demo_root": null,
+      "layout_id": "654610047b328926659500a242107dac6b9666c56e627d4766b7653f6c550f78",
+      "geometry_hash": "c3392d9741bc368820c3979e67f0ad3aae09ee9da5b460f47e15c81259aabc51",
+      "texture_id": "official_groundplane_v1",
+      "ball_layout": [
+        [
+          "red",
+          -0.9698751052815178,
+          0.5992710978904578,
+          0.035
+        ],
+        [
+          "blue",
+          0.9697321436740899,
+          -0.4468435565068719,
+          0.035
+        ],
+        [
+          "yellow",
+          0.1824326784064421,
+          1.1528281762079324,
+          0.035
+        ]
+      ]
+    },
+    "action_delay_ticks": 0,
+    "hardware_validated": false,
+    "success_protocol": "visual_ball_stop_v2",
+    "community_task_contract": null
+  },
+  "hardware_validated": false,
+  "recording": "recording.npz",
+  "prediction_recording": {
+    "path": "predictions.json",
+    "records": 175,
+    "actions": "bounded submitted chunk before stand decoding and age-based indexing",
+    "observations": "original sensor observation; input interventions are declared in policy metadata",
+    "warmup_predictions_excluded": true,
+    "serialization_outside_measurement": true
+  }
+}

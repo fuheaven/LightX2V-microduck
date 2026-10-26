@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light"><title>MicroDuck Studio · LightX2V</title>
+  <link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script>
+</head>
+<body>
+  <header class="header"><a class="brand" href="#gallery" aria-label="MicroDuck Studio 首页">
+    <svg class="brand-icon" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#f1c95c"/><path d="M11 24h17v5H11zM14 17h11v9H14z" fill="#292d31"/><rect x="14" y="10" width="15" height="12" rx="5" fill="#fff9e9"/><circle cx="24" cy="15" r="2" fill="#292d31"/><path d="M28 17h6l-1 4h-5" fill="#df713e"/><path d="M14 29v4m10-4v4" stroke="#292d31" stroke-width="3"/></svg>
+    <span>MicroDuck <b>Studio</b></span><span class="brand-by">by LightX2V</span></a>
+    <nav aria-label="主导航"><button class="nav-button active" data-tab="gallery" aria-pressed="true">能力展厅</button><button class="nav-button" data-tab="live" aria-pressed="false"><span class="tiny-dot"></span>实时仿真</button></nav>
+    <a class="repo-link" href="https://github.com/fuheaven/LightX2V-microduck" target="_blank" rel="noopener">项目与部署 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main>
+    <div id="page-error" class="notice error" role="alert" hidden></div>
+    <section id="gallery-page" aria-label="能力展厅">
+      <div class="intro"><div><p class="eyebrow">A SMALL ROBOT. A LEARNING WORLD.</p><h1>看见目标，<br>自己走过去<span class="title-dot">。</span></h1><p class="intro-copy">从相机里的颜色，到脚下的每一步。<br>看看 FastWAM 已经学会了什么，或启动一次新的仿真。</p></div>
+        <div class="model-note"><span class="model-mark">W</span><div><p>当前展示模型</p><strong>FastWAM <span>Step 250</span></strong><p>视觉决策 · 官方 ONNX 行走</p><a href="https://github.com/fuheaven/LightX2V-microduck/blob/main/docs/microduck/capabilities.md" target="_blank" rel="noopener">了解能力边界 ↗</a></div></div>
+      </div>
+      <div class="section-top"><h2>从会做，到做好</h2><span class="scope-pill">仿真开发集 · 非正式验收</span></div>
+      <div id="capability-tabs" class="capability-grid" aria-label="选择能力"></div>
+      <section class="showcase" aria-label="录屏展示">
+        <div class="player-area"><div class="player-top"><span><i class="record-dot"></i>已保存录屏</span><span id="recording-mode"></span></div>
+          <video id="recording" controls preload="metadata" playsinline aria-label="所选实验录屏"></video>
+          <div class="player-caption"><span>左：观察视角重绘</span><span>右：原始机器人相机</span><span>按仿真时间 1× 播放</span></div>
+        </div>
+        <aside class="clip-description"><p class="eyebrow" id="clip-category">CLEAR ROOM</p><h2 id="clip-title">加载录屏…</h2><p id="clip-result" class="result-pill"></p><p id="clip-explanation" class="muted"></p>
+          <dl class="clip-facts"><div><dt>目标</dt><dd id="clip-target">—</dd></div><div><dt>运行时间</dt><dd id="clip-duration">—</dd></div><div><dt>官方站立接管</dt><dd id="clip-fallback">—</dd></div></dl>
+          <button class="primary" id="try-clip">在实时仿真中试试 <span>↗</span></button>
+          <details class="evidence"><summary>查看本集证据</summary><p id="clip-evidence"></p><a id="clip-report" target="_blank" rel="noopener">打开原始报告 ↗</a><p>个别成功录屏不能替代完整测试。历史分数不自动代表当前代码版本的成绩。</p></details>
+        </aside>
+      </section>
+      <div class="clips-header"><h3>实验片段</h3><span id="clip-count" class="muted"></span></div><div id="clips" class="clip-grid"></div>
+      <div class="method-note"><span class="note-icon">i</span><p><strong>这些画面说明了什么？</strong> 无障碍寻球已在开发测试中表现稳定；带障碍的能力仍在实验。所有录屏来自真实 MuJoCo 轨迹，尚未进行真机验证。<a id="assessment-link" target="_blank" rel="noopener">查看完整开发报告 ↗</a></p></div>
+    </section>
+    <section id="live-page" aria-label="实时仿真" hidden>
+      <div class="live-intro"><div><p class="eyebrow">LIVE PLAYGROUND</p><h1>给它一个目标<span class="title-dot">。</span></h1><p class="intro-copy">开始后运行新的 MuJoCo 世界，边执行边观看。</p></div><span id="runner-status" class="scope-pill">正在检查运行器…</span></div>
+      <div id="runner-notice" class="notice" hidden></div>
+      <div class="live-layout"><aside class="controls-panel"><div class="panel-label">本次任务 <span>01</span></div>
+          <label class="field">控制方式<select id="live-policy"><option value="fastwam">FastWAM 视觉寻球</option><option value="official">官方 ONNX 行走演示</option></select></label>
+          <div id="navigation-options"><p class="field-label">寻找什么？</p><div class="color-options" role="group" aria-label="目标球颜色"><button data-color="red" class="selected" aria-pressed="true"><i class="ball red"></i>红球</button><button data-color="blue" aria-pressed="false"><i class="ball blue"></i>蓝球</button><button data-color="yellow" aria-pressed="false"><i class="ball yellow"></i>黄球</button></div>
+          <label class="field">在哪儿找？<select id="live-scene"><option value="room_clear">无障碍房间</option><option value="room_curriculum_one">单障碍房间 · 实验</option><option value="room_randomized">随机障碍房间 · 实验</option></select></label></div>
+          <p id="policy-note" class="small muted">FastWAM 观察相机并选择移动命令，官方策略维持行走和平衡。</p>
+          <details class="advanced"><summary>实验选项</summary><label class="field">场景 Seed<input id="live-seed" type="number" min="0" max="1000000" step="1" value="2000"></label><label class="field">最长仿真时长<select id="live-seconds"><option value="30">30 秒</option><option value="15">15 秒</option><option value="60">60 秒</option></select></label><label class="field" id="variant-field">推理版本<select id="live-variant"><option value="optimized">LightX2V 加速</option><option value="plain">未加速对照</option></select></label><p class="small muted">保留 500ms 动作时效。过期动作触发站立回退，并计入结果。</p></details>
+          <button id="start-live" class="primary">开始实时运行 <span>→</span></button><button id="stop-live" class="secondary" disabled>停止运行</button><p class="small muted">每次仅运行一个会话。结束后释放模型资源。</p>
+        </aside>
+        <div class="live-stage"><div class="live-stage-top"><span id="live-badge"><i class="tiny-dot"></i>等待开始</span><span id="live-clock">00:00</span></div>
+          <div class="live-screen"><img id="live-observer" alt="当前 MuJoCo 观察视角" hidden><div class="empty-world" id="live-empty"><div class="duck-illustration" aria-hidden="true"><div class="duck-head"><i></i></div><div class="duck-body"></div><div class="duck-legs"></div></div><h3>一只鸭子，准备出发</h3><p>选择任务后点击开始<br>这里将显示当前运行的画面</p></div><div id="live-phase" class="phase-label" hidden></div></div>
+          <div class="live-bottom"><div class="camera-preview"><img id="live-camera" alt="机器人头部相机观测" hidden><span id="camera-label">头部相机 · 等待画面</span></div><div class="live-metrics"><div><span>仿真 / 实际时间</span><strong id="live-rtf">—</strong></div><div><span>最近推理</span><strong id="live-latency">—</strong></div><div><span>当前控制</span><strong id="live-source">—</strong></div><div><span>站立接管</span><strong id="live-fallback">—</strong></div></div></div>
+          <div id="live-result" class="notice" role="status" aria-live="polite" hidden></div><div class="live-links"><a id="live-report" target="_blank" rel="noopener" hidden>本次运行报告 ↗</a><a id="live-log" target="_blank" rel="noopener" hidden>运行日志 ↗</a><span id="frame-freshness" class="muted small"></span></div>
+        </div>
+      </div><p class="live-footnote">显示帧与控制频率独立。物理目标为 50Hz，不等待模型；实际速度以页面数值为准。当前展示配置与历史录屏部署不同，结果以本次报告为准。</p>
+    </section>
+  </main>
+  <footer><span>MICRODUCK STUDIO <span class="footer-divider">/</span> LightX2V</span><span>学会一种能力，也记录它的边界。</span><a href="https://github.com/fuheaven/LightX2V-microduck/blob/main/docs/microduck/visualization.md" target="_blank" rel="noopener">部署文档 ↗</a></footer>
+</body></html>

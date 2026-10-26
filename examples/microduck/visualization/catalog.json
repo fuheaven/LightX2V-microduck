@@ -1,0 +1,395 @@
+{
+  "schema": "microduck_visualization_v1",
+  "model_id": "clear-room-realtime-control-pilot-v1",
+  "model_label": "FastWAM · Step 250",
+  "checkpoint_sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+  "recording_note": "左侧按原始关节状态重绘观察视角；右侧为原始摄像头图像。按仿真时间 1× 播放，非当前实时运行。",
+  "source_manifest_sha256": "d5a7cf021818d64266583c064a8720b2e5d89666b63446868451d9e529db064a",
+  "evidence_scope": "历史仿真开发集；当前版本的演示不自动继承历史成绩。未完成独立正式验收，未进行真机验证。",
+  "groups": [
+    {
+      "id": "clear-room",
+      "title": "无障碍房间",
+      "scene": "room_clear",
+      "mode": "realtime",
+      "passed": 59,
+      "total": 60,
+      "layouts": 20,
+      "color_scores": [
+        {
+          "color": "red",
+          "label": "红",
+          "passed": 20,
+          "total": 20
+        },
+        {
+          "color": "blue",
+          "label": "蓝",
+          "passed": 20,
+          "total": 20
+        },
+        {
+          "color": "yellow",
+          "label": "黄",
+          "passed": 19,
+          "total": 20
+        }
+      ],
+      "assessment": "assessment.json",
+      "clips": [
+        {
+          "id": "red-ball",
+          "title": "寻找红球并停下",
+          "task": "find_red_ball",
+          "seed": 2000,
+          "passed": true,
+          "variant": "optimized",
+          "duration_s": 13.4,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 174.14396591484547,
+          "failure_reasons": [],
+          "video": "red-ball.mp4",
+          "poster": "red-ball.jpg",
+          "report": "red-ball-report.json"
+        },
+        {
+          "id": "blue-ball",
+          "title": "寻找蓝球并停下",
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "passed": true,
+          "variant": "optimized",
+          "duration_s": 9.1,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 174.3515955284238,
+          "failure_reasons": [],
+          "video": "blue-ball.mp4",
+          "poster": "blue-ball.jpg",
+          "report": "blue-ball-report.json"
+        },
+        {
+          "id": "yellow-ball",
+          "title": "寻找黄球并停下",
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "passed": true,
+          "variant": "optimized",
+          "duration_s": 12.0,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 179.16201436892152,
+          "failure_reasons": [],
+          "video": "yellow-ball.mp4",
+          "poster": "yellow-ball.jpg",
+          "report": "yellow-ball-report.json"
+        },
+        {
+          "id": "failure",
+          "title": "失败样例：寻黄球",
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "passed": false,
+          "variant": "optimized",
+          "duration_s": 30.0,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 174.93127789348364,
+          "failure_reasons": [],
+          "video": "failure.mp4",
+          "poster": "failure.jpg",
+          "report": "failure-report.json"
+        },
+        {
+          "id": "plain-comparison",
+          "title": "同模型未加速：寻红球",
+          "task": "find_red_ball",
+          "seed": 2000,
+          "passed": false,
+          "variant": "plain",
+          "duration_s": 30.0,
+          "fallback_ticks": 1500,
+          "mode": "realtime",
+          "model_p95_ms": 569.2563083022833,
+          "failure_reasons": [],
+          "video": "plain-comparison.mp4",
+          "poster": "plain-comparison.jpg",
+          "report": "plain-comparison-report.json"
+        }
+      ],
+      "formal_acceptance": false,
+      "hardware_validated": false
+    },
+    {
+      "id": "single-obstacle",
+      "title": "单障碍房间",
+      "scene": "room_curriculum_one",
+      "mode": "offline",
+      "passed": 27,
+      "total": 60,
+      "layouts": 20,
+      "color_scores": [
+        {
+          "color": "red",
+          "label": "红",
+          "passed": 8,
+          "total": 20
+        },
+        {
+          "color": "blue",
+          "label": "蓝",
+          "passed": 10,
+          "total": 20
+        },
+        {
+          "color": "yellow",
+          "label": "黄",
+          "passed": 9,
+          "total": 20
+        }
+      ],
+      "assessment": "single-obstacle-assessment.json",
+      "clips": [
+        {
+          "id": "single-red-success",
+          "title": "单障碍寻红球 · 本集通过",
+          "task": "find_red_ball",
+          "seed": 2305,
+          "passed": true,
+          "variant": "optimized",
+          "duration_s": 29.0,
+          "fallback_ticks": 0,
+          "mode": "offline",
+          "model_p95_ms": 179.6205397695303,
+          "failure_reasons": [],
+          "video": "single-red-success.mp4",
+          "poster": "single-red-success.jpg",
+          "report": "single-red-success-report.json"
+        },
+        {
+          "id": "single-collision",
+          "title": "碰撞失败 · 寻红球",
+          "task": "find_red_ball",
+          "seed": 2306,
+          "passed": false,
+          "variant": "optimized",
+          "duration_s": 30.0,
+          "fallback_ticks": 0,
+          "mode": "offline",
+          "model_p95_ms": 180.28038274496794,
+          "failure_reasons": [
+            "发生碰撞",
+            "30 秒内未完成任务"
+          ],
+          "video": "single-collision.mp4",
+          "poster": "single-collision.jpg",
+          "report": "single-collision-report.json"
+        }
+      ],
+      "formal_acceptance": false,
+      "hardware_validated": false,
+      "evaluation": "single-obstacle-evaluation.json"
+    },
+    {
+      "id": "random-obstacles",
+      "title": "随机障碍房间",
+      "scene": "room_randomized",
+      "mode": "realtime",
+      "passed": 2,
+      "total": 21,
+      "layouts": 7,
+      "color_scores": [
+        {
+          "color": "red",
+          "label": "红",
+          "passed": 0,
+          "total": 7
+        },
+        {
+          "color": "blue",
+          "label": "蓝",
+          "passed": 1,
+          "total": 7
+        },
+        {
+          "color": "yellow",
+          "label": "黄",
+          "passed": 1,
+          "total": 7
+        }
+      ],
+      "assessment": "random-obstacles-assessment.json",
+      "clips": [
+        {
+          "id": "random-success",
+          "title": "随机障碍寻蓝球 · 本集通过",
+          "task": "find_blue_ball",
+          "seed": 2401,
+          "passed": true,
+          "variant": "optimized",
+          "duration_s": 23.2,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 176.60140423104167,
+          "failure_reasons": [],
+          "video": "random-success.mp4",
+          "poster": "random-success.jpg",
+          "report": "random-success-report.json"
+        },
+        {
+          "id": "random-collision",
+          "title": "碰撞失败 · 寻红球",
+          "task": "find_red_ball",
+          "seed": 2400,
+          "passed": false,
+          "variant": "optimized",
+          "duration_s": 30.0,
+          "fallback_ticks": 0,
+          "mode": "realtime",
+          "model_p95_ms": 177.03676279634237,
+          "failure_reasons": [
+            "发生碰撞",
+            "30 秒内未完成任务"
+          ],
+          "video": "random-collision.mp4",
+          "poster": "random-collision.jpg",
+          "report": "random-collision-report.json"
+        }
+      ],
+      "formal_acceptance": false,
+      "hardware_validated": false,
+      "evaluation": "random-obstacles-evaluation.json"
+    }
+  ],
+  "files": {
+    "assessment.json": {
+      "sha256": "b32fc7ad46e79b28f987d5ebdec82fe4d758af4a18303682959d00b28b4157d7",
+      "bytes": 166504
+    },
+    "red-ball.mp4": {
+      "sha256": "0e4eed8d0a6e885bc06d12d1a19f1111cd89ae48a872a6949adbad389eb6e714",
+      "bytes": 865040
+    },
+    "red-ball.jpg": {
+      "sha256": "f3b932b3196fd9ff3595b32b537ee06cbcc272d6496b5c6a852858580aef6d25",
+      "bytes": 31650
+    },
+    "red-ball-report.json": {
+      "sha256": "9608c993cecff818514a283cec5bdb4a51bcf631fe3c49bffacb001de58a1621",
+      "bytes": 7690
+    },
+    "blue-ball.mp4": {
+      "sha256": "369862473eed7e2f739b95712a41adff675ad06390730433e8b2f13f9f2b667d",
+      "bytes": 541947
+    },
+    "blue-ball.jpg": {
+      "sha256": "f3b932b3196fd9ff3595b32b537ee06cbcc272d6496b5c6a852858580aef6d25",
+      "bytes": 31650
+    },
+    "blue-ball-report.json": {
+      "sha256": "70e426e475690740f6983385982f27c92091a84cf4cdbc0e829879d56301d05c",
+      "bytes": 7722
+    },
+    "yellow-ball.mp4": {
+      "sha256": "88129164542f47c109e525d78ccc2d5a8c80eb8727fb27ce9b51e2b13d3b1884",
+      "bytes": 752903
+    },
+    "yellow-ball.jpg": {
+      "sha256": "f3b932b3196fd9ff3595b32b537ee06cbcc272d6496b5c6a852858580aef6d25",
+      "bytes": 31650
+    },
+    "yellow-ball-report.json": {
+      "sha256": "e342efc180e938b6cac631d1c84ad578db6b0294c4279946a574fe97e5fbac77",
+      "bytes": 7710
+    },
+    "failure.mp4": {
+      "sha256": "f3ff3e57bd6b0fe863d162eb35579fc1e66cf4936148de00341a498ee743e94b",
+      "bytes": 919880
+    },
+    "failure.jpg": {
+      "sha256": "f3b932b3196fd9ff3595b32b537ee06cbcc272d6496b5c6a852858580aef6d25",
+      "bytes": 31650
+    },
+    "failure-report.json": {
+      "sha256": "bc58d0e5238518a1a58653c233bf0c4baf7f59b0600cc3f87b640f792d8852c4",
+      "bytes": 7714
+    },
+    "plain-comparison.mp4": {
+      "sha256": "fcf98f6643fe764acaaaa3086610eeb45b57f78787c3662b2a4bc22ac4f87719",
+      "bytes": 394416
+    },
+    "plain-comparison.jpg": {
+      "sha256": "f3b932b3196fd9ff3595b32b537ee06cbcc272d6496b5c6a852858580aef6d25",
+      "bytes": 31650
+    },
+    "plain-comparison-report.json": {
+      "sha256": "43f2ee0a36df2f757f148aecf9cb09867e9fe714e63c3db5966f1c7d9e8698d3",
+      "bytes": 7709
+    },
+    "single-obstacle-assessment.json": {
+      "sha256": "52fb461792e6d2b40a8e1d8e049f9417e62c2ac55f2f1541d16d58531b3b51ef",
+      "bytes": 246297
+    },
+    "single-obstacle-evaluation.json": {
+      "sha256": "cefc3bd7566db3a782457a8e44377b920f67909fd89240da5fb237877ec93dbc",
+      "bytes": 589440
+    },
+    "single-red-success.mp4": {
+      "sha256": "7cb88e093af3a6731b1bd390c48c50895167a2c748c3d837c27e10a86cf761c3",
+      "bytes": 2018159
+    },
+    "single-red-success.jpg": {
+      "sha256": "04c53b0564e867e6473802aac8b9dab00ae934adc015d76ea023cdf67ef263ef",
+      "bytes": 34815
+    },
+    "single-red-success-report.json": {
+      "sha256": "483cd0c916d5e5fd5f89a260750a638c9b815ed6088e5b0f5da19736fba05ff0",
+      "bytes": 8540
+    },
+    "single-collision.mp4": {
+      "sha256": "c93ae591ef505ab1d8f6c38de0abd05ed62761b2d205726a09dd5803ff1f2ef7",
+      "bytes": 2150916
+    },
+    "single-collision.jpg": {
+      "sha256": "22576e1898f186f2a6faee64b57fab9910b4cb5fa2cba6c4f1983dde07e6cf48",
+      "bytes": 36176
+    },
+    "single-collision-report.json": {
+      "sha256": "c8fc54c38df078c6e6d41d9825cca1d1adb50a4b41e10eec1bb246c2b4d6b074",
+      "bytes": 8533
+    },
+    "random-obstacles-assessment.json": {
+      "sha256": "40a60146b6b173f849298c601044cbaba6a30cbeafa69ddf3e7573829b01d867",
+      "bytes": 32107
+    },
+    "random-obstacles-evaluation.json": {
+      "sha256": "5d899a6375f983de998ed3d082ca43b3f30e517767e403c521c7768822fdf537",
+      "bytes": 251527
+    },
+    "random-success.mp4": {
+      "sha256": "d0cd67887f9d2e9316c5f98746cd339d9a22c0dd8bdc0b69339760ea78eaa002",
+      "bytes": 1568408
+    },
+    "random-success.jpg": {
+      "sha256": "2fc6f5d9368fb8f552c4142c388c09e7b0ec71d3b33ad06c313775a59ca5a01a",
+      "bytes": 35225
+    },
+    "random-success-report.json": {
+      "sha256": "f3c4552be1f61004124029cd7880e1878ad05f91803b4ce0e06a6268e0f98257",
+      "bytes": 10277
+    },
+    "random-collision.mp4": {
+      "sha256": "0d5fd7c3e842787b20f690918448e404fbac703a589884fb002ca5cb6701bdf3",
+      "bytes": 1490689
+    },
+    "random-collision.jpg": {
+      "sha256": "533fda97d4e94a54e7c8cea8a2dd8a66d4b56c8ebca04b3c1500722ce0047e48",
+      "bytes": 34121
+    },
+    "random-collision-report.json": {
+      "sha256": "6943e5eb02b75cb5f7c8bbda26c808824119f18e72ee13b7aba3c3d6c65738a8",
+      "bytes": 10283
+    }
+  }
+}

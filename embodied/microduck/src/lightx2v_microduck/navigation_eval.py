@@ -35,7 +35,8 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
                            record_predictions=False, reset_environment=True,
                            record_stage_timings=False, max_action_age_ms=500,
                            snapshot_camera_workers=0, cancel_poll_interval_ms=None,
-                           training_admission=None, training_collection_plan_sha256=None):
+                           training_admission=None, training_collection_plan_sha256=None,
+                           live_viewer=None):
     """No learned capability claim is inferred from successful process exit.
 
     Initialization is outside the measurement window and reported separately.
@@ -124,6 +125,8 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
         return replace(current, monotonic_ns=capture_ns)
 
     observation = capture()
+    if live_viewer is not None:
+        live_viewer.camera(observation)
     policy.reset(observation.episode_id)
     buffer.reset(observation.episode_id)
     intervention = getattr(policy, "metadata", {}).get("input_intervention", {})
@@ -192,6 +195,8 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
                               phase="camera", duration_ms=0.)
                 continue
             camera_latencies.append((frame.receipt["ready_ns"] - observed.monotonic_ns) / 1e6)
+            if live_viewer is not None:
+                live_viewer.camera(observed)
             if record_frames:
                 frames.append(observed.rgb)
                 frame_ticks.append(observed.camera_tick)
@@ -251,6 +256,9 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
             _latest(replies, (*packet, timing, request_trace))
 
     try:
+        if live_viewer is not None:
+            live_viewer.start(env)
+            observation = capture()
         if snapshot_camera_workers:
             from .snapshot_camera import SnapshotCamera
 
@@ -305,6 +313,10 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
                       if cancel_poll_interval_ms is not None else None)
     cancellation_requested = (cancel_monitor.requested.is_set if cancel_monitor is not None
                               else (output / 'cancel.request').exists)
+    if live_viewer is not None:
+        check_cancel = cancellation_requested
+        cancellation_requested = lambda: check_cancel() or live_viewer.cancelled()
+        live_viewer.begin()
     started = time.monotonic()
     execution_failure = None
     try:
@@ -316,6 +328,8 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
                      if record_stage_timings else None)
             env.render_enabled = camera is None and env.tick % DECISION_TICKS == 0
             observation = capture()
+            if live_viewer is not None:
+                live_viewer.camera(observation)
             if camera is not None:
                 deliver_camera(to_policy=True)
                 if env.tick % DECISION_TICKS == 0 and not (env.tick == 0 and initialize_plan):
@@ -411,6 +425,10 @@ def run_navigation_episode(env, policy, output, *, task="find_red_ball", seed=0,
                 stage["consume_finished_ns"] = time.monotonic_ns()
             env.render_enabled = False
             after_execution = env.step(intent)
+            if live_viewer is not None:
+                live_viewer.publish(env, wall_s=time.monotonic() - started,
+                                    execution=evidence, fallback_ticks=buffer.fallback_ticks,
+                                    latency_ms=latencies[-1] if latencies else startup_ms)
             if observe_execution is not None:
                 # Actor observations and consumed intent only. Evaluator truth
                 # is deliberately not accessible through this feedback hook.

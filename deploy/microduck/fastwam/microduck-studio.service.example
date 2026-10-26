@@ -1,0 +1,17 @@
+[Unit]
+Description=MicroDuck Studio (on-demand FastWAM simulation)
+After=network-online.target
+
+[Service]
+Type=simple
+# Change these two paths to your clone; install as a user service.
+WorkingDirectory=%h/LightX2V-microduck
+EnvironmentFile=%h/.config/microduck-studio.env
+ExecStart=%h/LightX2V-microduck/deploy/microduck/fastwam/web.sh
+ExecStop=/usr/bin/docker stop microduck-studio
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+
+[Install]
+WantedBy=default.target

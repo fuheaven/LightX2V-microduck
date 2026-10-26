@@ -13,4 +13,6 @@
 
 第三方代码和资产仍适用其各自条款。共享 MicroDuck 包中保留的 TinyVLA 参考代码有独立 NOTICE；本部署不加载 TinyVLA。此文档没有将机器人非商业资产改为 Apache 许可。
 
+`examples/microduck/visualization/` 新增本项目仿真实验的录屏、缩略图和报告，包含官方 MicroDuck 本体的渲染画面。相关官方资产来源与 CC BY-NC-SA 条款见上表；本仓库代码许可不改变这些素材的来源与适用限制。原始 MJCF/mesh 和 ONNX 仍按固定上游单独获取。
+
 可追溯锁：`embodied/microduck/src/lightx2v_microduck/resources/upstream.lock.json`、`deploy/microduck/fastwam/model-files.lock.json`、`third_party/bam/source-manifest.json`。官方资产由固定源获取，不通过 Git 复制未知或未授权的资源包。

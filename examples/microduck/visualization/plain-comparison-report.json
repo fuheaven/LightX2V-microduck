@@ -1,0 +1,268 @@
+{
+  "mode": "realtime",
+  "task": "find_red_ball",
+  "seed": 2000,
+  "initialization": "reset_and_warmup",
+  "policy": {
+    "model_id": "clear-room-realtime-control-pilot-v1",
+    "artifact_sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+    "contract": "microduck_navigation_v1",
+    "hardware_validated": false,
+    "input": "head_rgb_history_grid+instruction+proprio48",
+    "history_contract": {
+      "schema": "microduck_causal_rgb_grid_v1",
+      "offsets_ticks": [
+        300,
+        150,
+        50,
+        0
+      ],
+      "camera_size": 256,
+      "output_size": 512,
+      "max_sample_age_ticks": 5,
+      "layout": "row_major_oldest_to_current",
+      "startup_padding": "repeat_episode_first_frame",
+      "selector": "fixed_timestamps_only",
+      "control_hz": 50
+    },
+    "uses_privileged_state": false
+  },
+  "task_success": false,
+  "strict_model_success": false,
+  "cancelled": false,
+  "realtime_timing_qualified": true,
+  "realtime_success": false,
+  "timing_gate": {
+    "min_real_time_factor": 0.95,
+    "max_clock_lag_s": 0.1
+  },
+  "fallback_control_ticks": 1500,
+  "rejected_plans": 54,
+  "execution_clock": {
+    "schema": "microduck_navigation_execution_clock_v2",
+    "expiry_basis": "fresh_monotonic_at_admission_and_consumption",
+    "max_age_ticks": 25,
+    "max_wall_age_ns": 500000000,
+    "source_capture_timestamp_preserved": true
+  },
+  "warmup_inference_ms": [
+    1191.8533071875572
+  ],
+  "worker_warmup_inference_ms": [
+    522.9877233505249
+  ],
+  "startup_inference_ms": 502.5459807366133,
+  "injected_delay_ms": 0.0,
+  "model_latency_p50_ms": 558.7792843580246,
+  "model_latency_p95_ms": 569.2563083022833,
+  "observation_age_p95_ms": null,
+  "camera_capture_p95_ms": 9.2906873,
+  "request_preparation_p95_ms": 1.5642937272787094,
+  "request_preparation_errors": 0,
+  "wall_s": 30.00006572343409,
+  "sim_s": 30.0,
+  "real_time_factor": 0.9999978092236631,
+  "maximum_clock_lag_s": 0.04344319358468063,
+  "control_overruns": 2,
+  "inference_worker_stopped": true,
+  "evaluator": {
+    "episode_id": "46e26428aa6449f5b7c48fe4262e654c",
+    "tick": 1500,
+    "sim_time_s": 30.999999999998117,
+    "evaluator_source_sha256": "d90f3764dfd24e7cffba849fc7fada6a709e872b76a17ac5846516bbadfd6c6c",
+    "tasks_source_sha256": "6dfd055676482cc11c1e710db618c17a983c07e931e8f2d3faa0209d5d73c24b",
+    "evaluation_origin_s": 1.0000000000000007,
+    "evaluation_elapsed_s": 29.999999999998117,
+    "robot_position": [
+      0.0033555890511337357,
+      -0.00012553120663601338,
+      0.11623287887470796
+    ],
+    "robot_yaw": 0.028023979415901172,
+    "robot_velocity": [
+      0.00023793898952895152,
+      0.00021486755143201565,
+      5.169446347121309e-05
+    ],
+    "balls": {
+      "red": [
+        0.9218994453010042,
+        -0.46621472144850534,
+        0.034632818157539845
+      ],
+      "blue": [
+        0.4509180120066248,
+        0.8706035866084002,
+        0.034632818157539845
+      ],
+      "yellow": [
+        1.0176670816065767,
+        0.6146041385795369,
+        0.034632818157539845
+      ]
+    },
+    "obstacles": [],
+    "room_bounds": [
+      -1.5,
+      1.5,
+      -1.5,
+      1.5
+    ],
+    "target_color": "red",
+    "projected_gravity": [
+      0.006155776217814434,
+      -0.0007277168822335128,
+      -0.9999807882391006
+    ],
+    "joint_targets": [
+      0.0019486320670694113,
+      -0.27171945571899414,
+      -0.3967719078063965,
+      -0.12294339388608932,
+      0.5143548846244812,
+      0.2797553539276123,
+      0.35724884271621704,
+      -0.022392351180315018,
+      0.02205665037035942,
+      -0.005643822252750397,
+      0.27488595247268677,
+      0.3852226138114929,
+      0.09566757827997208,
+      -0.45854678750038147
+    ],
+    "applied_action": [
+      0.0019486320670694113,
+      -0.18441946804523468,
+      0.06112806499004364,
+      -0.11804339289665222,
+      0.061354849487543106,
+      -0.0693446472287178,
+      0.008148862048983574,
+      -0.022392351180315018,
+      0.02205665037035942,
+      -0.005643822252750397,
+      0.1875859647989273,
+      -0.07267738878726959,
+      0.09076757729053497,
+      -0.005546789616346359
+    ],
+    "previous_raw_action": [
+      0.0019486320670694113,
+      -0.18441946804523468,
+      0.06112806499004364,
+      -0.11804339289665222,
+      0.061354849487543106,
+      -0.0693446472287178,
+      0.008148862048983574,
+      -0.022392351180315018,
+      0.02205665037035942,
+      -0.005643822252750397,
+      0.1875859647989273,
+      -0.07267738878726959,
+      0.09076757729053497,
+      -0.005546789616346359
+    ],
+    "motor_torques": [
+      0.0017815061763094254,
+      -0.09488494488944384,
+      0.021028907296196397,
+      -0.09126656781566166,
+      0.021771102114379548,
+      0.028132722961092,
+      -0.0385514765058366,
+      0.006086286217301812,
+      -0.004777451746577958,
+      -0.0006125546093239983,
+      0.09652952516909648,
+      -0.006199985367819743,
+      0.0736027109361555,
+      -0.014546892530175002
+    ],
+    "success": false,
+    "terminated": true,
+    "fallen": false,
+    "author_success": null,
+    "strict_success": false,
+    "strict_preset_result": null,
+    "ever_fallen": false,
+    "contact_events": [],
+    "wheel_rotation_rad": 0.0,
+    "collision": false,
+    "fault": "",
+    "goal_hold_ticks": 0,
+    "follow_in_band_fraction": null,
+    "off_ball": false,
+    "termination_reason": "",
+    "recovery_active": false,
+    "recovery_events": 0,
+    "task_start_tick": 0,
+    "task_context": [
+      "stand",
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "planar_displacement_m": 0.0008313978929024986,
+    "planar_path_length_m": 0.007317200050745086,
+    "minimum_height_m": 0.11593330539734034,
+    "integrated_abs_pitch_rate_rad": 0.07093899737576706,
+    "model_signature": "bc01860838e501a1e20571dcf820cca4f290488d03dd2caa8e6b1fef34c40bb0",
+    "actuator_profile": "bam_m6_xl330",
+    "robot_signature": {
+      "sha256": "c84586273415452a4f4b87dfb525506cc31938b84d1c07b69ee4d0512e179c29",
+      "bodies": 15,
+      "profile": "official_bam",
+      "normalized_prefix": ""
+    },
+    "scene": {
+      "name": "room_clear",
+      "source_xml": "/mtc/fuhaiwen1/microduck-tinyvla/world-action/assets/upstream/microduck_rl/src/mjlab_microduck/robot/microduck/scene.xml",
+      "embodiment": "legs",
+      "obstacles": [],
+      "room_bounds": [
+        -1.5,
+        1.5,
+        -1.5,
+        1.5
+      ],
+      "target_colors": [
+        "red",
+        "blue",
+        "yellow"
+      ],
+      "robot_prefix": "",
+      "robot_source_xml": "/mtc/fuhaiwen1/microduck-tinyvla/world-action/assets/upstream/microduck_rl/src/mjlab_microduck/robot/microduck/robot_groundcontact.xml",
+      "original_demo_root": null,
+      "layout_id": "1794dccd41703d42aef31e9ea508a06e5beab62b0d1e84af32b133e83267d5f2",
+      "geometry_hash": "a10bcc34a2c516ed292b07ba689e6b69cf7933c6de04c1a867c9bb6f27ec6a77",
+      "texture_id": "official_groundplane_v1",
+      "ball_layout": []
+    },
+    "action_delay_ticks": 0,
+    "hardware_validated": false,
+    "success_protocol": "visual_ball_stop_v2",
+    "community_task_contract": null
+  },
+  "hardware_validated": false,
+  "recording": "recording.npz",
+  "prediction_recording": {
+    "path": "predictions.json",
+    "records": 54,
+    "actions": "bounded submitted chunk before stand decoding and age-based indexing",
+    "observations": "original sensor observation; input interventions are declared in policy metadata",
+    "warmup_predictions_excluded": true,
+    "serialization_outside_measurement": true
+  }
+}

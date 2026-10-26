@@ -29,5 +29,14 @@
     "source": "https://github.com/Rhoban/bam",
     "revision": "62bd8ce12154340be97e06f7f41a0ca8f116d967",
     "manifest": "third_party/bam/source-manifest.json"
-  }
+  },
+  "export_manifest_scope": "export-source-files.json preserves the initial handoff snapshot (815a8c9); subsequent changes are recorded in Git and feature validation reports",
+  "extensions": [
+    {
+      "feature": "microduck_studio_v1",
+      "documentation": "docs/microduck/visualization.md",
+      "media_manifest": "examples/microduck/visualization/catalog.json",
+      "new_training": false
+    }
+  ]
 }

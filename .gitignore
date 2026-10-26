@@ -47,6 +47,7 @@ lightx2v_kernel_xpu/_cmake_build
 *.npz
 *.npy
 *.mp4
+!examples/microduck/visualization/*.mp4
 *.bag
 *.sqlite
 *.sqlite3

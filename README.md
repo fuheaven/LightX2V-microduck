@@ -16,6 +16,7 @@ flowchart LR
 
 ## 从哪里开始
 
+0. **[MicroDuck Studio 可视化服务](docs/microduck/visualization.md)**：全新独立页面，观看成功/失败录屏，按类别查看训练效果，并启动实时仿真。
 1. [部署说明](docs/microduck/deployment.md)：独立 Docker、模型准备、固定输入测速、MuJoCo 闭环。
 2. [优化交接](docs/microduck/optimization.md)：代码入口、加速开关、Profiler、数值与闭环回归。
 3. [已实现能力与证据](docs/microduck/capabilities.md)：成绩对应的任务、部署和局限。
@@ -37,6 +38,15 @@ flowchart LR
 数字来自[历史证据](docs/microduck/evidence/manifest.json)。本导出包含后续执行器修正，**新环境需要重新评测，历史分数不是当前提交的验收分数**。暂不声称掌握任意物体导航、可靠随机障碍、闭环定向踢球或真机自主行动。
 
 ## 部署概览
+
+只想先看看训练效果？Python 3.10+ 即可启动录屏展厅，无需 GPU 或权重：
+
+```bash
+python3 scripts/microduck/fastwam_visualization.py --port 8770
+# 打开 http://127.0.0.1:8770/
+```
+
+完整 GPU 实时仿真见[可视化部署说明](docs/microduck/visualization.md)。
 
 Linux x86_64、Docker、NVIDIA Container Toolkit，当前验证硬件为单张 H200。先构建镜像，再按部署文档准备模型；未验证 24GB 显存卡。
 
