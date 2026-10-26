@@ -1,0 +1,680 @@
+import inspect
+from dataclasses import MISSING, dataclass, field, fields, make_dataclass
+from typing import Any, Optional
+
+import torch
+
+
+class _UnsetType:
+    def __repr__(self):
+        return "UNSET"
+
+
+UNSET = _UnsetType()
+
+
+@dataclass
+class T2VInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+
+
+@dataclass
+class I2VInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    # WorldPlay-specific: pose/action conditioning (optional)
+    pose: str = field(default_factory=lambda: None)
+    # Lingbot i2v camera/action conditioning (optional)
+    action_path: str = field(default_factory=str)
+
+
+@dataclass
+class SRInputInfo:
+    seed: int = field(default_factory=int)
+    image_path: str = field(default_factory=str)  # Single image input
+    video_path: str = field(default_factory=str)  # Video input for SR
+    sr_ratio: float = field(default_factory=lambda: 2.0)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+
+
+@dataclass
+class Flf2vInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    last_frame_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+
+
+# Need Check
+@dataclass
+class VaceInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    src_ref_images: str = field(default_factory=str)
+    src_video: str = field(default_factory=str)
+    src_mask: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+
+
+@dataclass
+class S2VInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    video_path: str = field(default_factory=str)
+    src_video: str = field(default_factory=str)
+    audio_path: str = field(default_factory=str)
+    src_pose_path: str = field(default_factory=str)
+    audio_num: int = field(default_factory=int)
+    with_mask: bool = field(default_factory=lambda: False)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    stream_config: dict = field(default_factory=dict)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    fixed_area: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+    # prev info
+    overlap_frame: torch.Tensor = field(default_factory=lambda: None)
+    overlap_latent: torch.Tensor = field(default_factory=lambda: None)
+    # input preprocess audio
+    audio_clip: torch.Tensor = field(default_factory=lambda: None)
+
+
+@dataclass
+class RS2VInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    audio_path: str = field(default_factory=str)
+    audio_num: int = field(default_factory=int)
+    with_mask: bool = field(default_factory=lambda: False)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    stream_config: dict = field(default_factory=dict)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+    # prev info
+    overlap_frame: torch.Tensor = field(default_factory=lambda: None)
+    overlap_latent: torch.Tensor = field(default_factory=lambda: None)
+    # input preprocess audio
+    audio_clip: torch.Tensor = field(default_factory=lambda: None)
+    # input reference state
+    ref_state: int = field(default_factory=int)
+    # flags for first and last clip
+    is_first: bool = field(default_factory=lambda: False)
+    is_last: bool = field(default_factory=lambda: False)
+
+
+# Need Check
+@dataclass
+class AnimateInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    prompt_ref: str = field(default_factory=lambda: "人物动作的参考视频")
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    src_pose_path: str = field(default_factory=str)
+    src_face_path: str = field(default_factory=str)
+    src_ref_images: str = field(default_factory=str)
+    video_path: str = field(default_factory=str)
+    src_bg_path: str = field(default_factory=str)
+    src_mask_path: str = field(default_factory=str)
+    # None: use config_json replace_flag; True/False: per-request (e.g. worker frontend)
+    replace_flag: Optional[bool] = None
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+
+
+@dataclass
+class T2IInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    target_shape: list = field(default_factory=list)
+    image_shapes: list = field(default_factory=list)
+    txt_seq_lens: list = field(default_factory=list)  # [postive_txt_seq_len, negative_txt_seq_len]
+    aspect_ratio: str = field(default_factory=str)
+
+
+@dataclass
+class T2TInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    max_new_tokens: Optional[int] = None
+    text_do_sample: Optional[bool] = None
+    text_temperature: Optional[float] = None
+    text_top_k: Optional[int] = None
+    text_top_p: Optional[float] = None
+    bot_task: Optional[str] = None
+    system_prompt: Optional[str] = None
+    stream_callback: Any = None
+
+
+@dataclass
+class TI2TInputInfo(T2TInputInfo):
+    image_path: str = field(default_factory=str)
+    infer_align_image_size: Optional[bool] = None
+
+
+@dataclass
+class I2IInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    i2i_denoise_strength: Optional[float] = None
+    inpaint_blur_size: Optional[int] = None
+    inpaint_blur_sigma: Optional[float] = None
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    keep_original_aspect: bool = field(default_factory=lambda: False)
+    layout_bboxes: str = field(default_factory=str)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    target_shape: list = field(default_factory=list)
+    image_shapes: list = field(default_factory=list)
+    txt_seq_lens: list = field(default_factory=list)  # [postive_txt_seq_len, negative_txt_seq_len]
+    processed_image_size: list = field(default_factory=list)
+    original_size: list = field(default_factory=list)
+    aspect_ratio: str = field(default_factory=str)
+
+
+@dataclass
+class TI2IInputInfo(I2IInputInfo):
+    infer_align_image_size: Optional[bool] = None
+
+
+@dataclass
+class T2AVInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    audio_latent_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+
+@dataclass
+class I2AVInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    image_strength: float = field(default_factory=float)
+    image_frame_idx: Optional[list[int]] = None
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+
+@dataclass
+class L2AVInputInfo(T2AVInputInfo):
+    last_frame_path: str = field(default_factory=str)
+
+
+@dataclass
+class FL2AVInputInfo(T2AVInputInfo):
+    image_path: str = field(default_factory=str)
+    last_frame_path: str = field(default_factory=str)
+
+
+@dataclass
+class Ref2AVInputInfo(T2AVInputInfo):
+    # Reuse the repository-wide media CLI. Comma-separated strings and Python
+    # sequences are normalized by MiniMaxH3Runner.
+    image_path: Any = field(default_factory=str)
+    video_path: Any = field(default_factory=str)
+    audio_path: Any = field(default_factory=str)
+
+
+@dataclass
+class I2VAInputInfo:
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    video_path: str = field(default_factory=str)
+    action_path: str = field(default_factory=str)
+    state_path: str = field(default_factory=str)
+    action_mode: str = field(default_factory=str)
+    domain_name: str = field(default_factory=str)
+    view_point: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    save_action_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+    # Optional in-memory policy inputs.  Offline/CLI inference continues to use
+    # image_path/state_path; long-running integrations (for example ROS) can
+    # avoid writing a PNG and NPY file for every control step.
+    policy_image: Any = field(default=None, repr=False)
+    policy_state: Any = field(default=None, repr=False)
+
+
+@dataclass
+class V2AVInputInfo:
+    """LTX-2.3 IC-LoRA video-to-audio-video.
+
+    Drives both motion-transfer (Union / Pose / Motion-Track-Control) and
+    ICEdit-Insight editing (restoration / HD / watermark / subtitle removal).
+    The reference / control video is provided pre-processed via ``video_path``.
+    Optional character image conditioning is supported through the i2av-style
+    ``image_path`` / ``image_strength`` / ``image_frame_idx`` fields.
+    """
+
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    # Optional character / keyframe image conditioning (motion transfer).
+    image_path: str = field(default_factory=str)
+    image_strength: float = field(default_factory=float)
+    image_frame_idx: Optional[list[int]] = None
+    # Pre-processed reference / control video (pose / canny / depth / track for
+    # motion transfer, or the degraded source video for ICEdit).
+    video_path: str = field(default_factory=str)
+    action_path: str = field(default_factory=str)
+    action_mode: str = field(default_factory=str)
+    domain_name: str = field(default_factory=str)
+    view_point: str = field(default_factory=str)
+    reference_video_strength: float = field(default_factory=lambda: 1.0)
+    reference_video_frame_cap: Optional[int] = None
+    # Optional: mux audio from this file after save (e.g. original driving video).
+    # ``video_path`` is often a silent pose/canny/depth control clip; DefaultRunner's
+    # v2av mux path is not used because LTX2Runner overrides ``process_images_after_vae_decoder``.
+    mux_audio_video_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    save_action_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+
+@dataclass
+class LTX2S2VInputInfo:
+    """LTX-2 audio-conditioned video (reference audio + optional reference images)."""
+
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    image_strength: float = field(default_factory=float)
+    image_frame_idx: Optional[list[int]] = None
+    audio_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    target_video_length: int = field(default_factory=int)
+
+
+@dataclass
+class WorldPlayI2VInputInfo:
+    """Input info for WorldPlay model (image-to-video with action/pose conditioning)."""
+
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    original_shape: list = field(default_factory=list)
+    resized_shape: list = field(default_factory=list)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    # WorldPlay-specific: pose/action conditioning
+    pose: str = field(default_factory=str)  # Pose string (e.g., "w-3, right-0.5") or JSON path
+    model_type: str = field(default_factory=lambda: "ar")  # "ar" (autoregressive) or "bi" (bidirectional)
+    chunk_latent_frames: int = field(default_factory=lambda: 4)
+    # Computed pose tensors (set during processing)
+    viewmats: torch.Tensor = field(default_factory=lambda: None)
+    Ks: torch.Tensor = field(default_factory=lambda: None)
+    action: torch.Tensor = field(default_factory=lambda: None)
+
+
+@dataclass
+class Hunyuan3DShapeInputInfo:
+    """Input info for Hunyuan3D-2.1 image-to-3D-mesh shape generation."""
+
+    seed: int = field(default_factory=int)
+    image_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+
+
+@dataclass
+class WorldMirrorReconInputInfo:
+    """Input info for HY-WorldMirror-2.0 3D reconstruction.
+
+    Unlike the diffusion tasks, this task takes a directory / video / image
+    and saves multi-view depth / normal / Gaussian-splat results to disk.
+    """
+
+    seed: int = field(default_factory=int)
+    # Input may be a directory of images, a single image, or a video.
+    input_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)  # output root dir
+    strict_output_path: str = field(default_factory=lambda: None)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # Optional priors
+    prior_cam_path: str = field(default_factory=lambda: None)
+    prior_depth_path: str = field(default_factory=lambda: None)
+
+
+@dataclass
+class WorldPlayT2VInputInfo:
+    """Input info for WorldPlay model (text-to-video with action/pose conditioning)."""
+
+    seed: int = field(default_factory=int)
+    prompt: str = field(default_factory=str)
+    negative_prompt: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    # shape related
+    resize_mode: str = field(default_factory=str)
+    latent_shape: list = field(default_factory=list)
+    target_shape: list = field(default_factory=list)
+    # WorldPlay-specific: pose/action conditioning
+    pose: str = field(default_factory=str)  # Pose string (e.g., "w-3, right-0.5") or JSON path
+    model_type: str = field(default_factory=lambda: "ar")  # "ar" (autoregressive) or "bi" (bidirectional)
+    chunk_latent_frames: int = field(default_factory=lambda: 4)
+    # Computed pose tensors (set during processing)
+    viewmats: torch.Tensor = field(default_factory=lambda: None)
+    Ks: torch.Tensor = field(default_factory=lambda: None)
+    action: torch.Tensor = field(default_factory=lambda: None)
+
+
+@dataclass
+class SenseNovaVisionInputInfo:
+    seed: int = field(default_factory=lambda: 42)
+    prompt: str = field(default_factory=str)
+    image_path: str = field(default_factory=str)
+    save_result_path: str = field(default_factory=str)
+    return_result_tensor: bool = field(default_factory=lambda: False)
+    target_shape: list = field(default_factory=list)
+    omni_vision_subtask: str = field(default_factory=str)
+    raw_output_path: str = field(default_factory=str)
+    glb_output_path: str = field(default_factory=str)
+    postprocess_predictions: Optional[bool] = None
+
+
+task_dict = {
+    "t2v": T2VInputInfo,
+    "i2v": I2VInputInfo,
+    "sr": SRInputInfo,
+    "flf2v": Flf2vInputInfo,
+    "vace": VaceInputInfo,
+    "s2v": S2VInputInfo,
+    "rs2v": RS2VInputInfo,
+    "animate": AnimateInputInfo,
+    "t2t": T2TInputInfo,
+    "t2i": T2IInputInfo,
+    "ti2t": TI2TInputInfo,
+    "ti2i": TI2IInputInfo,
+    "i2i": I2IInputInfo,
+    "t2av": T2AVInputInfo,
+    "i2av": I2AVInputInfo,
+    "l2av": L2AVInputInfo,
+    "fl2av": FL2AVInputInfo,
+    "ref2av": Ref2AVInputInfo,
+    "i2va": I2VAInputInfo,
+    "v2av": V2AVInputInfo,
+    "ltx2_s2v": LTX2S2VInputInfo,
+    "worldplay_i2v": WorldPlayI2VInputInfo,
+    "worldplay_t2v": WorldPlayT2VInputInfo,
+    "recon": WorldMirrorReconInputInfo,
+    "i23d": Hunyuan3DShapeInputInfo,
+    "omni_vision_task": SenseNovaVisionInputInfo,
+}
+
+
+def init_empty_input_info(task, support_tasks=[]):
+    if len(support_tasks) == 0:
+        support_tasks = [task]
+    # assert task in support_tasks, f"Task {task} not in support tasks {support_tasks}"
+
+    if len(support_tasks) == 1:
+        support_task = support_tasks[0]
+        if support_task not in task_dict:
+            raise ValueError(f"Unsupported task: {support_task}")
+        return task_dict[support_task]()
+
+    merged_fields = []
+    merged_field_names = set()
+
+    for support_task in support_tasks:
+        if support_task not in task_dict:
+            raise ValueError(f"Unsupported task: {support_task}")
+
+        support_input_info_cls = task_dict[support_task]
+        for support_field in fields(support_input_info_cls):
+            if support_field.name in merged_field_names:
+                continue
+            merged_field_names.add(support_field.name)
+
+            if support_field.default_factory is not MISSING:
+                merged_fields.append((support_field.name, support_field.type, field(default_factory=support_field.default_factory)))
+            elif support_field.default is not MISSING:
+                merged_fields.append((support_field.name, support_field.type, field(default=support_field.default)))
+            else:
+                merged_fields.append((support_field.name, support_field.type, field(default=None)))
+
+    if not merged_fields:
+        raise ValueError("support_tasks must not be empty")
+
+    merged_cls_name = "Merged" + "".join(task.upper() for task in support_tasks) + "InputInfo"
+    merged_input_info_cls = make_dataclass(merged_cls_name, merged_fields)
+    return merged_input_info_cls()
+
+
+def calculate_target_video_length_from_duration(duration_seconds: float, fps: int = 16) -> int:
+    """Calculate target_video_length from video duration using the formula:
+    target_video_length = (fps * seconds + 3) // 4 * 4 + 1
+
+    This ensures the result satisfies the VAE stride constraint: (n-1) % 4 == 0
+
+    Args:
+        duration_seconds: Video duration in seconds
+        fps: Target frames per second (default 16)
+
+    Returns:
+        Frame count that satisfies VAE stride constraint
+
+    Examples:
+        1s: (16*1 + 3) // 4 * 4 + 1 = 17 frames
+        3s: (16*3 + 3) // 4 * 4 + 1 = 49 frames
+        5s: (16*5 + 3) // 4 * 4 + 1 = 81 frames
+    """
+    target_video_length = (int(fps * duration_seconds) + 3) // 4 * 4 + 1
+    return target_video_length
+
+
+@dataclass
+class SekoTalkInputs:
+    infer_steps: int | Any = UNSET
+    target_video_length: int | Any = UNSET
+    seed: int | Any = UNSET
+    prompt: str | Any = UNSET
+    negative_prompt: str | Any = UNSET
+    image_path: str | Any = UNSET
+    audio_path: str | Any = UNSET
+    audio_num: int | Any = UNSET
+    video_duration: float | Any = UNSET
+    with_mask: bool | Any = UNSET
+    save_result_path: str | Any = UNSET
+    return_result_tensor: bool | Any = UNSET
+    stream_config: dict | Any = UNSET
+
+    resize_mode: str | Any = UNSET
+    fixed_area: str | Any = UNSET
+    target_shape: list | Any = UNSET
+
+    # prev info
+    overlap_frame: torch.Tensor | Any = UNSET
+    overlap_latent: torch.Tensor | Any = UNSET
+    # input preprocess audio
+    audio_clip: torch.Tensor | Any = UNSET
+
+    # input reference state
+    ref_state: int | Any = UNSET
+    # flags for first and last clip
+    is_first: bool | Any = UNSET
+    is_last: bool | Any = UNSET
+    # if save video by stream
+    stream_save_video: bool | Any = UNSET
+
+    @classmethod
+    def from_args(cls, args, **overrides):
+        """
+        Build InputInfo from argparse.Namespace (or any object with __dict__)
+        Priority:
+            args < overrides
+        """
+        field_names = {f.name for f in fields(cls)}
+        data = {k: v for k, v in vars(args).items() if k in field_names}
+        data.update(overrides)
+        return cls(**data)
+
+    def normalize_unset_to_none(self):
+        """
+        Replace all UNSET fields with None.
+        Call this right before running / inference.
+        """
+        for f in fields(self):
+            if getattr(self, f.name) is UNSET:
+                setattr(self, f.name, None)
+        return self
+
+
+def init_input_info_from_args(task, args, **overrides):
+    if task in ["s2v", "rs2v"]:
+        return SekoTalkInputs.from_args(args, **overrides)
+    else:
+        raise ValueError(f"Unsupported task: {task}")
+
+
+def fill_input_info_from_defaults(input_info, defaults):
+    for key in input_info.__dataclass_fields__:
+        if key in defaults and getattr(input_info, key) is UNSET:
+            setattr(input_info, key, defaults[key])
+
+
+def update_input_info_from_dict(input_info, data):
+    for key in input_info.__dataclass_fields__:
+        if key in data:
+            setattr(input_info, key, data[key])
+
+
+def update_input_info_from_object(input_info, obj):
+    for key in input_info.__dataclass_fields__:
+        if hasattr(obj, key):
+            setattr(input_info, key, getattr(obj, key))
+
+
+def get_all_input_info_keys():
+    all_keys = set()
+
+    current_module = inspect.currentframe().f_globals
+
+    for name, obj in current_module.items():
+        if inspect.isclass(obj) and name.endswith("InputInfo") and hasattr(obj, "__dataclass_fields__"):
+            all_keys.update(obj.__dataclass_fields__.keys())
+
+    return all_keys
+
+
+# 创建包含所有InputInfo字段的集合
+ALL_INPUT_INFO_KEYS = get_all_input_info_keys()

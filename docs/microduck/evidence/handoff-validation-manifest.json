@@ -1,0 +1,16 @@
+{
+  "schema": "microduck_handoff_validation_v1",
+  "date": "2026-10-26",
+  "docker_image_id": "sha256:f377997ed4d437dc3bb505a75d2e52f33c2a84e9d327a97263f79b1f6b0f5b38",
+  "cpu_tests_passed": 79,
+  "integration_tests_deselected": 4,
+  "new_training": false,
+  "hardware_validated": false,
+  "formal_acceptance": false,
+  "files": {
+    "handoff-benchmark-plain.json": "ccb4da0aaa7b4112d23de46cec3d42c9d0731c07360e96a4ebcd39984659b2d4",
+    "handoff-benchmark-optimized.json": "c0eed5e484d1623684d1c5129132f984eb5df7f779d30c409b8cb81e1f6b0970",
+    "handoff-offline-smoke.json": "de1dc31042577061a7e8ce0473617c004fbe469b22bf68d05f4d46b6eef4b874",
+    "deployment-installed-packages.txt": "1e4d657019c6c98ae438408d577c72eaed4588861ff985d3e942e2a898c21764"
+  }
+}

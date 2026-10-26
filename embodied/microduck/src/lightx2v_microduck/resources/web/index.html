@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MicroDuck · 能力展厅</title><link rel="stylesheet" href="/showcase.css"><script src="/showcase.js" defer></script><link rel="stylesheet" href="/fastwam-capabilities.css"><script src="/fastwam-capabilities.js" defer></script></head>
+<body>
+<a class="skip-link" href="#content">跳到能力列表</a>
+<header class="topbar"><a class="brand" href="/">MicroDuck <span>× LightX2V</span></a><nav aria-label="主导航"><a href="/experiments">实验室</a><a href="/training">训练进度</a><a href="/school">鸭子学校</a></nav></header>
+<main>
+<section id="fastwam-capabilities" class="fw-capabilities" aria-label="FastWAM 已训练能力与录屏"><h2>已训练能力与录屏</h2><p>正在读取已核验的模型表现…</p></section>
+<section class="hero" aria-labelledby="page-title">
+ <div class="intro"><p class="eyebrow">TinyVLA · 预设运动能力</p><h1 id="page-title">已验收的<br>预设运动。</h1><p class="lead">以下为 TinyVLA 的预设动作验证，与上方 FastWAM 的视觉导航成绩分开记录。</p><div class="hero-actions"><a class="button primary" href="#skills">查看 TinyVLA 已验收动作</a><button id="quick-live" type="button" class="button secondary">实时运行官方行走</button></div><p id="freshness" class="subtle" role="status">正在读取验收记录…</p></div>
+ <div class="preview"><div class="preview-heading"><span id="preview-kind" class="pill">等待记录</span><span id="preview-title">TinyVLA 仿真演示</span></div><div class="preview-media"><video id="featured-video" muted loop playsinline controls preload="metadata" aria-label="TinyVLA 验收记录视频"></video><img id="live-image" alt="当前实时 MuJoCo 仿真" hidden><div id="preview-empty" class="media-message">正在查找对应模型的演示视频…</div></div><div id="live-controls" class="live-controls" hidden><label for="live-view">实时视角</label><select id="live-view"><option value="observer">鸭子与周围环境</option><option value="camera">鸭子摄像头</option><option value="perception" disabled>检测画面</option></select></div><div class="preview-footer"><span id="preview-note">视频来自独立测试记录。</span><button id="stop-live" class="small-button" hidden>停止仿真</button></div><p id="live-status" class="live-status" role="status" hidden></p></div>
+</section>
+<section class="stats" aria-label="能力概览"><div><strong id="accepted-count">—</strong><span>TinyVLA 离线验收通过</span></div><div><strong id="tested-count">—</strong><span>已完成独立测试</span></div><div><strong id="community-count">—</strong><span>可在本地打开的社区实验</span></div><div><strong>仿真阶段</strong><span>实时能力与真机单独验证</span></div></section>
+<div id="page-error" class="error-banner" role="alert" hidden><span></span><button id="retry">重新加载</button></div>
+<nav class="tabs" aria-label="能力类别"><a href="#skills" data-tab="skills" aria-current="page">TinyVLA 已验收能力</a><a href="#official" data-tab="official">官方基础运动</a><a href="#community" data-tab="community">社区探索 <span id="new-count"></span></a></nav>
+<div id="content" tabindex="-1">
+<section id="skills-panel" data-panel="skills" aria-labelledby="skills-heading"><div class="section-heading"><div><p class="eyebrow">我们的训练成果</p><h2 id="skills-heading">已通过离线验收</h2><p>每项至少 100 个独立测试条件，成功率达到 90%。点击卡片观看对应模型的记录。</p></div><a class="text-link" href="/training">查看完整训练与评测 →</a></div>
+<p class="scope-note">当前验证的是带预设命令的运动控制；尚未验收视觉语言自主规划。回放视频不代表实时推理。</p>
+<div id="skill-grid" class="skill-grid" aria-live="polite"></div><p id="skills-empty" class="empty-state" hidden>尚无可核验的正式通过记录。可以前往训练进度查看同步状态。</p>
+<details class="remaining"><summary>其余动作进展 <span id="remaining-count"></span></summary><div id="remaining-grid" class="remaining-grid"></div></details>
+<p id="campaign-note" class="subtle"></p>
+</section>
+<section id="official-panel" data-panel="official" aria-labelledby="official-heading" hidden><div class="section-heading"><div><p class="eyebrow">官方 ONNX 控制</p><h2 id="official-heading">直接体验基础运动</h2><p>调用已有官方运动策略，在 MuJoCo 中实时运行。这里的能力归属于官方策略。</p></div></div><div id="official-grid" class="community-grid"></div><div class="scope-note">上层自主任务可以调用这些运动能力。无需等待 TinyVLA 重新学完全部动作，再开始探索自主行为。</div></section>
+<section id="community-panel" data-panel="community" aria-labelledby="community-heading" hidden><div class="section-heading"><div><p class="eyebrow">共享生态 · 明确来源</p><h2 id="community-heading">把社区成果放在一起探索</h2><p id="community-date">正在读取调研快照…</p></div><a class="text-link" href="/experiments?workflow=skill_planner">配置上层 VLM →</a></div>
+<div class="filters"><label>方向<select id="community-group"><option value="all">全部方向</option><option value="brain">自主决策与跟随</option><option value="motion">运动与新技能</option><option value="perception">视觉感知</option><option value="world">仿真世界</option><option value="training">训练工具</option></select></label><label>接入状态<select id="community-status"><option value="all">全部状态</option><option value="local">本地可体验</option><option value="upstream">上游成果 · 待适配</option><option value="new">本次新增</option></select></label><label class="search">搜索项目<input id="community-search" type="search" placeholder="例如 Laya、爬梯、Water Court"></label></div>
+<p id="community-result" class="subtle" role="status"></p><div id="community-grid" class="community-grid"></div><p id="community-empty" class="empty-state" hidden>没有匹配的项目，试试其他筛选条件。</p><p id="discovery-note" class="subtle"></p></section>
+</div>
+<footer><span>MicroDuck × LightX2V</span><span>模型、实验与证据各自标明来源 · 尚未进行真机验证</span><a href="/experiments">进入实验室 →</a></footer>
+</main>
+<dialog id="skill-dialog" aria-labelledby="dialog-title"><div class="dialog-heading"><div><p class="eyebrow">TinyVLA · 离线测试回放</p><h2 id="dialog-title"></h2></div><button id="close-dialog" class="secondary">关闭</button></div><p id="dialog-description"></p><video id="dialog-video" controls playsinline preload="metadata"></video><label class="clip-control">选择记录与视角<select id="clip-select"></select></label><p id="clip-note" role="status"></p><div class="dialog-facts"><div><span>独立测试</span><strong id="dialog-score"></strong></div><div><span>登记模型</span><code id="dialog-model"></code></div><a id="dialog-report" class="text-link" target="_blank" rel="noopener">查看原始验收报告 →</a></div><p class="subtle">成功与失败样例均来自同一模型的测试集；单条视频不能替代总体成功率。</p></dialog>
+<template id="skill-template"><article class="skill-card"><button type="button" class="skill-open"><div class="skill-media"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video><span class="media-label">观看记录</span></div><div class="skill-body"><div class="card-top"><span class="pill accepted">离线已验收</span><span class="body-label"></span></div><h3></h3><p class="description"></p><div class="card-score"><strong></strong><span>独立测试成功率</span></div></div></button></article></template>
+</body></html>

@@ -1,0 +1,29 @@
+{
+  "schema": "microduck_vlm_navigation_cases_v1",
+  "source_protocol_sha256": "57d236d62991100c03bc33b77635b8d19adc905fbff42b12eb05f87aa1133190",
+  "source_protocol": "artifacts/navigation/guarded-rehearsal-pilot-v1/memory-realtime-preparation-v1/inputs/candidate-evaluation-protocol.json",
+  "profile": "official_bam",
+  "image_size": 256,
+  "warmup_ticks": 50,
+  "control_hz": 50,
+  "comparison_contract": "microduck_navigation_forward04_v1",
+  "independent_acceptance": false,
+  "split": "diagnostic",
+  "cases": [
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_yellow_ball"
+    }
+  ]
+}

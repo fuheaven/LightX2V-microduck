@@ -1,0 +1,33 @@
+{
+  "schema": "microduck_fastwam_source_export_v1",
+  "upstream": "https://github.com/ModelTC/LightX2V",
+  "revision": "ca181cab7f454f804ab9c23f8811316a242b1e6c",
+  "modified_upstream_files": [
+    "lightx2v/__init__.py",
+    "lightx2v/models/networks/wan/fastwam_model.py",
+    "lightx2v/models/networks/wan/infer/fastwam/pre_infer.py",
+    "lightx2v/models/networks/wan/infer/fastwam/transformer_infer.py",
+    "lightx2v/models/runners/wan/fastwam_runner.py",
+    "lightx2v/models/video_encoders/hf/wan/vae_2_2.py"
+  ],
+  "weights_included": false,
+  "training_logs_included": false,
+  "exported_shared_components": [
+    "embodied/microduck/src/lightx2v_microduck",
+    "lightx2v/models/networks/tinyvla",
+    "lightx2v/models/runners/tinyvla"
+  ],
+  "added_native_runtime": [
+    "lightx2v/models/networks/wan/infer/fastwam/action_graph.py"
+  ],
+  "excluded_upstream_binary_examples": [
+    "configs/worldmirror/worldmirror_input_scales.safetensors",
+    "scripts/motus/example_inputs/state.npy"
+  ],
+  "scope": "Native FastWAM inference and independent MicroDuck simulation; no weights, training output, host service configuration or monitoring credentials",
+  "vendored_cpu_actuator": {
+    "source": "https://github.com/Rhoban/bam",
+    "revision": "62bd8ce12154340be97e06f7f41a0ca8f116d967",
+    "manifest": "third_party/bam/source-manifest.json"
+  }
+}

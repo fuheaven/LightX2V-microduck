@@ -1,0 +1,676 @@
+from abc import ABCMeta, abstractmethod
+
+import torch
+import torch.distributed as dist
+from loguru import logger
+from safetensors import safe_open
+
+from lightx2v.common.ops.norm.triton_ops import (
+    fused_norm_3drope,
+    fused_qk_norm_3drope,
+    fused_qk_rms_norm,
+    rms_norm_kernel,
+)
+from lightx2v.common.ops.utils import *
+from lightx2v.utils.envs import *
+from lightx2v.utils.registry_factory import RMS_WEIGHT_REGISTER
+from lightx2v_platform.base.global_var import AI_DEVICE
+
+try:
+    import sgl_kernel
+    from sgl_kernel.utils import is_arch_support_pdl
+except ImportError:
+    sgl_kernel = None
+    is_arch_support_pdl = None
+
+try:
+    from flashinfer.norm import rmsnorm as flashinfer_rmsnorm
+except ImportError:
+    flashinfer_rmsnorm = None
+
+try:
+    from magi_compiler import magi_register_custom_op
+except ImportError:
+    magi_register_custom_op = None
+
+from lightx2v.common.magi_custom_op_mode import use_magi_custom_ops
+
+
+@torch.library.custom_op(
+    "lightx2v::rmsnorm_flashinfer",
+    mutates_args=(),
+    device_types="cuda",
+)
+def rmsnorm_flashinfer(
+    input_tensor: torch.Tensor,
+    weight: torch.Tensor,
+    eps: float,
+    enable_pdl: bool,
+) -> torch.Tensor:
+    return flashinfer_rmsnorm(input_tensor, weight, eps, enable_pdl=enable_pdl)
+
+
+@rmsnorm_flashinfer.register_fake
+def rmsnorm_flashinfer_fake(
+    input_tensor: torch.Tensor,
+    weight: torch.Tensor,
+    eps: float,
+    enable_pdl: bool,
+) -> torch.Tensor:
+    return torch.empty_like(input_tensor)
+
+
+class RMSWeightTemplate(metaclass=ABCMeta):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        self.weight_name = weight_name
+        self.eps = eps
+        self.create_cuda_buffer = create_cuda_buffer
+        self.create_cpu_buffer = create_cpu_buffer
+        self.lazy_load = lazy_load
+        self.lazy_load_file = lazy_load_file
+        self.is_post_adapter = is_post_adapter
+        self.infer_dtype = GET_DTYPE()
+        self.sensitive_layer_dtype = GET_SENSITIVE_DTYPE()
+        self.config = {}
+        self.lora_prefix = lora_prefix
+        self.lora_path = lora_path
+        self.has_lora_branch = False
+        self.has_diff = False
+        self._get_base_attrs_mapping()
+        self._get_lora_attr_mapping()
+
+    def _get_base_attrs_mapping(self):
+        self.base_attrs = []
+        if self.weight_name is not None:
+            self.base_attrs.append((self.weight_name, "weight", False))
+        else:
+            self.weight = None
+
+    def _get_lora_attr_mapping(self):
+        if self.weight_name is not None:
+            _, _, _, self.weight_diff_name, _ = build_lora_and_diff_names(self.weight_name, self.lora_prefix)
+            self.lora_attrs = {
+                "weight_diff": "weight_diff_name",
+            }
+            self.weight_diff = torch.tensor(0.0, dtype=GET_DTYPE(), device=AI_DEVICE)
+        else:
+            self.weight_diff_name = None
+            self.lora_attrs = {}
+
+    def _get_actual_weight(self):
+        if self.weight is None:
+            return None
+        if not hasattr(self, "weight_diff"):
+            return self.weight
+        if self.weight_diff.device != self.weight.device or self.weight_diff.dtype != self.weight.dtype:
+            self.weight_diff = self.weight_diff.to(device=self.weight.device, dtype=self.weight.dtype)
+        return self.weight + self.weight_diff
+
+    def register_diff(self, weight_dict):
+        if not self.lazy_load or self.create_cuda_buffer or self.create_cpu_buffer:
+            if self.weight_diff_name is not None and self.weight_diff_name in weight_dict:
+                self.weight_diff = weight_dict[self.weight_diff_name]
+                logger.debug(f"Register Diff to {self.weight_name}")
+
+    def load(self, weight_dict):
+        if not self.create_cuda_buffer and not self.create_cpu_buffer and not self.lazy_load:
+            device_tensors, pin_tensors = create_default_tensors(self.base_attrs, weight_dict)
+            self.weight = device_tensors.get("weight")
+            self.pin_weight = pin_tensors.get("weight")
+        elif self.create_cuda_buffer:
+            result = create_cuda_buffers(
+                self.base_attrs,
+                weight_dict,
+                self.lazy_load,
+                self.lazy_load_file,
+                use_infer_dtype=True,
+            )
+            self.weight_cuda_buffer = result.get("weight")
+        elif self.create_cpu_buffer:
+            result = create_cpu_buffers(self.base_attrs, self.lazy_load_file, use_infer_dtype=True)
+            self.pin_weight = result.get("weight")
+            self.weight = None
+
+    def set_config(self, config=None):
+        if config is not None:
+            self.config = config
+
+    def to_cuda(self, non_blocking=False):
+        move_attr_to_cuda(self, self.base_attrs, self.lora_attrs, non_blocking)
+
+    def to_cpu(self, non_blocking=False):
+        move_attr_to_cpu(self, self.base_attrs, self.lora_attrs, non_blocking)
+
+    def state_dict(self, destination=None):
+        return state_dict(self, self.base_attrs, self.lora_attrs, destination)
+
+    def load_state_dict(self, destination, block_index, adapter_block_index=None):
+        return load_state_dict(
+            self,
+            self.base_attrs,
+            self.lora_attrs,
+            destination,
+            block_index,
+            adapter_block_index,
+        )
+
+    def load_lora_state_dict_from_disk(self, block_index):
+        self.weight_diff_name = resolve_block_name(self.weight_diff_name, block_index)
+        with safe_open(self.lora_path, framework="pt", device="cpu") as lora_load_file:
+            for lora_attr, lora_attr_name in self.lora_attrs.items():
+                if getattr(self, lora_attr_name) in lora_load_file.keys():
+                    setattr(
+                        self,
+                        lora_attr,
+                        getattr(self, lora_attr).copy_(
+                            lora_load_file.get_tensor(getattr(self, lora_attr_name)),
+                            non_blocking=True,
+                        ),
+                    )
+
+    def load_state_dict_from_disk(self, block_index, adapter_block_index=None):
+        if self.weight_name is not None:
+            if self.has_lora_branch or self.has_diff:
+                self.load_lora_state_dict_from_disk(block_index)
+            self.weight_name = resolve_block_name(self.weight_name, block_index, adapter_block_index, self.is_post_adapter)
+            lazy_load_file_path = get_lazy_load_file_path(self.lazy_load_file, self.weight_name)
+            with safe_open(lazy_load_file_path, framework="pt", device="cpu") as lazy_load_file:
+                weight_tensor = lazy_load_file.get_tensor(self.weight_name).to(self.infer_dtype)
+                self.pin_weight = self.pin_weight.copy_(weight_tensor)
+            del weight_tensor
+        else:
+            self.weight = None
+
+    @abstractmethod
+    def apply(self, input_tensor):
+        pass
+
+
+@RMS_WEIGHT_REGISTER("torch")
+class RMSWeight(RMSWeightTemplate):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.eps)
+
+    def apply(self, input_tensor):
+        if self.sensitive_layer_dtype != self.infer_dtype:
+            output = self._norm(input_tensor).type_as(input_tensor)
+        else:
+            output = self._norm(input_tensor.float()).type_as(input_tensor)
+        weight = self._get_actual_weight()
+        return output if weight is None else output * weight
+
+
+@RMS_WEIGHT_REGISTER("torch_native")
+class RMSWeightNative(RMSWeight):
+    def apply(self, input_tensor):
+        return torch.nn.functional.rms_norm(
+            input_tensor,
+            (input_tensor.shape[-1],),
+            weight=self._get_actual_weight(),
+            eps=self.eps,
+        )
+
+
+@RMS_WEIGHT_REGISTER("TensorParallel")
+class RMSWeightTP(RMSWeightTemplate):
+    """
+    RMSNorm weight module with tensor parallelism support.
+
+    The weight is split along the hidden dimension to match the split QKV outputs.
+    """
+
+    def __init__(
+        self,
+        weight_name,
+        tp_group=None,
+        tp_rank=0,
+        tp_size=1,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+        self.tp_group = tp_group
+        self.tp_rank = tp_rank
+        self.tp_size = tp_size
+
+    def apply(self, input_tensor):
+        local_sum = input_tensor.pow(2).sum(-1, keepdim=True)
+
+        # All-reduce to get global sum
+        if self.tp_size > 1 and self.tp_group is not None:
+            dist.all_reduce(local_sum, op=dist.ReduceOp.SUM, group=self.tp_group)
+
+        # Compute global mean: global_sum / hidden_dim
+        hidden_dim = input_tensor.shape[-1] * self.tp_size
+        global_mean = local_sum / hidden_dim
+
+        # Apply normalization with global mean
+        if self.sensitive_layer_dtype != self.infer_dtype:
+            output = input_tensor * torch.rsqrt(global_mean.float() + self.eps).to(self.infer_dtype)
+        else:
+            output = input_tensor * torch.rsqrt(global_mean + self.eps)
+        weight = self._get_actual_weight()
+        return output if weight is None else (output * weight).to(self.infer_dtype)
+
+
+@RMS_WEIGHT_REGISTER("TensorParallelFP32")
+class RMSWeightTPFP32(RMSWeightTP):
+    """Tensor-parallel RMSNorm with FP32 accumulation and computation."""
+
+    def apply(self, input_tensor):
+        input_dtype = input_tensor.dtype
+        input_fp32 = input_tensor.float()
+        local_sum = input_fp32.square().sum(dim=-1, keepdim=True)
+
+        if self.tp_size > 1 and self.tp_group is not None:
+            dist.all_reduce(local_sum, op=dist.ReduceOp.SUM, group=self.tp_group)
+
+        global_hidden_dim = input_tensor.shape[-1] * self.tp_size
+        output = input_fp32 * torch.rsqrt(local_sum / global_hidden_dim + self.eps)
+
+        weight = self._get_actual_weight()
+        if weight is not None:
+            output = output * weight.float()
+        return output.to(input_dtype)
+
+
+@RMS_WEIGHT_REGISTER("sgl-kernel")
+class RMSWeightSgl(RMSWeight):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+        self.enable_pdl = is_arch_support_pdl() if is_arch_support_pdl is not None else False
+
+    def apply(self, input_tensor):
+        weight = self._get_actual_weight()
+        if weight is not None and sgl_kernel is not None and self.sensitive_layer_dtype == self.infer_dtype:
+            input_tensor = input_tensor.contiguous()
+            orig_shape = input_tensor.shape
+            input_tensor = input_tensor.view(-1, orig_shape[-1])
+            if torch.compiler.is_compiling() and flashinfer_rmsnorm is not None and input_tensor.dtype in (torch.float16, torch.bfloat16):
+                input_tensor = rmsnorm_flashinfer(input_tensor, weight, self.eps, self.enable_pdl)
+            else:
+                input_tensor = sgl_kernel.rmsnorm(input_tensor, weight, self.eps, enable_pdl=self.enable_pdl)
+            input_tensor = input_tensor.view(orig_shape)
+        else:
+            # sgl_kernel is not available or dtype!=torch.bfloat16/float16, fallback to default implementation
+            if self.sensitive_layer_dtype != self.infer_dtype:
+                input_tensor = input_tensor * torch.rsqrt(input_tensor.float().pow(2).mean(-1, keepdim=True) + self.eps).to(self.infer_dtype)
+            else:
+                input_tensor = input_tensor * torch.rsqrt(input_tensor.pow(2).mean(-1, keepdim=True) + self.eps)
+            if weight is not None:
+                input_tensor = (input_tensor * weight).to(self.infer_dtype)
+
+        return input_tensor
+
+
+@RMS_WEIGHT_REGISTER("fp32_variance")
+class RMSWeightFP32(RMSWeight):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+
+    def apply(self, input_tensor):
+        input_dtype = input_tensor.dtype
+        variance = input_tensor.to(torch.float32).pow(2).mean(-1, keepdim=True)
+        hidden_states = input_tensor * torch.rsqrt(variance + self.eps)
+
+        weight = self._get_actual_weight()
+        if weight is not None:
+            if weight.dtype in [torch.float16, torch.bfloat16]:
+                hidden_states = hidden_states.to(weight.dtype)
+            hidden_states = hidden_states * weight
+        hidden_states = hidden_states.to(input_dtype)
+
+        return hidden_states
+
+
+@RMS_WEIGHT_REGISTER("fp32_variance_qwen")
+class RMSWeightFP32Qwen(RMSWeight):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+
+    def apply(self, hidden_states):
+        input_dtype = hidden_states.dtype
+        hidden_states = hidden_states.to(torch.float32)
+        variance = hidden_states.pow(2).mean(-1, keepdim=True)
+        hidden_states = hidden_states * torch.rsqrt(variance + self.eps)
+        hidden_states = hidden_states.to(input_dtype)
+        return hidden_states if self.weight is None else self.weight * hidden_states
+
+
+@RMS_WEIGHT_REGISTER("self_forcing")
+class RMSWeightSF(RMSWeight):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.eps)
+
+    def apply(self, x):
+        output = self._norm(x.float()).type_as(x)
+        weight = self._get_actual_weight()
+        return output if weight is None else output * weight
+
+
+@RMS_WEIGHT_REGISTER("one-pass")
+class RMSWeightOnePass(RMSWeight):
+    def __init__(
+        self,
+        weight_name,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        super().__init__(
+            weight_name,
+            create_cuda_buffer,
+            create_cpu_buffer,
+            lazy_load,
+            lazy_load_file,
+            is_post_adapter,
+            eps,
+            lora_prefix,
+            lora_path,
+        )
+
+    def apply(self, input_tensor):
+        w = self._get_actual_weight()
+        if w is None:
+            return torch.nn.functional.rms_norm(input_tensor, (input_tensor.shape[-1],), eps=self.eps)
+        if use_magi_custom_ops() and magi_register_custom_op is not None:
+            return torch.ops.lightx2v.rms_norm(input_tensor, w, self.eps)
+        return rms_norm_kernel(input_tensor, w, self.eps)
+
+
+def apply_qk_rms_norm(
+    query: torch.Tensor,
+    key: torch.Tensor,
+    norm_q,
+    norm_k,
+    *,
+    use_triton: bool = True,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    if norm_q is None and norm_k is None:
+        return query, key
+
+    if use_triton and norm_q is not None and norm_k is not None and norm_q.eps == norm_k.eps and query.is_cuda and key.is_cuda and query.shape[-1] == key.shape[-1]:
+        q_shape = query.shape
+        k_shape = key.shape
+        head_dim = q_shape[-1]
+        q_flat = query.reshape(-1, head_dim)
+        k_flat = key.reshape(-1, head_dim)
+        q_flat, k_flat = fused_qk_rms_norm(
+            q_flat,
+            k_flat,
+            norm_q._get_actual_weight(),
+            norm_k._get_actual_weight(),
+            norm_q.eps,
+            match_torch_rms_cast=True,
+        )
+        return q_flat.reshape(q_shape), k_flat.reshape(k_shape)
+
+    if norm_q is not None:
+        q_shape = query.shape
+        query = norm_q.apply(query.reshape(-1, q_shape[-1])).reshape(q_shape)
+    if norm_k is not None:
+        k_shape = key.shape
+        key = norm_k.apply(key.reshape(-1, k_shape[-1])).reshape(k_shape)
+    return query, key
+
+
+class RMSWeightFusedQKNorm3DRope:
+    """
+    Holds two pairs of dual-RMSNorm weights (Q and K) and applies
+    fused QK dual-RMSNorm + 3D Neox-RoPE on Q and K in a single kernel launch.
+
+    Used in NeoppAttentionWeights to replace separate q_norm and k_norm.
+    """
+
+    def __init__(
+        self,
+        q_weight_name_t,
+        q_weight_name_hw,
+        k_weight_name_t,
+        k_weight_name_hw,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        self.q_weight_name_t = q_weight_name_t
+        self.q_weight_name_hw = q_weight_name_hw
+        self.k_weight_name_t = k_weight_name_t
+        self.k_weight_name_hw = k_weight_name_hw
+        self.create_cuda_buffer = create_cuda_buffer
+        self.create_cpu_buffer = create_cpu_buffer
+        self.lazy_load = lazy_load
+        self.lazy_load_file = lazy_load_file
+        self._w_qt = None
+        self._w_qhw = None
+        self._w_kt = None
+        self._w_khw = None
+        self.eps = eps
+
+    def load(self, weight_dict):
+        self._w_qt = weight_dict[self.q_weight_name_t]
+        self._w_qhw = weight_dict[self.q_weight_name_hw]
+        self._w_kt = weight_dict[self.k_weight_name_t]
+        self._w_khw = weight_dict[self.k_weight_name_hw]
+
+    def apply(self, q, k, cos_sin):
+        """In-place fused dual-RMSNorm + 3D Neox-RoPE on Q and K in a single kernel launch.
+
+        q : [seq, num_heads, head_dim]    bfloat16
+        k : [seq, num_kv_heads, head_dim] bfloat16
+        """
+        cos_t, sin_t, cos_h, sin_h, cos_w, sin_w = cos_sin
+        fused_qk_norm_3drope(
+            q,
+            k,
+            self._w_qt,
+            self._w_qhw,
+            self._w_kt,
+            self._w_khw,
+            cos_t,
+            sin_t,
+            cos_h,
+            sin_h,
+            cos_w,
+            sin_w,
+            eps=self.eps,
+        )
+
+
+class RMSWeightDualNorm3DRope:
+    """
+    Holds a pair of fp32_variance_qwen RMSNorm weights (t-segment + hw-segment)
+    and applies fused dual-RMSNorm + 3D Neox-RoPE in-place on Q or K.
+
+    Used in NeoppAttentionWeights for the Q and K projections.
+    """
+
+    def __init__(
+        self,
+        weight_name_t,
+        weight_name_hw,
+        create_cuda_buffer=False,
+        create_cpu_buffer=False,
+        lazy_load=False,
+        lazy_load_file=None,
+        is_post_adapter=False,
+        eps=1e-6,
+        lora_prefix="diffusion_model.blocks",
+        lora_path="",
+    ):
+        self.weight_name_t = weight_name_t
+        self.weight_name_hw = weight_name_hw
+        self.create_cuda_buffer = create_cuda_buffer
+        self.create_cpu_buffer = create_cpu_buffer
+        self.lazy_load = lazy_load
+        self.lazy_load_file = lazy_load_file
+        self._w_t = None
+        self._w_hw = None
+        self.eps = eps
+
+    def load(self, weight_dict):
+        self._w_t = weight_dict[self.weight_name_t]
+        self._w_hw = weight_dict[self.weight_name_hw]
+
+    def apply(self, x, cos_sin):
+        """In-place fused dual-RMSNorm + 3D Neox-RoPE on x: [seq, num_heads, head_dim]."""
+        cos_t, sin_t, cos_h, sin_h, cos_w, sin_w = cos_sin
+        fused_norm_3drope(
+            x,
+            self._w_t,
+            self._w_hw,
+            cos_t,
+            sin_t,
+            cos_h,
+            sin_h,
+            cos_w,
+            sin_w,
+            eps=self.eps,
+        )

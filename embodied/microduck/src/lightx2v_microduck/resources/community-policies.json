@@ -1,0 +1,664 @@
+{
+  "schema_version": 1,
+  "catalog_date": "2026-09-09",
+  "policies": {
+    "follow-v4": {
+      "policy_id": "follow-v4",
+      "source": "https://github.com/jonathanhawkins/microduck-lab",
+      "revision": "54989dff8e4ec8735a89ff5969c17e12882bf0c0",
+      "license": "Apache-2.0",
+      "robot_assets_license": "CC BY-SA-NC (separate from policy weights)",
+      "files": {
+        "brain.onnx": {
+          "sha256": "b6950b352622cf9e055e0c2e3d91b26bc9f965202402c35df86e0e66f6ffabd4",
+          "size_bytes": 111715,
+          "url": "https://raw.githubusercontent.com/jonathanhawkins/microduck-lab/54989dff8e4ec8735a89ff5969c17e12882bf0c0/microduck_local/brains/follow-v4/brain.onnx"
+        },
+        "brain.json": {
+          "sha256": "4f0c72259bba015dc85a5f8f38c3cda9eddc19b2cb1ac4cb02953c50ea85ea33",
+          "size_bytes": 659,
+          "url": "https://raw.githubusercontent.com/jonathanhawkins/microduck-lab/54989dff8e4ec8735a89ff5969c17e12882bf0c0/microduck_local/brains/follow-v4/brain.json"
+        },
+        "LICENSE": {
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "size_bytes": 11357,
+          "url": "https://raw.githubusercontent.com/jonathanhawkins/microduck-lab/54989dff8e4ec8735a89ff5969c17e12882bf0c0/LICENSE"
+        }
+      },
+      "model_file": "brain.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          80
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "microduck_lab_follow_obs_v2"
+      },
+      "action": {
+        "name": "intent",
+        "shape": [
+          1,
+          3
+        ],
+        "dtype": "float32",
+        "kind": "skill_intent",
+        "scale": 1.0,
+        "control_hz": 10,
+        "bounds_low": [
+          -0.2,
+          -0.3,
+          -1.0
+        ],
+        "bounds_high": [
+          0.6,
+          0.3,
+          1.0
+        ],
+        "clipping": "baked_in_graph_and_upstream_runtime_bounds",
+        "execution_prefix_ticks": 5
+      },
+      "recurrent": null,
+      "hardware_validated": false,
+      "execution_evidence": "actual_onnx_load_and_finite_forward_only",
+      "behavior_evidence": "upstream_author_report_not_reproduced",
+      "uses_privileged_state": true,
+      "required_input_adapter": "microduck_lab.ObsBuilder v2 including geometric detector/ToF and temporal features; no 61D auto-conversion",
+      "required_scene": null,
+      "encoder_files": {
+        "microduck_local/vec_env.py": "6b8753a5904bdb863c25a103e3f15755aaa76194eaa2082b067b926da1783f6c",
+        "microduck_local/trace_tidy.py": "c80c5427e7e5802c07c7bcb08f6d4be800f0980a48873b59e6e01fb6e5f46dfb",
+        "microduck_local/bam_actuator.py": "89768b7a98b7b61b22c3ac41d4723357556868569919eb71a99b61c2502d5e7a",
+        "microduck_local/eval_pitch.py": "3c0d3f3ac054cace472999f58b23777a6528206a77a513654f519031a9592568",
+        "microduck_local/train_behavior.py": "58a7fd8ab5d269e5b0de84ba9e4809655cebe32bc8fbf2e73dcbb9b5a04ccd76",
+        "microduck_local/symmetry.py": "ca0d0ed4e8a3a2e6b7c989804be5289d0dc8891127706fa91d960aa536667d69",
+        "microduck_local/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "microduck_local/walk_env.py": "0cdee414067d0ebe27da5774f116a6e8ceb3d033eb3821aff9e7d2e69d017150",
+        "microduck_local/render_striker.py": "fb0331ae8efc6b08663fa8fddd625572cde4d93893eb11faed8f03c15ea65e36",
+        "microduck_local/plateau.py": "61f320545d5efe536c889bc57665742cb98bafcee2a94808ae2903ebd2807bd6",
+        "microduck_local/bench.py": "b4039e103d2f4f6ee1e879bc0297ea5f5a9e4cdf8cbc9cef2dd30e28e059592e",
+        "microduck_local/world_server.py": "1558fc7cb89923b022672ad8c421dfea4898386f7546b93816e3816ee476edac",
+        "microduck_local/render_rollout.py": "a96b8813c160ab2304af279cf5a462f3736a61bb7ec5ead92a47394a72dac20d",
+        "microduck_local/eval_find_ball.py": "7e183882a10e34367d0a81262d5b98855bd9200e25b06f5f691407f959e12771",
+        "microduck_local/contract.py": "a935feef6cfaa6d5303948b5fd3ae2bf8e253a834db223bcf74f450c07f18ed4",
+        "microduck_local/ppo_hparams.py": "df117cd8a751c2851844bdf562358cd3a3be117341fb2266b0074dca5c480598",
+        "microduck_local/motion.py": "ccc3b1f3e978b620441217f9f7af812a1fb6b14a69f82faf6709243a25e7f5ba",
+        "microduck_local/export_onnx.py": "5372b5f0dc6cfd2c03b690e85eef5f037332659097c61c11d932699de32ef68c",
+        "microduck_local/eval_brain.py": "95922e104d293cfb94af75ddb4d8de3501c421bc1b9734ffd4c89f11e26164fa",
+        "microduck_local/select_brain.py": "7f645c963e2c29dbf3a194d410445b3af5cbe2efdc10a401323809f2aea1d2b4",
+        "microduck_local/train.py": "98b4eb4ddf5fc6fabd394a99444dd01734bfd88358b14920fb8df26738ef58df",
+        "microduck_local/eval_tidy.py": "851d6398c6e8fc0ae2c419886cc9945cbaaab15db0fb4608a04a5baf5724026c",
+        "microduck_local/eval_onnx.py": "f9fe7b7b1bac481cd74673b17334267b668c580d996f3894c2a1cafdb0d8c24c",
+        "microduck_local/distill.py": "8591aab1fb537fc0a8da97fff6595730d0fa84a0e23bce5c5af4c68692fafcdc",
+        "microduck_local/bench_envs.py": "a99e9aadb9af04d6287621eca57ecad7df466b0173717066af1da82437f344ea",
+        "microduck_local/machine.py": "f7e330057d11ff7b1f24ae1004f30a5207d0ef26f3ab1e22b21f3b7bcb3c0a8f",
+        "microduck_local/select_run.py": "5b047a9490bd38ff1e6d664c395adea56646d50138ce54528735d428797b78a0",
+        "microduck_local/train_brain.py": "6ea050004078f31b73f6a1acf37dccadc0783092eb6fc83c4272766f9bccc8f0",
+        "microduck_local/eval_striker.py": "8f84171935a22f7737726b6fb81e9f7368a828336d35807e548b64af36f0a7a3",
+        "microduck_local/viz_server.py": "b182c85fe815a644b7b141f3a2f958244b086afea5f9141d8fb26b442089d731",
+        "microduck_local/describe_brain.py": "f0a717025ff762d6b18e158dd6a4fd4ab63abce84051849861e8848b7a95efa3",
+        "microduck_local/bench_ab.py": "28cfc2fdf5807c4763c395422da51d4951a20e59137d4007664fecca4500e1c6",
+        "microduck_local/walker_facts.py": "5aa94570a3fc7de7458c5970fea2310d8fc9db0081347a4a8764e77d30ec6e39",
+        "microduck_local/behaviors/locomotion.py": "5276973379a6c75e40d6c7484e04557cfdc6a1d5dc38231c5bd1b9f0a0eb054a",
+        "microduck_local/behaviors/__init__.py": "fa085cbfda678624e88961067553b8f2a17ed6106a545ffb8b0d0116fbf17a58",
+        "microduck_local/behaviors/core.py": "fc902eb282dd676ee12c95313f6acb0a50903080fb428f9be66070591ff29c60",
+        "microduck_local/behaviors/poses.py": "f71df3a0d84949a3cba86bc4d8b1bbca2134524e6ec69ab0b6d0f2a43433782a",
+        "microduck_local/behaviors/imitate.py": "89eed93b10ccd9154ed405f616dedf868c0a9cdc9c33ae6f7d1b24148eac7b19",
+        "microduck_local/behaviors/backflip.py": "8f22136795bea37a69f4624bb3bb17ffea118d2c1b0e687a8dd7ce253c523030",
+        "microduck_local/behaviors/env.py": "755017414d495618fab74a8329645729f742da5adc1bf54d79a83368fcf54e8a",
+        "microduck_local/behaviors/airflip.py": "1591e26b844850240b7921aa34df7f92b316346cbf7eec5da4efe9a3d58d24a6",
+        "microduck_local/behaviors/ball.py": "3afb8bb9c369bd5cc49efa8ec5870b1f823b72c567c8e15c3f70b1bd33219c8d",
+        "microduck_local/behaviors/headstand.py": "5ff0552c3c27167832100440d576bc5fa01081891ffd3443a9403ed62636e392",
+        "microduck_local/world/__init__.py": "07389f3f8be96408fbae542d7a39110cc6e71946543ab6609299213105513256",
+        "microduck_local/world/compose.py": "b42ad816b2845eb5afa6ae336a7f29452e24c272a9d0adf3f6948def494e4eac",
+        "microduck_local/world/arena.py": "e42b7ae2a82abcd5ad504b2aea522e026cde3edf5c1b826976a1b4b41bec56c1",
+        "microduck_local/world/metrics.py": "10a9b3fb9092a7c4c44f2ecf900eda46d50ac18f2926d60f7c39c4ee6d0b428c",
+        "microduck_local/world/scenario.py": "75aff03bd3b0a9956698f88c842b74e7b9c5be0253ba77d2e79dc8eb565b01f8",
+        "microduck_local/sensors/__init__.py": "b62c73181a2feb3f5d8780a4cd94ae7f3623486ec0d92746526f62d0903a6408",
+        "microduck_local/sensors/ray.py": "7fdd624a18017d713409ef3a9cf6d82c13872ffab270e43536bf849d7190106e",
+        "microduck_local/sensors/detector.py": "6a8295002539bda68cd32fff6470b5c23058d0e43598012fd5284264812062e0",
+        "microduck_local/sensors/tof.py": "06c4bc3cd9b82124e171bab79e6638668d5b22119734e089313b348f7f440d29",
+        "microduck_local/brain/tether.py": "edc6c64bb013842d30f1c2ed4375e89bbb0ddb1e691bb086efced9f2a3f217f5",
+        "microduck_local/brain/__init__.py": "f8112a7f147cb8dc946d8c5af9578ca7e1eb2cd678680bb1cf6bb46354a04cf6",
+        "microduck_local/brain/controllers.py": "d3a1d54760328e462f9888a317a2433ff4d79ac1856a105d268c4fce6cd209bb",
+        "microduck_local/brain/striker.py": "9febee8fed552b9f95cec37e43e6a399124270d1bf59826717637782b0afe9f9",
+        "microduck_local/brain/tidy.py": "3ded74538e3342c79d06106d75361d17cbc0920c19603d82820adfb6ae7f9a0c",
+        "microduck_local/brain/mapping.py": "ab2fd9ebf8541f0ef8c49bb1e07808ebd070904372e405607fb2064ab49c1383",
+        "microduck_local/brain/learned.py": "592078d6afb5a94ef79b058908185a6e6bbbd5b225309074fabf53a33f18a5bd",
+        "microduck_local/brain/team.py": "0a3778b0e0811890e83709ed48912bb0dd0e9bba066bf73d0c36dab4ab646b64",
+        "microduck_local/brain/runtime.py": "d83992e52e52a73ae9c0645f6b9745a5487be46eacf7293ebea2dbd8c02edb52",
+        "microduck_local/brain/gait.py": "c4db8a041033ba07677361c4608f6d03db12a31e95ded2e024fccd8359a64c7a",
+        "microduck_local/brain/tracker.py": "820468a33cb19619a380149f228e25e21309869a6a8d2208a037d5c9b54e0b86",
+        "microduck_local/brain/brain_env.py": "2e4458e2a28a86d672ab2762640d81cea6daa8918f28dcb186545f97adf6f35e"
+      }
+    },
+    "rough-walk-g": {
+      "policy_id": "rough-walk-g",
+      "source": "https://huggingface.co/RemiFabre/microduck-rough-walk-g",
+      "revision": "242876a0aa8b40b702142fb0a5677fd43bc88a4c",
+      "license": "Apache-2.0",
+      "robot_assets_license": "CC BY-SA-NC (separate from policy weights)",
+      "files": {
+        "README.md": {
+          "sha256": "54074fb7c4bfa9fc08caa4e48bd4cf1669d8ca40b554601d613ccf1bb36869cc",
+          "size_bytes": 3449,
+          "url": "https://huggingface.co/RemiFabre/microduck-rough-walk-g/resolve/242876a0aa8b40b702142fb0a5677fd43bc88a4c/README.md"
+        },
+        "manifest.json": {
+          "sha256": "a304b650a9fe558eb054695654d2b2a346a2c246c05dd56f4524a1fff42174c6",
+          "size_bytes": 2180,
+          "url": "https://huggingface.co/RemiFabre/microduck-rough-walk-g/resolve/242876a0aa8b40b702142fb0a5677fd43bc88a4c/manifest.json"
+        },
+        "policy.onnx": {
+          "sha256": "7a0d132f121d4bea3b713d3d7509500319389e0ac8de1ec9b390256471bbfc18",
+          "size_bytes": 793771,
+          "url": "https://huggingface.co/RemiFabre/microduck-rough-walk-g/resolve/242876a0aa8b40b702142fb0a5677fd43bc88a4c/policy.onnx"
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "hardware_validated": false,
+      "execution_evidence": "actual_onnx_load_and_finite_forward_only",
+      "behavior_evidence": "upstream_author_report_not_reproduced",
+      "uses_privileged_state": false,
+      "required_scene": null,
+      "zero_command_slices": [
+        [
+          55,
+          61
+        ]
+      ],
+      "command_semantics": {
+        "twist": [
+          "vx_m_s",
+          "vy_m_s",
+          "wz_rad_s"
+        ],
+        "head": "4 deltas from HOME, tracked",
+        "body": "zeros"
+      },
+      "training_revision": "6cd45fc (abbreviated upstream reference; full commit not verified)"
+    },
+    "basketball": {
+      "policy_id": "basketball",
+      "source": "https://huggingface.co/HannesVonEssen/microduck-basketball",
+      "revision": "8e7e8d281a45181871fe9f60d4fc5d9dbc751b11",
+      "license": "Apache-2.0",
+      "robot_assets_license": "CC BY-SA-NC (separate from policy weights)",
+      "files": {
+        "README.md": {
+          "sha256": "a2e8d266ebd6127dd501df375fd92fac45d4147e0e56146307ddd247b3a14f7c",
+          "size_bytes": 8514,
+          "url": "https://huggingface.co/HannesVonEssen/microduck-basketball/resolve/8e7e8d281a45181871fe9f60d4fc5d9dbc751b11/README.md"
+        },
+        "manifest.json": {
+          "sha256": "bc3356d168c0496861f853bb22e36b295c054abcd62841f257d3c3925ef7ddba",
+          "size_bytes": 2420,
+          "url": "https://huggingface.co/HannesVonEssen/microduck-basketball/resolve/8e7e8d281a45181871fe9f60d4fc5d9dbc751b11/manifest.json"
+        },
+        "policy.onnx": {
+          "sha256": "e105148b160b3a86170621648215be38dd5018e955930ce182394f4513c7569b",
+          "size_bytes": 2500571,
+          "url": "https://huggingface.co/HannesVonEssen/microduck-basketball/resolve/8e7e8d281a45181871fe9f60d4fc5d9dbc751b11/policy.onnx"
+        },
+        "basketball.obj": {
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/aa5bd7909873a807fb9f4045f491519c443142e7/src/mjlab_microduck/robot/assets/basketball/basketball.obj",
+          "sha256": "92b3f3ecc349369652f0d723fe95c8e82b8d3a3ea74fe0e589df62f965713108",
+          "bytes": 15423664
+        },
+        "basketball.png": {
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/aa5bd7909873a807fb9f4045f491519c443142e7/src/mjlab_microduck/robot/assets/basketball/basketball.png",
+          "sha256": "fb576ec1dca84629f01c1a7b0063d98cf1f512ebeb939657e7dd42eb1d7ac181",
+          "bytes": 2073610
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": {
+        "pairs": [
+          {
+            "input": "h_in",
+            "output": "h_out",
+            "shape": [
+              1,
+              1,
+              256
+            ]
+          },
+          {
+            "input": "c_in",
+            "output": "c_out",
+            "shape": [
+              1,
+              1,
+              256
+            ]
+          }
+        ],
+        "reset": "activation, episode, policy switch, and recovery; retain on normal command changes"
+      },
+      "hardware_validated": false,
+      "execution_evidence": "actual_onnx_load_and_finite_forward_only",
+      "behavior_evidence": "upstream_author_report_not_reproduced",
+      "uses_privileged_state": false,
+      "required_scene": "basketball_apex_supported_start",
+      "zero_command_slices": [
+        [
+          51,
+          61
+        ]
+      ],
+      "action_filtering": false,
+      "training_revision": "aa5bd7909873a807fb9f4045f491519c443142e7",
+      "model_api": 2
+    },
+    "roulade-elan-v2": {
+      "policy_id": "roulade-elan-v2",
+      "source": "https://huggingface.co/langli11/microduck-tricks",
+      "revision": "ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158",
+      "source_revision": "146777b989f47160d26590e29a9d13957b2c6a3c",
+      "license": "Apache-2.0 (model card); robot assets separately licensed",
+      "files": {
+        "policy.onnx": {
+          "sha256": "9036268bf7299b75d7faead948efed95a16c5938abd987ddd2426e9102fb3473",
+          "size_bytes": 793769,
+          "url": "https://huggingface.co/langli11/microduck-tricks/resolve/ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158/policies/roulade_elan_v2_ckpt3750.onnx"
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "hardware_validated": false,
+      "execution_evidence": "finite_onnx_forward",
+      "behavior_evidence": "not_yet_evaluated_in_this_platform",
+      "zero_command_slices": [
+        [
+          48,
+          61
+        ]
+      ],
+      "author_evaluation_physics": "mjcf_position_pd_with_1.75A_limit",
+      "platform_physics": "official_bam_transfer_experiment"
+    },
+    "roller-slalom-v2": {
+      "policy_id": "roller-slalom-v2",
+      "source": "https://huggingface.co/langli11/microduck-tricks",
+      "revision": "ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158",
+      "source_revision": "146777b989f47160d26590e29a9d13957b2c6a3c",
+      "license": "Apache-2.0 (model card); robot assets separately licensed",
+      "files": {
+        "policy.onnx": {
+          "sha256": "628fc8942c3a6985ff691d4772311e5221d86653a7ded5dae43ab2d0b5af72b7",
+          "size_bytes": 793822,
+          "url": "https://huggingface.co/langli11/microduck-tricks/resolve/ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158/policies/roller_slalom_v2_ckpt2000.onnx"
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "rollers",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "hardware_validated": false,
+      "execution_evidence": "finite_onnx_forward",
+      "behavior_evidence": "not_yet_evaluated_in_this_platform",
+      "zero_command_slices": [
+        [
+          51,
+          61
+        ]
+      ],
+      "author_evaluation_physics": "mjcf_position_pd_with_1.75A_limit",
+      "platform_physics": "official_bam_transfer_experiment"
+    },
+    "duck-detector-v2": {
+      "policy_id": "duck-detector-v2",
+      "source": "https://huggingface.co/pollen-robotics/microduck-duck-detector",
+      "revision": "da261782ed87dbc465e67d46a5ec86ed31fc807f",
+      "license": "Model card: Apache-2.0; embedded Ultralytics metadata: AGPL-3.0. Optional local download; no bundled redistribution.",
+      "files": {
+        "duck_detect.onnx": {
+          "sha256": "c6b64c659462f51161341eed6a362c1e339ecb1aa58ede4d075e852218c61ec8",
+          "url": "https://huggingface.co/pollen-robotics/microduck-duck-detector/resolve/da261782ed87dbc465e67d46a5ec86ed31fc807f/duck_detect.onnx",
+          "size_bytes": 10477940
+        }
+      },
+      "model_file": "duck_detect.onnx",
+      "adapter": "DuckDetector",
+      "hardware_validated": false
+    },
+    "climb-scene": {
+      "policy_id": "climb-scene",
+      "source": "https://github.com/Vottivott/microduck-playground",
+      "revision": "748a6a8ad16c5e5796f5960d0957861ac1329810",
+      "license": "CC-BY-NC-SA-4.0 scene assets; Apache-2.0 code",
+      "files": {
+        "geometry_base.py": {
+          "sha256": "a77032f2e56ba539aca12eb39534dc7d64c35efc6fcbab76c2be84f6f65ae3cc",
+          "size_bytes": 4833,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_base.py"
+        },
+        "geometry_previous.py": {
+          "sha256": "c1b4adb62d50e47dc71695b5245677c38685715c8bc43355a6e4a5a927b1478d",
+          "size_bytes": 3274,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_previous.py"
+        },
+        "geometry_connected.py": {
+          "sha256": "74399d4d1e2b3523bbe94055bc52c80aa885d93907ecfd78956c94fbaa9a0132",
+          "size_bytes": 946,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_connected.py"
+        },
+        "geometry_full.py": {
+          "sha256": "0902c3b599474775316a007910e8119540a6b318d300ab75c603f9a6b1ea8e24",
+          "size_bytes": 1146,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_full.py"
+        },
+        "geometry_shift.py": {
+          "sha256": "3439851ba72d1dae42ee7c3e43c1d08a3d569a005efe07c09300f661caf5002c",
+          "size_bytes": 1028,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_shift.py"
+        },
+        "geometry_patch.py": {
+          "sha256": "2f5470109742cfd65f41a5a5b003e708becca3eb7861b983a1f6218a3af4042e",
+          "size_bytes": 1779,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/training/geometry_patch.py"
+        },
+        "geometry.json": {
+          "sha256": "3a6c4ca1e26e3b929fc05388a44686f885879ea7388023c4c673767204089728",
+          "size_bytes": 51771,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/source/src/mjlab_microduck/robot/floor_desk_assets/geometry.json"
+        },
+        "trajectories.npz": {
+          "sha256": "1e206cb1742065e26bd4309665f2122d9b691384008083c60d6fdc7446c840b5",
+          "size_bytes": 31071370,
+          "url": "https://raw.githubusercontent.com/Vottivott/microduck-playground/748a6a8ad16c5e5796f5960d0957861ac1329810/experiments/desk-climb/recording/trajectories.npz"
+        }
+      },
+      "model_file": "geometry.json",
+      "adapter": "static_scene_asset_build",
+      "hardware_validated": false,
+      "generated_files": {
+        "compiled_scene.json": {
+          "sha256": "48770f4011180fd065b984f9e32f32dbbc10ac1ed675107b9f521b298f594b6d",
+          "builder": "scripts/microduck/build_climb_scene.py"
+        }
+      }
+    },
+    "climb-climber": {
+      "policy_id": "climb-climber",
+      "source": "https://huggingface.co/HannesVonEssen/microduck-climb",
+      "revision": "42aee045d41b86fa1c102e96996b320f1d3c0bea",
+      "license": "Apache-2.0 model card",
+      "files": {
+        "policy.onnx": {
+          "sha256": "9d8872e3cc32c7e75f3ac84d5e47b404769d4762043a1e45b3418b3b14bff9a4",
+          "url": "https://huggingface.co/HannesVonEssen/microduck-climb/resolve/42aee045d41b86fa1c102e96996b320f1d3c0bea/models/climber.onnx",
+          "size_bytes": 793741
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "zero_command_slices": [
+        [
+          48,
+          61
+        ]
+      ],
+      "hardware_validated": false
+    },
+    "climb-getup": {
+      "policy_id": "climb-getup",
+      "source": "https://huggingface.co/HannesVonEssen/microduck-climb",
+      "revision": "42aee045d41b86fa1c102e96996b320f1d3c0bea",
+      "license": "Apache-2.0 model card",
+      "files": {
+        "policy.onnx": {
+          "sha256": "11a9693ed87f550c6f6859caaad69c9e86890692c4b6f046a41eaa3ec77d20ad",
+          "url": "https://huggingface.co/HannesVonEssen/microduck-climb/resolve/42aee045d41b86fa1c102e96996b320f1d3c0bea/models/getup.onnx",
+          "size_bytes": 793747
+        }
+      },
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "zero_command_slices": [
+        [
+          48,
+          61
+        ]
+      ],
+      "hardware_validated": false
+    },
+    "official-velstand": {
+      "policy_id": "official-velstand",
+      "source": "https://huggingface.co/pollen-robotics/microduck-policies",
+      "revision": "1b56c396825c052a4e26e95cf2b8d8298af9e9b4",
+      "license": "Apache-2.0",
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "files": {
+        "policy.onnx": {
+          "sha256": "1c659be55da94bc5753b707de5c6a3e7c49931e05ca3b6991615cef1a8ba9a45",
+          "size_bytes": 793705,
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/1b56c396825c052a4e26e95cf2b8d8298af9e9b4/velstand.onnx"
+        },
+        "manifest.json": {
+          "sha256": "622048c2c23ea58942023f66fd16b189a875fd169e88d85beb16ebbe63b20c94",
+          "size_bytes": 1935,
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/1b56c396825c052a4e26e95cf2b8d8298af9e9b4/manifest.json"
+        }
+      },
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "uses_privileged_state": false,
+      "hardware_validated": false,
+      "execution_evidence": "verified_onnx_load_and_finite_forward",
+      "behavior_evidence": "bam_transfer_experiment_not_formal_acceptance",
+      "zero_command_slices": [
+        [
+          55,
+          61
+        ]
+      ]
+    },
+    "duckbatch-128": {
+      "policy_id": "duckbatch-128",
+      "source": "https://huggingface.co/craigm26/microduck-duckbatch-b002-128x128",
+      "revision": "a5a2db1c561c2e7b1158259b3eb6ea605af9ba4c",
+      "license": "Apache-2.0",
+      "model_file": "policy.onnx",
+      "embodiment": "legs",
+      "files": {
+        "policy.onnx": {
+          "sha256": "0b3e39b99e5b6a63a61934ab2c9ee5c6db7d7120e4bce3b9d9dc2b52753b0b9f",
+          "size_bytes": 107125,
+          "url": "https://huggingface.co/craigm26/microduck-duckbatch-b002-128x128/resolve/a5a2db1c561c2e7b1158259b3eb6ea605af9ba4c/policy.onnx"
+        },
+        "manifest.json": {
+          "sha256": "578361d783b75eee9076121b212d952b5691ae7873cc282eb49c7527f634ee99",
+          "size_bytes": 2306,
+          "url": "https://huggingface.co/craigm26/microduck-duckbatch-b002-128x128/resolve/a5a2db1c561c2e7b1158259b3eb6ea605af9ba4c/manifest.json"
+        }
+      },
+      "observation": {
+        "name": "obs",
+        "shape": [
+          1,
+          61
+        ],
+        "dtype": "float32",
+        "normalization": "baked_into_onnx",
+        "profile": "official_61d"
+      },
+      "action": {
+        "name": "actions",
+        "shape": [
+          1,
+          14
+        ],
+        "dtype": "float32",
+        "kind": "joint_residual",
+        "scale": 1.0,
+        "control_hz": 50
+      },
+      "recurrent": null,
+      "uses_privileged_state": false,
+      "hardware_validated": false,
+      "execution_evidence": "verified_onnx_load_and_finite_forward",
+      "behavior_evidence": "bam_transfer_experiment_not_formal_acceptance",
+      "zero_command_slices": [
+        [
+          55,
+          61
+        ]
+      ]
+    }
+  }
+}

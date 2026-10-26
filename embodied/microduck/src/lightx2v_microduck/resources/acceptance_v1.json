@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "protocol": "microduck_acceptance_v1",
+  "primary_profiles": ["official_bam"],
+  "target_policy_prefixes": ["tinyvla:", "lightx2v_tinyvla_http:"],
+  "target_model_identity": {
+    "engine": "lightx2v-native-tinyvla",
+    "require_checkpoint_verified": true,
+    "require_checkpoint_sha256": true,
+    "require_model_variant_matches_policy_id": true
+  },
+  "skills13": {
+    "minimum_unique_seeds_per_task": 100,
+    "minimum_success_rate_per_task": 0.9,
+    "success_protocol": "microduck_strict_presets_v1",
+    "legs": ["walk_forward", "circle_left", "figure_eight", "zigzag", "sway_circle", "kick_left", "kick_right", "ground_touch", "sit_walk", "roll_circle"],
+    "rollers": ["roller_glide", "roller_crouch", "roller_slalom"]
+  },
+  "visual_goal": {
+    "tasks": ["find_red_ball", "find_blue_ball", "find_yellow_ball"],
+    "minimum_unique_unseen_layouts": 200,
+    "minimum_overall_success_rate": 0.8,
+    "require_min_layouts_per_task": 0,
+    "success_protocol": "visual_ball_stop_v2",
+    "independence": "Count distinct geometry_hash AND layout_id across all colors; repeating a layout for another color does not create an independent layout.",
+    "unseen_evidence": "Hash-verified dataset indices cover all training and tuning data, bind to the evaluated checkpoint, and exclude every train/val layout. Completeness of declared training/tuning history remains an attestation."
+  },
+  "execution": {
+    "require_complete_evaluation": true,
+    "require_terminal_episode": true,
+    "require_trajectory_hash": true,
+    "interventions_are_failures": true,
+    "allow_teacher_or_oracle_in_primary": false,
+    "allow_extra_sensors_in_primary": false,
+    "allow_nonempty_ablation_in_primary": false
+  },
+  "external_evidence": {
+    "performance": "pending: requires independently reviewed target-GPU inference and realtime latency evidence",
+    "hardware": "pending: requires actual MicroDuck hardware deployment and behavior evidence"
+  }
+}

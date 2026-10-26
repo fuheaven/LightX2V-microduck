@@ -1,0 +1,419 @@
+{
+  "schema": "microduck_vlm_navigation_cases_v1",
+  "source_protocol_sha256": "57d236d62991100c03bc33b77635b8d19adc905fbff42b12eb05f87aa1133190",
+  "source_protocol": "artifacts/navigation/guarded-rehearsal-pilot-v1/memory-realtime-preparation-v1/inputs/candidate-evaluation-protocol.json",
+  "profile": "official_bam",
+  "image_size": 256,
+  "warmup_ticks": 50,
+  "control_hz": 50,
+  "comparison_contract": "microduck_navigation_forward04_v1",
+  "independent_acceptance": false,
+  "split": "development",
+  "cases": [
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1011,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1032,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1032,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1032,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1040,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1040,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1040,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1086,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1086,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1086,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1091,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1091,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1091,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1095,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1095,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1095,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1098,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1098,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_clear",
+      "seed": 1098,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2300,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2300,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2300,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2301,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2301,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2301,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2302,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2302,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2302,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2303,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2303,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2303,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2304,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2304,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2304,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2305,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2305,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2305,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2306,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2306,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2306,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2307,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2307,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2307,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2308,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2308,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2308,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2309,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2309,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2309,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2310,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2310,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2310,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2311,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2311,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2311,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2312,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2312,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2312,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2313,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2313,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2313,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2314,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2314,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2314,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2315,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2315,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2315,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2316,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2316,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2316,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2317,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2317,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2317,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2318,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2318,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2318,
+      "task": "find_yellow_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2319,
+      "task": "find_red_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2319,
+      "task": "find_blue_ball"
+    },
+    {
+      "scene": "room_curriculum_one",
+      "seed": 2319,
+      "task": "find_yellow_ball"
+    }
+  ]
+}

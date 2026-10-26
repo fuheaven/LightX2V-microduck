@@ -1,0 +1,1300 @@
+{
+  "status": "complete",
+  "formal_acceptance": false,
+  "hardware_validated": false,
+  "completed": 60,
+  "task_successes": 17,
+  "strict_successes": 17,
+  "realtime_successes": 17,
+  "timing_qualified": 60,
+  "model_ticks": 73589,
+  "fallback_ticks": 0,
+  "fallback_reasons": {},
+  "observation_age_ms": {
+    "p50": 960.08429,
+    "p95": 1280.3804146,
+    "max": 2580.581539
+  },
+  "executed_older_than_1000ms": 32326,
+  "rows": [
+    {
+      "seed": 2000,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 32,
+        "maximum_executed_source_age_ns": 2220332023,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "7d6094952d5f311ce2626e7038b542dd80ea0dcec441711bac5a599193991905",
+      "control_sha256": "417a5756adf882e1245bb32e8f246674cc457a99d26f12332f69b7770894d7c3",
+      "predictions_sha256": "e8dbccba2a0a6116aead847423d9ca9668bbc388de612f8deb305e5a50e52abc"
+    },
+    {
+      "seed": 2000,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 31,
+        "maximum_executed_source_age_ns": 2240275552,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "2d3edb7fa429349f45d4d76a051379341512612f0297fb57d715ea35397021e1",
+      "control_sha256": "5163b972012768679386a494c37af0e507aa49eea78faee677394141f88c03b1",
+      "predictions_sha256": "2e49f4184fcfd848647646704067fccaaa557caa3814f32634b3a5028e1ba0ff"
+    },
+    {
+      "seed": 2000,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 31,
+        "maximum_executed_source_age_ns": 2580581539,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "aaa6b246b6f5aaf542f68f95fe6bdc366d57b3d73770adf580e9659e9e6be525",
+      "control_sha256": "a72a422c9fb59e04a63d67373f5be0e9e9bc96e138de9e772dcf2440bf063926",
+      "predictions_sha256": "1227f68775e3c136ab6329ace3ac7e6cef8d18d9d9aa572d9728ead02efcbc10"
+    },
+    {
+      "seed": 2001,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 48,
+        "maximum_executed_source_age_ns": 2260121191,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "d3ab6924724d4f5a48561cf46bddc3e96246af73f5ae302d59d6c556d0fcd7fb",
+      "control_sha256": "9306a87479764b52dc078278dcfa6f11da87374753fdc81a613768df0e8b2970",
+      "predictions_sha256": "fce08b37a51f2891ccfaeb3744d0b8a2196c01d3d8d78c3ac52b8d548c8f45c2"
+    },
+    {
+      "seed": 2001,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1265819013,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "a439c2f8fa7bdb28b577849e3ff212100eb7760501d5c18bafdf8484b3f03775",
+      "control_sha256": "4e78a4306e6897eb7c3364dcedcefa011949d4f5216d6e5f39351e72b3c6709d",
+      "predictions_sha256": "f9c93e5ee665e73712c68a342b051a3baceb6be9c352c96f8f117a6a0a718f64"
+    },
+    {
+      "seed": 2001,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1262222271,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "a9b64f58da9ea9e4c1c1f4da4ce8f1f7837a0f4b6f208513b00acab3df25b3e0",
+      "control_sha256": "6784dbbf756815244d526ceb3db88909c00b0cfae42321eb57578dd5a2318a95",
+      "predictions_sha256": "fe54eefdd03e8f935084ff84427d1e42fc428bbb65baae8f8d3c71f927fe8bd8"
+    },
+    {
+      "seed": 2002,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280391540,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "dfb3ad4bcf5457671d6c6192d8ba82cdac20d9afeb78346ad6db9131f0160ca0",
+      "control_sha256": "5cf821ad86e7967d35ed2d74bee2284a052739a391126727692150fa729973db",
+      "predictions_sha256": "5c7cce5f918edff36f1958183a7872a8415fe4e3954c0c1681d519603345e3ab"
+    },
+    {
+      "seed": 2002,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1380275922,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "9af164db10596cb88ebea14b4ad5e8cd1feeaab80a9e58192bab6399d0e9b730",
+      "control_sha256": "b5b1a9bf965b53a8f9e5d678760e99cb0da0e34be16bf1eea75428a29ca293a9",
+      "predictions_sha256": "81f4395df0265072ac538b5cbb09fb5435b07450245d6a596a1731bd24342991"
+    },
+    {
+      "seed": 2002,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 528,
+        "model_ticks": 528,
+        "fallback_ticks": 0,
+        "accepted_plans": 18,
+        "maximum_executed_source_age_ns": 1269094853,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "55467f6ff458a00c2193a0af99bbb713696c8318543175079c7379c9cbe68189",
+      "control_sha256": "b8d4399403860db8dbb49df1f4703ee5107568a508ffa60e65079471c91c337d",
+      "predictions_sha256": "bc4fa9bc744427947a979052e322a2cf90776b747be516ff836ffdde2c85e0ff"
+    },
+    {
+      "seed": 2003,
+      "task": "find_red_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 424,
+        "model_ticks": 424,
+        "fallback_ticks": 0,
+        "accepted_plans": 15,
+        "maximum_executed_source_age_ns": 1263868784,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "b5a829a57baf5e1f105374a0ab2094b43ce7e4c9c796502e508124e477362c53",
+      "control_sha256": "63ea4c2b842f53d51d31f6e8246458e46325e17c1ef87d51030681d1abdc4a97",
+      "predictions_sha256": "d6f5faa29d1339553e070e27d804a433374e14c92f06261ad192cd5288676ece"
+    },
+    {
+      "seed": 2003,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1277059760,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "5e780aafedfc61839f69237a247fdec49e52f9d0e4316fc5cde4242125a1fda7",
+      "control_sha256": "b383412cc6d37cac653fa639819a317a170ac6f629efbb4b6adb28c56e1de061",
+      "predictions_sha256": "e3fb3b44601857ade3d96cfcee8ea594f66703944a6af9c45868262d00805bdb"
+    },
+    {
+      "seed": 2003,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1337291098,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "9cc68d5f121c3f920db74cb669afe01fb0812f647ba7ddc53f285cf56aac9d40",
+      "control_sha256": "888d482f3866a238d0ad989210fd12a5a51b754b742ab023013c97343a9a425f",
+      "predictions_sha256": "a98fb6f951fb4998eee2dedb10c1c49a4f2b02f4ac023b7a204849d25dfe0210"
+    },
+    {
+      "seed": 2004,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1320146495,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "4d959b50c28c797863cda8406a285ccea441eefb25eba9cf09e45e1c9f5ad4ee",
+      "control_sha256": "d6f1cd57edb373babca1ab485ad96ce16bad643245d9f0881d28cc0b36c3c786",
+      "predictions_sha256": "3f7e1a8e0b4f40b4e1ba5e1eba833c3c547a6866a7b88503a34e2844bcd2a096"
+    },
+    {
+      "seed": 2004,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1310120085,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "e791ac3b690ab9909089f6a36029eebeca27e4ba3289a9ad12176d56ec210ab5",
+      "control_sha256": "f2839333120da3b7cf15f49ad781a89a5e1ca779641bded4e4d63b03fd698797",
+      "predictions_sha256": "b206df3f722152fd79c79bc16f0cda815b74bd1405d4d6f8a451ca2148a910e7"
+    },
+    {
+      "seed": 2004,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1340357496,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "af55ca17d95064184bcd96584dd440998af45d23cb343cdca54e2826d53584d9",
+      "control_sha256": "c0ac08ab41708e178edaa72f3daf7a7aca43487f4408957f830b6844169a1753",
+      "predictions_sha256": "d4629699d76e72cfbadb7a97a5a4e4ad0ba6c62fd3ed14f7c3d9904415d80f59"
+    },
+    {
+      "seed": 2005,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1280419833,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "12cdf014b797be77694b8c1aff1650c1d666491847f08c4fa15d034f4925fdd5",
+      "control_sha256": "d36eb5e82e37a9938e5010e737b5ed873e7e63f8954e466ec0399cf706ac72d0",
+      "predictions_sha256": "add40bba6e0e7204e6c13648bb0ed125020080509e8094d41180489923923cc2"
+    },
+    {
+      "seed": 2005,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1440398774,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "fb2dc8fb70d483917d4f0350826d7bad0cd5258f7646c1283731e92f63dc8aa0",
+      "control_sha256": "02020eb480365e5387f2e3e2351a9ce794a29d0e709a4004876f1b31c10abad2",
+      "predictions_sha256": "d4f2f79becdc7158bccaccf32a29c97907a2e719704d71bf227b21cbfee0b9c5"
+    },
+    {
+      "seed": 2005,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1280529343,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "337c918190b74da53c529cdf7ecaa018f4559fa1f65c495e301b3d1994ac2a3d",
+      "control_sha256": "d1d02cc827779f672c4a9398df0557d94fb38c88f2921905ad7c3d15d5ab6a67",
+      "predictions_sha256": "be384006cb0d6abcb103baeb33ddd56d2139787c1ba1604a9e7a846d7bf03157"
+    },
+    {
+      "seed": 2006,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1265323189,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "2ec894b56b8c66a786fe250a7b950cf3ed3ed6a75641ce0c6c6d670d93a77ca7",
+      "control_sha256": "f29a4fa9a1417b677ad49425030dd7ac6d493b7d0ae6519c5c00b58ddca66efc",
+      "predictions_sha256": "e87bd4e674b13997a9622fea13a72319d37c51b80a6d1e9b6c62d6c1f12764f4"
+    },
+    {
+      "seed": 2006,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 427,
+        "model_ticks": 427,
+        "fallback_ticks": 0,
+        "accepted_plans": 15,
+        "maximum_executed_source_age_ns": 1265718548,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "e251d90408f02558c64838eab935150e493bc7397d96693a87fb194286524ab2",
+      "control_sha256": "cf32ae8fdcc91287195fb6299594d303dec9e9ab0c210f6b5c60cf686718fde7",
+      "predictions_sha256": "99708d82d456e70f87dc4a927de645dca6c0b7d4ce11d84e4ead6c589d129d26"
+    },
+    {
+      "seed": 2006,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280288081,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "b2fba8511daf9d2621b3e90cbc65a38dc8ca117b763595f58d368e9655b7fc71",
+      "control_sha256": "1d73df256ba3f5bd52b2294c95604eb2836e2c77237a3c56e91c195694b28630",
+      "predictions_sha256": "310fb6b17d2c4a5ccea30a48a2c58f31fc7b51cc30df2c937948efba9a318d17"
+    },
+    {
+      "seed": 2007,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280450354,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "75cfd34ef0541e49d9f296a0ac1dbb9fe4429c5320bd7909c41f4d40b15862fd",
+      "control_sha256": "24baf70ad56eadc177dfbd9ed97b8837d8e0e10f9632a604a7ae2e2794b5a04a",
+      "predictions_sha256": "b49fdfb44251460c860884c98f9455845b45be19e9901fe2734e5ba9d760be20"
+    },
+    {
+      "seed": 2007,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1279929358,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "c1c99e65aa16d76a64c3d811a8f25140a184aed2a8948d431fcafb4d77e7dff4",
+      "control_sha256": "3c5b5aa77b7be976c9cf5a6e245949c27e543c0b7d458a73f5766a62d375ff37",
+      "predictions_sha256": "de8a4cf97ef26fe1a5dd6ff2cb692a91a11f57ca3f434cfc6ac7f30a1321c79f"
+    },
+    {
+      "seed": 2007,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 549,
+        "model_ticks": 549,
+        "fallback_ticks": 0,
+        "accepted_plans": 19,
+        "maximum_executed_source_age_ns": 1264561028,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "33caa57a904dbc659d1a14f3830e1d3b0a93ca274c7b5d6025bf4bf668a045c1",
+      "control_sha256": "95de47ae8cd7cb4f2518dcd55b1b02f7031a21a0b5c184fa608f11f90c18e58c",
+      "predictions_sha256": "1f475064a4cb5c1a01b5d72ebb7dc988ab8e3b4f6fa1ce9d4362696a3aa911a8"
+    },
+    {
+      "seed": 2008,
+      "task": "find_red_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 407,
+        "model_ticks": 407,
+        "fallback_ticks": 0,
+        "accepted_plans": 14,
+        "maximum_executed_source_age_ns": 1260505230,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "0f68d02f0f98ba1f7d7642fd8b9e70002df874c12db39a5d6a41aef743416971",
+      "control_sha256": "52c9314ef2ec2a42185c396352156cc17034888e7a9c72cf413e56fce504a354",
+      "predictions_sha256": "fb0233df39730049f813d3d7d9c5b5401f62c87c2e5ec0bbf9480075d7b0faa8"
+    },
+    {
+      "seed": 2008,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1265159571,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "18aac45cd559b42b63e1cfde50d67cedffa40ca39fc22b53ea939e863c1a5c00",
+      "control_sha256": "1ede69d6f178a4f7f71099fa1504ca0da6d092bd02f622116b8b3b0da687f2aa",
+      "predictions_sha256": "83bead66cd05e3d33a0b168465e8750605d2186219e2a98b7da8e60c70bae784"
+    },
+    {
+      "seed": 2008,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 405,
+        "model_ticks": 405,
+        "fallback_ticks": 0,
+        "accepted_plans": 14,
+        "maximum_executed_source_age_ns": 1260404946,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "77d778d90933014d7b9cba56d1d723152cbd2567504aa101190966d2ee560068",
+      "control_sha256": "09475a5359c60b09cb23508e0dacd1a4a04daa6c89d85cb98a96ff56d6a1aa8d",
+      "predictions_sha256": "8554836ff873430fa30a3e4b7bba8764ef71f32628115da0b03894087555b7d8"
+    },
+    {
+      "seed": 2009,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1260220622,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "c10e437045f4bfbfcb51624efb6a9808c97e5fefd9de7d08d8aaa96428539e00",
+      "control_sha256": "acfa9ab3608bf49a4d0eb616967b8485b2d0c6eb8e56bdedfa7d82d52e794792",
+      "predictions_sha256": "de2b11cad953b9063ddce6e5c75c839fda322999e4fc8cd38c1ecdec0b47b839"
+    },
+    {
+      "seed": 2009,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 53,
+        "maximum_executed_source_age_ns": 1260278190,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "cac561dab3173ae0a25ddf9db1886e3ec50b5ce9a50ab926741f482e64a6bec1",
+      "control_sha256": "7c20aada58c60c2330392033aa18b17811d298fb07d7afffbca19c425ceab37a",
+      "predictions_sha256": "626e5334e9ced950fe6e432d84a777e09d4c21c44ae79f72bd85c0e8df725f88"
+    },
+    {
+      "seed": 2009,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280245927,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "0aa651880336b42112b4a41909304780c8d0f11379c38ab4d9464e7099f5978d",
+      "control_sha256": "a2ba11171fde13281a0374b1a0eaa64f7f0b02078b8e3d98a3eb5cddda515001",
+      "predictions_sha256": "56383b5c8ba53870efe5aa99f722866a7a772decbe7ef48733305da36adc0a46"
+    },
+    {
+      "seed": 2010,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1260670646,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "4aed3ec6fbac9353977d78780e93d2296bae3d4ada94e6b084878272019ddcba",
+      "control_sha256": "9c42a79c040133bc15d3ead9257801eb9641f06a593a5d602b7ce0903410a050",
+      "predictions_sha256": "e33edbb635aa1f412854f1d6195483d242750ddcedfd6328ff77df345fe793da"
+    },
+    {
+      "seed": 2010,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 446,
+        "model_ticks": 446,
+        "fallback_ticks": 0,
+        "accepted_plans": 16,
+        "maximum_executed_source_age_ns": 1260640296,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "a5af8da0970e72cd15a87505876db958f845d6c0f3f2b2f9ceccbc2417359194",
+      "control_sha256": "352fb0e6705d9b6448d0264bfbf76d07fe6b70b1c38001b91628b0fb392362cb",
+      "predictions_sha256": "ff37516369ba5799565cc2aa4775418f7a3b2abb2f0370591cc3dbf1fc9d233c"
+    },
+    {
+      "seed": 2010,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1284953290,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "cd4d3f1f308bead6b11d55b59886540b0beffa8fbd5aaa916dc501107a7f84be",
+      "control_sha256": "0c0e476ad34f699f2cc391d9e634aa92037d39a128aba3937d986e215ef14ecf",
+      "predictions_sha256": "82d844e5243a3bc5170ae02252826d5c9dd3c222695f7997870e3fa4ca9e6e0f"
+    },
+    {
+      "seed": 2011,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1320069807,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "66d0765c5b8ea976fd6740eccc2e8738ceb9c6a8c1b2a79f736ae88fc6511e7b",
+      "control_sha256": "42f5fa4b590bf92833660fff30e4e32905207af17edafbb2ec9606c5349bca56",
+      "predictions_sha256": "25b07c147115f8fde854516cd28016bbba33e23c0582279cd10f39e43ab092e5"
+    },
+    {
+      "seed": 2011,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1261210238,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "f29d2860f2fbe9a253287cb35f61a9b53d915f0fb3997ad7eb2c74f1e3817b5d",
+      "control_sha256": "023bd18b9d0ad44f1a1e55c676e473bec59208119cea82d6f9206294a9a7f9d5",
+      "predictions_sha256": "7bc13ff85829fa7c3211c3a71fe4bf02de8e101461baf0e7f4cec2e16af7c2f4"
+    },
+    {
+      "seed": 2011,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280253017,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "709de21d618bc7f9ebcb2626c56b208ffeec7d1c8dba96ea1ee7b1046c5a815a",
+      "control_sha256": "1eb23ea7dc1ad9a8f266313faa441939b846d023a9ae0fa0f158c7cff7525956",
+      "predictions_sha256": "3659e53b2d3f1aeeeddbf836e283f04efa43ef043d9a22ea949c7dce5a0e4b83"
+    },
+    {
+      "seed": 2012,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1381557680,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "34c8c2eee736799f8cf9517b969de4a4043495721211d4a7e1b6ea29476e5edd",
+      "control_sha256": "a1aff2a7c148534fe087d47809d3a0bc08b65863594719096363e119b1802bef",
+      "predictions_sha256": "573b5b5269ba4197fe270c37e161d0c5aee313dc032fd4e177613dc0472b43b1"
+    },
+    {
+      "seed": 2012,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 472,
+        "model_ticks": 472,
+        "fallback_ticks": 0,
+        "accepted_plans": 16,
+        "maximum_executed_source_age_ns": 1280175963,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "d1384633c75908c25b6d21b5b1c47cf1f1ef763bc12a773107bf26c528e269d4",
+      "control_sha256": "4d8907319512e48d5e9aa576a974871d1edeffaf4301417e182f9a031a5c6964",
+      "predictions_sha256": "87f7fd7af89b8fdec38ee526dc035395bafaaca2291d1be7e8d9583d4f271ad0"
+    },
+    {
+      "seed": 2012,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280838499,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "1a3c0bd11e2f7d1c0d9db3b8e925e23c9ac6514d7d7d923e2a69fe171c35c447",
+      "control_sha256": "a47f44fb6d6a640d4a8e664c138fcec1bf41cac516191f112e15f8051ddaf2c4",
+      "predictions_sha256": "585e603d4cf7490d1981038824b6803d8e9d9db1b5e4f356065368f4c1eb9e50"
+    },
+    {
+      "seed": 2013,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1280361587,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "029b58d48fe67243019057b94c9190845af937f0850fc6ac38df15be2f09c25f",
+      "control_sha256": "733f870c2a8f228db4bdb52abe32cac310ba3805fd03a26829df6b54064c21cf",
+      "predictions_sha256": "c1af33172af54e5da021efe4bd31ddef510b105a1e1b7f8c061e6b03ea7a5e60"
+    },
+    {
+      "seed": 2013,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 475,
+        "model_ticks": 475,
+        "fallback_ticks": 0,
+        "accepted_plans": 17,
+        "maximum_executed_source_age_ns": 1507567088,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "1e0f2053be051c65482660e7e1b23121fc5e998b2fae81f699f7dec85ce61ecc",
+      "control_sha256": "fdf8e0eb6160c04fbdeb1f91eb98d137b376489301c2c824a3dfea386bc379e0",
+      "predictions_sha256": "b45fd2607c399e8200e06619dc06d9a2dc182b685f13a48e43e6a22e79029689"
+    },
+    {
+      "seed": 2013,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1409817388,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "796f8efdf5574f720c66d436ff21ea2077731eeb3fa4b3d6267dda85e871f7de",
+      "control_sha256": "0e3a1ef8b159d6a94715f2c2fd51e60aabb8645a361df1c5aefc773918db98e6",
+      "predictions_sha256": "22ab8fdc1875daa707141d2beb7e0968f821a0bd79edc0df7db07ade4e1a385b"
+    },
+    {
+      "seed": 2014,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 51,
+        "maximum_executed_source_age_ns": 1280315950,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "1b6230fa21fdc429b8d5eb3175b8ee6f4e3824fc7b226ef591896131ca503395",
+      "control_sha256": "7aba2f3ae905d7bc27191f8704a01ac0faa6cbaf5870c7d0113998f28dcba8c7",
+      "predictions_sha256": "f69ba1e278220885918b747501ff72d0f3ef7a30477d939ba81f912b811a2975"
+    },
+    {
+      "seed": 2014,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 437,
+        "model_ticks": 437,
+        "fallback_ticks": 0,
+        "accepted_plans": 15,
+        "maximum_executed_source_age_ns": 1280406705,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "95c4b0c40995b9b988e6aed54d0cb9e509cdcbf2c87bf4fac744569a48081a56",
+      "control_sha256": "b027653e08e73d002c9b2787bd35cc5e112b6d0bcc65e1bc97a5bb5204826643",
+      "predictions_sha256": "eff0e758aa51d42ec2bc3858c5d84954e9318e1513b8feb92ad67dba7bf68927"
+    },
+    {
+      "seed": 2014,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 451,
+        "model_ticks": 451,
+        "fallback_ticks": 0,
+        "accepted_plans": 16,
+        "maximum_executed_source_age_ns": 1261665672,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "dc61bb934914101cd823fc8601a73457d60f4058df8008b725605da204e5b499",
+      "control_sha256": "080c9a064b687aba9c95355da5781f99a7c7d4935976286af45d7216fda7fa39",
+      "predictions_sha256": "3f7cffa7492b89deac59f36953e27cefe91c770707a9ee4d5e96d0ba9fa24685"
+    },
+    {
+      "seed": 2015,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280658016,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "63166c61e67a9628faafdb65cd208c6674c862bc6a6863c37989b45efe3cdaee",
+      "control_sha256": "8955443feadff621e8fd6d579663a494bc6b86950a0e14bbb969724ecf1fb671",
+      "predictions_sha256": "c685471eb8c96fe729952e107d4022fb05c64373c04ba0f337ecbceac54b34ec"
+    },
+    {
+      "seed": 2015,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1308556130,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "537990a00542eb529f036d919486e40ea5156a928dc083e6a214ebec912cfdd2",
+      "control_sha256": "811f1690d14694d65a9bc2a69cd72fb9b942b0a86903af38f8cc65051478909d",
+      "predictions_sha256": "e0b3478847fb1365149201be06f811de7cb3863f6e736afc727bc28185de525a"
+    },
+    {
+      "seed": 2015,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1340925956,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "99d624f39184ce2b6dc9f51511d180c4c5733de50c3474ab45b34bb567709ad3",
+      "control_sha256": "470486e5beccfa230fdc92b5fe9d321569268561ba64d0926b23b1ddf3d5dc1b",
+      "predictions_sha256": "72df6efa3e6b3257ad1975240223d422f5b09bb11c8003f6db87f13c8cfc9afb"
+    },
+    {
+      "seed": 2016,
+      "task": "find_red_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 467,
+        "model_ticks": 467,
+        "fallback_ticks": 0,
+        "accepted_plans": 16,
+        "maximum_executed_source_age_ns": 1261779071,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "5855ff159b0fdd53c433eb4b7ff09e80ff3c7cb362a3ec3c00bf6839838280f7",
+      "control_sha256": "ff7a2240e9608f031109c816393eed20807540abb9647c83240fdf571dda66e4",
+      "predictions_sha256": "6b22958d758782d509a38f7436e8a9f6569358ceb5b4a885544e7ec9d21eafbe"
+    },
+    {
+      "seed": 2016,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1261053411,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "e328cbcfe06dc49014c8944952ec132bfc55bd98cf2e559fd498cf61f771a92c",
+      "control_sha256": "d46bd3a46ed3b968912d40f63cf0f957fbb3b35a641d63458c8feb760914f6a9",
+      "predictions_sha256": "c96077e4caed9e3b5d3b88c40603865a48e55241536839ecbb1154b96b05396f"
+    },
+    {
+      "seed": 2016,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280030070,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "ec6a45a76e1368df3fd02de4a7fb953f0f31ff151ac463de70e11deec49dfd98",
+      "control_sha256": "0e7734b696b575e6f8195ed6bb9d84f25daa17e639493da7e43992951f9debf1",
+      "predictions_sha256": "5bf88afb223f1ec3b3b54b5dbcec25f1f82b2e8979f1d00946adb9bc6c1bbaff"
+    },
+    {
+      "seed": 2017,
+      "task": "find_red_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 400,
+        "model_ticks": 400,
+        "fallback_ticks": 0,
+        "accepted_plans": 14,
+        "maximum_executed_source_age_ns": 1260285276,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "9fb93087efe3a351830223145e540bdffc92ef2e0b675bf862d03c9a4cb26f8e",
+      "control_sha256": "64d1e7504b0cb84ed0121fd41ffeb3a210ae8c27a36a38eececcaa8e202c22a9",
+      "predictions_sha256": "4bddf3362fb6bcbe07ac7879e605a37b52abbbcb6c6cb01e3e3bd2efc4be0b05"
+    },
+    {
+      "seed": 2017,
+      "task": "find_blue_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1261132358,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "bb0dc6ee3b833064cac82d6dfaa608be397d06055b7f59d1098fdaac685af21d",
+      "control_sha256": "72efcc2b75751c74502d428784c92ec653fc31e24783ee3a48f3b18fe98fba57",
+      "predictions_sha256": "9190cab00db9c162f43a8154e2f96b1fd9dc038205166fe2cc45f68b613742a3"
+    },
+    {
+      "seed": 2017,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 528,
+        "model_ticks": 528,
+        "fallback_ticks": 0,
+        "accepted_plans": 18,
+        "maximum_executed_source_age_ns": 1260720237,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "a0c615a5e1feb091f5c6026755494522d55cf2849e7dba023204c9dde01be851",
+      "control_sha256": "5c1ebf792a7958c7cebab34b08590c9916e0c5bf35f75a1899fa71c19f052f90",
+      "predictions_sha256": "801cbd629e212220b67c9ae5653ebbe75ccc1dc622aef5279c4ebd5398f6cb0e"
+    },
+    {
+      "seed": 2018,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1293664255,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "1042a8f5a69b77051c201b74f51f0f8eea6c2084738cc9d21a6b4e37f2552373",
+      "control_sha256": "85031b2c9ade9d684c95f336ea7a3b9946971fb57ce69501a582543013d0fe49",
+      "predictions_sha256": "187e831300a3cb4dbcb3e1e35436bc396781c6c56a2325bdf2d123a5b1e0a6c8"
+    },
+    {
+      "seed": 2018,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1382,
+        "model_ticks": 1382,
+        "fallback_ticks": 0,
+        "accepted_plans": 47,
+        "maximum_executed_source_age_ns": 1320116544,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "e89156bcee09d36d66e7bcb59db1b49e85f4677d35ee5db02753ba874a3dda3a",
+      "control_sha256": "eeb4e2632ac7338e085ba3a33336759114d6d2aea051ab597505041dc23d0f03",
+      "predictions_sha256": "06e82063cd057f8ff3d37b5917d49f6d632a10e4fc9549970fac9c370d068d63"
+    },
+    {
+      "seed": 2018,
+      "task": "find_yellow_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1280153812,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "3a72ed593b3e06520507cc52478d9ea120ef2a69a3fb676a805093e59953a0f7",
+      "control_sha256": "89c219a5d6998f4022ee46ad208c0938d7cc92cb5bf878ade973878f2954b62f",
+      "predictions_sha256": "ebd063519b9f8e0eedbeba176de1beab6620ab856ff5d0977d1094c7b07dff7c"
+    },
+    {
+      "seed": 2019,
+      "task": "find_red_ball",
+      "task_success": false,
+      "strict_success": false,
+      "realtime_success": false,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 1500,
+        "model_ticks": 1500,
+        "fallback_ticks": 0,
+        "accepted_plans": 52,
+        "maximum_executed_source_age_ns": 1260772024,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "0e1bd1ab90d72633613af2cc57e1aad3005c962d12a8605519574fb20fc4b1cb",
+      "control_sha256": "d16724ea46203aef52fa366762714ed86946f601f156959fc0c7c74208020c70",
+      "predictions_sha256": "64ae60cf9c6545fc0d9d81662d0e124fdcf7d579d74378885f1f44dfb495da33"
+    },
+    {
+      "seed": 2019,
+      "task": "find_blue_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 886,
+        "model_ticks": 886,
+        "fallback_ticks": 0,
+        "accepted_plans": 31,
+        "maximum_executed_source_age_ns": 1280132010,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "47227d2b1a4f7d264ce00a3f9bebbd543544bf25990a93d6963d639041885b3a",
+      "control_sha256": "c375ab9e3ac721c03e7fb5c8567a4dec24de0e1ea4e762f39238f460a67156c5",
+      "predictions_sha256": "2bb63b59e6bbceab6dad868d0175a51ba1eb58e887b4ba90e7bf312f98ae2097"
+    },
+    {
+      "seed": 2019,
+      "task": "find_yellow_ball",
+      "task_success": true,
+      "strict_success": true,
+      "realtime_success": true,
+      "timing_qualified": true,
+      "audit": {
+        "verified_ticks": 405,
+        "model_ticks": 405,
+        "fallback_ticks": 0,
+        "accepted_plans": 14,
+        "maximum_executed_source_age_ns": 1263897002,
+        "no_age_limit_execution_verified": true,
+        "not_task_acceptance": true
+      },
+      "episode_sha256": "81ac823663bcfe24503ca9d090f0d0825dab2989fc658f101aa7ff231bcb786d",
+      "control_sha256": "12732f24b4e55eeac7ad578c7b9b4622ef2f6bdcb8c400d069cdda731e35500f",
+      "predictions_sha256": "4e32974d60bca7b83f9a8b8a59054579883b82fe40d9f378f7ee43e4082f297e"
+    }
+  ],
+  "paired_baseline": {
+    "report_sha256": "806cd3857083d073f5853a3f8d0a68696d70223a3e898956c3f94dcbb6784de1",
+    "max_action_age_ms": 1000,
+    "task_successes": 0,
+    "gained_cases": [
+      [
+        2002,
+        "find_yellow_ball"
+      ],
+      [
+        2003,
+        "find_red_ball"
+      ],
+      [
+        2006,
+        "find_blue_ball"
+      ],
+      [
+        2007,
+        "find_yellow_ball"
+      ],
+      [
+        2008,
+        "find_red_ball"
+      ],
+      [
+        2008,
+        "find_yellow_ball"
+      ],
+      [
+        2010,
+        "find_blue_ball"
+      ],
+      [
+        2012,
+        "find_blue_ball"
+      ],
+      [
+        2013,
+        "find_blue_ball"
+      ],
+      [
+        2014,
+        "find_blue_ball"
+      ],
+      [
+        2014,
+        "find_yellow_ball"
+      ],
+      [
+        2016,
+        "find_red_ball"
+      ],
+      [
+        2017,
+        "find_red_ball"
+      ],
+      [
+        2017,
+        "find_yellow_ball"
+      ],
+      [
+        2018,
+        "find_blue_ball"
+      ],
+      [
+        2019,
+        "find_blue_ball"
+      ],
+      [
+        2019,
+        "find_yellow_ball"
+      ]
+    ],
+    "lost_cases": [],
+    "deployment_note": "Same GTX 1660 Ti render host and H200 inference host; baseline H200 GPU0, ablation GPU7. Model and unaccelerated settings unchanged."
+  },
+  "report_sha256": "a4b5471a639fa0ed98c7bf11ecf7a0591e9484b153b40fc99e3a59e294e85da0",
+  "script_sha256": "ea2987923e03cd42ed107a7d9c71a86db3e41e975e07d233cfa8ad4adc56bbd5"
+}

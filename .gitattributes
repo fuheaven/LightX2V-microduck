@@ -1,0 +1,3 @@
+# Preserve the upstream snapshot's CRLF files and exact vendored BAM bytes.
+* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+third_party/bam/** -whitespace

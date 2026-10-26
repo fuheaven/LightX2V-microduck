@@ -1,0 +1,529 @@
+# Copyright 2024-2025 The Alibaba Wan Team Authors. All rights reserved.
+import os
+import shutil
+
+import cv2
+import numpy as np
+import torch
+from PIL import Image
+from loguru import logger
+
+try:
+    import moviepy.editor as mpy
+except:  # noqa
+    import moviepy as mpy
+
+
+try:
+    import sam2.modeling.sam.transformer as transformer
+
+    transformer.USE_FLASH_ATTN = False
+    transformer.MATH_KERNEL_ON = True
+    transformer.OLD_GPU = True
+    from sam_utils import build_sam2_video_predictor  # noqa
+
+    _SAM2_AVAILABLE = True
+except (ImportError, ModuleNotFoundError) as e:
+    logger.warning(f"sam2 not available, preprocessing will be skipped: {e}")
+    _SAM2_AVAILABLE = False
+
+from decord import VideoReader
+from human_visualization import draw_aapose_by_meta_new
+from pose2d import Pose2d
+from pose2d_utils import AAPoseMeta
+from retarget_pose import get_retarget_pose
+from utils import get_aug_mask, get_face_bboxes, get_frame_indices, get_mask_body_img, padding_resize, resize_by_area, skip_replace_frame_outputs
+
+BODY_KEYPOINT_CONF_THRESHOLD = 0.3
+MIN_VALID_BODY_KEYPOINTS = 4
+MASK_BODY_KEYPOINT_INDICES = [0, 1, 2, 5, 8, 11, 10, 13]
+
+
+class ProcessPipeline:
+    def __init__(self, det_checkpoint_path, pose2d_checkpoint_path, sam_checkpoint_path, flux_kontext_path):
+        self.pose2d = Pose2d(checkpoint=pose2d_checkpoint_path, detector_checkpoint=det_checkpoint_path)
+
+        model_cfg = "sam2_hiera_l.yaml"
+        if sam_checkpoint_path is not None:
+            if not _SAM2_AVAILABLE:
+                raise RuntimeError("sam2 is required for preprocessing but is not installed. Please install sam2.")
+            self.predictor = build_sam2_video_predictor(model_cfg, sam_checkpoint_path)
+        if flux_kontext_path is not None:
+            from diffusers import FluxKontextPipeline
+
+            self.flux_kontext = FluxKontextPipeline.from_pretrained(flux_kontext_path, torch_dtype=torch.bfloat16).to("cuda")
+
+    @staticmethod
+    def _get_body_keypoints(pose_meta):
+        if pose_meta is None:
+            return None
+        body_keypoints = pose_meta.get("keypoints_body")
+        if body_keypoints is None:
+            return None
+        try:
+            body_keypoints = np.asarray(body_keypoints, dtype=np.float32)
+        except (TypeError, ValueError):
+            return None
+        if body_keypoints.ndim != 2 or body_keypoints.shape[1] < 3:
+            return None
+        return body_keypoints
+
+    @classmethod
+    def _get_valid_body_keypoint_mask(cls, pose_meta, keypoint_indices=None):
+        body_keypoints = cls._get_body_keypoints(pose_meta)
+        if body_keypoints is None:
+            return None, None
+        if keypoint_indices is not None:
+            valid_indices = [idx for idx in keypoint_indices if idx < body_keypoints.shape[0]]
+            body_keypoints = body_keypoints[valid_indices] if valid_indices else body_keypoints[:0]
+        if body_keypoints.shape[0] == 0:
+            return body_keypoints, np.zeros((0,), dtype=bool)
+
+        coords = body_keypoints[:, :2]
+        scores = body_keypoints[:, 2]
+        valid_mask = (
+            np.isfinite(coords).all(axis=1) & np.isfinite(scores) & (coords[:, 0] >= 0) & (coords[:, 0] <= 1) & (coords[:, 1] >= 0) & (coords[:, 1] <= 1) & (scores >= BODY_KEYPOINT_CONF_THRESHOLD)
+        )
+        return body_keypoints, valid_mask
+
+    @classmethod
+    def _count_valid_body_keypoints(cls, pose_meta):
+        _, valid_mask = cls._get_valid_body_keypoint_mask(pose_meta)
+        if valid_mask is None:
+            return 0
+        return int(np.count_nonzero(valid_mask))
+
+    @classmethod
+    def _is_valid_pose_meta(cls, pose_meta):
+        return cls._count_valid_body_keypoints(pose_meta) >= MIN_VALID_BODY_KEYPOINTS
+
+    @classmethod
+    def _get_pose_valid_flags(cls, pose_metas):
+        return [cls._is_valid_pose_meta(meta) for meta in pose_metas]
+
+    @staticmethod
+    def _trim_tail_invalid_frames(frames, pose_metas, pose_valid_flags, mode_name):
+        last_valid_idx = None
+        for idx in range(len(pose_valid_flags) - 1, -1, -1):
+            if pose_valid_flags[idx]:
+                last_valid_idx = idx
+                break
+
+        if last_valid_idx is None:
+            raise ValueError(f"{mode_name} preprocessing failed: no valid human body keypoints detected in driving video")
+
+        drop_count = len(pose_valid_flags) - last_valid_idx - 1
+        if drop_count > 0:
+            logger.info(f"{mode_name} preprocessing: dropped {drop_count} trailing invalid frame(s) without valid body keypoints")
+
+        keep_end = last_valid_idx + 1
+        return frames[:keep_end], pose_metas[:keep_end], pose_valid_flags[:keep_end]
+
+    @staticmethod
+    def _empty_face_image(frame):
+        return np.zeros((512, 512, frame.shape[2]), dtype=frame.dtype)
+
+    def _build_face_images(self, frames, pose_metas, pose_valid_flags=None):
+        face_images = []
+        for idx, meta in enumerate(pose_metas):
+            frame = frames[idx]
+            if pose_valid_flags is not None and not pose_valid_flags[idx]:
+                logger.warning(f"Frame {idx}: no valid body keypoints, using empty face crop")
+                face_images.append(self._empty_face_image(frame))
+                continue
+
+            try:
+                face_bbox_for_image = get_face_bboxes(meta["keypoints_face"][:, :2], scale=1.3, image_shape=(frames[0].shape[0], frames[0].shape[1]))
+                x1, x2, y1, y2 = face_bbox_for_image
+                face_image = frame[y1:y2, x1:x2]
+                if face_image.size == 0:
+                    raise ValueError("empty face crop")
+                face_image = cv2.resize(face_image, (512, 512))
+            except (KeyError, TypeError, ValueError, cv2.error) as e:
+                logger.warning(f"Frame {idx}: invalid face keypoints ({e}), using empty face crop")
+                face_image = self._empty_face_image(frame)
+            face_images.append(face_image)
+        return face_images
+
+    @classmethod
+    def _get_body_prompt_points(cls, pose_meta, width, height):
+        if not cls._is_valid_pose_meta(pose_meta):
+            return np.zeros((0, 2), dtype=np.int32)
+        body_keypoints, valid_mask = cls._get_valid_body_keypoint_mask(pose_meta, keypoint_indices=MASK_BODY_KEYPOINT_INDICES)
+        if body_keypoints is None or valid_mask is None or not valid_mask.any():
+            return np.zeros((0, 2), dtype=np.int32)
+        keypoints_body = body_keypoints[valid_mask][:, :2]
+        wh = np.array([[width, height]])
+        return (keypoints_body * wh).astype(np.int32)
+
+    def __call__(
+        self,
+        video_path,
+        refer_image_path,
+        output_path,
+        resolution_area=[1280, 720],
+        fps=30,
+        iterations=3,
+        k=7,
+        w_len=1,
+        h_len=1,
+        retarget_flag=False,
+        use_flux=False,
+        replace_flag=False,
+        drop_tail_invalid_frames=False,
+    ):
+        if replace_flag:
+            video_reader = VideoReader(video_path)
+            frame_num = len(video_reader)
+            print("frame_num: {}".format(frame_num))
+
+            video_fps = video_reader.get_avg_fps()
+            print("video_fps: {}".format(video_fps))
+            print("fps: {}".format(fps))
+
+            # TODO: Maybe we can switch to PyAV later, which can get accurate frame num
+            duration = video_reader.get_frame_timestamp(-1)[-1]
+            expected_frame_num = int(duration * video_fps + 0.5)
+            ratio = abs((frame_num - expected_frame_num) / frame_num)
+            if ratio > 0.1:
+                print("Warning: The difference between the actual number of frames and the expected number of frames is two large")
+                frame_num = expected_frame_num
+
+            if fps == -1:
+                fps = video_fps
+
+            target_num = int(frame_num / video_fps * fps)
+            print("target_num: {}".format(target_num))
+            idxs = get_frame_indices(frame_num, video_fps, target_num, fps)
+            frames = video_reader.get_batch(idxs).asnumpy()
+
+            frames = [resize_by_area(frame, resolution_area[0] * resolution_area[1], divisor=16) for frame in frames]
+            height, width = frames[0].shape[:2]
+            logger.info(f"Processing pose meta")
+
+            tpl_pose_metas = self.pose2d(frames)
+            pose_valid_flags = self._get_pose_valid_flags(tpl_pose_metas)
+            if drop_tail_invalid_frames:
+                frames, tpl_pose_metas, pose_valid_flags = self._trim_tail_invalid_frames(frames, tpl_pose_metas, pose_valid_flags, "Animate replace")
+
+            invalid_pose_count = len(pose_valid_flags) - sum(pose_valid_flags)
+            if invalid_pose_count > 0:
+                logger.info(f"Animate replace preprocessing: {invalid_pose_count}/{len(pose_valid_flags)} frame(s) have invalid body keypoints")
+
+            face_images = self._build_face_images(frames, tpl_pose_metas, pose_valid_flags)
+
+            logger.info(f"Processing reference image: {refer_image_path}")
+            refer_img = cv2.imread(refer_image_path)
+            src_ref_path = os.path.join(output_path, "src_ref.png")
+            shutil.copy(refer_image_path, src_ref_path)
+            refer_img = refer_img[..., ::-1]
+
+            refer_img = padding_resize(refer_img, height, width)
+            logger.info(f"Processing template video: {video_path}")
+            tpl_retarget_pose_metas = [AAPoseMeta.from_humanapi_meta(meta) for meta in tpl_pose_metas]
+            cond_images = []
+
+            for idx, meta in enumerate(tpl_retarget_pose_metas):
+                canvas = np.zeros_like(refer_img)
+                conditioning_image = draw_aapose_by_meta_new(canvas, meta)
+                cond_images.append(conditioning_image)
+            masks = self.get_mask(frames, 400, tpl_pose_metas)
+
+            bg_images = []
+            aug_masks = []
+            replace_frame_count = 0
+
+            for frame_idx, (frame, mask) in enumerate(zip(frames, masks)):
+                if not pose_valid_flags[frame_idx]:
+                    logger.warning(f"Frame {frame_idx}: no valid body keypoints, skipping character replacement for this frame")
+                    each_bg_image, each_aug_mask = skip_replace_frame_outputs(frame)
+                    bg_images.append(each_bg_image)
+                    aug_masks.append(each_aug_mask)
+                    continue
+
+                each_aug_mask = None
+                if mask is not None and mask.sum() > 0:
+                    if iterations > 0:
+                        _, each_mask = get_mask_body_img(frame, mask, iterations=iterations, k=k)
+                        if each_mask.sum() > 0:
+                            each_aug_mask = get_aug_mask(each_mask, w_len=w_len, h_len=h_len)
+                    else:
+                        each_aug_mask = mask
+
+                if each_aug_mask is None or each_aug_mask.sum() == 0:
+                    logger.warning(f"Frame {frame_idx}: no valid person mask, skipping character replacement for this frame")
+                    each_bg_image, each_aug_mask = skip_replace_frame_outputs(frame)
+                else:
+                    each_bg_image = frame * (1 - each_aug_mask[:, :, None])
+                    replace_frame_count += 1
+
+                bg_images.append(each_bg_image)
+                aug_masks.append(each_aug_mask)
+
+            if replace_frame_count == 0:
+                raise ValueError("Animate replace preprocessing failed: no stable human body detected in driving video")
+            if replace_frame_count < len(frames):
+                logger.info(f"Replace preprocessing: {replace_frame_count}/{len(frames)} frames will be replaced, {len(frames) - replace_frame_count} frames kept as original")
+
+            src_face_path = os.path.join(output_path, "src_face.mp4")
+            mpy.ImageSequenceClip(face_images, fps=fps).write_videofile(src_face_path)
+
+            src_pose_path = os.path.join(output_path, "src_pose.mp4")
+            mpy.ImageSequenceClip(cond_images, fps=fps).write_videofile(src_pose_path)
+
+            src_bg_path = os.path.join(output_path, "src_bg.mp4")
+            mpy.ImageSequenceClip(bg_images, fps=fps).write_videofile(src_bg_path)
+
+            aug_masks_new = [np.stack([mask * 255, mask * 255, mask * 255], axis=2) for mask in aug_masks]
+            src_mask_path = os.path.join(output_path, "src_mask.mp4")
+            mpy.ImageSequenceClip(aug_masks_new, fps=fps).write_videofile(src_mask_path)
+            return True
+        else:
+            logger.info(f"Processing reference image: {refer_image_path}")
+            refer_img = cv2.imread(refer_image_path)
+            src_ref_path = os.path.join(output_path, "src_ref.png")
+            shutil.copy(refer_image_path, src_ref_path)
+            refer_img = refer_img[..., ::-1]
+
+            refer_img = resize_by_area(refer_img, resolution_area[0] * resolution_area[1], divisor=16)
+
+            refer_pose_meta = self.pose2d([refer_img])[0]
+
+            logger.info(f"Processing template video: {video_path}")
+            video_reader = VideoReader(video_path)
+            frame_num = len(video_reader)
+            print("frame_num: {}".format(frame_num))
+
+            video_fps = video_reader.get_avg_fps()
+            print("video_fps: {}".format(video_fps))
+            print("fps: {}".format(fps))
+
+            # TODO: Maybe we can switch to PyAV later, which can get accurate frame num
+            duration = video_reader.get_frame_timestamp(-1)[-1]
+            expected_frame_num = int(duration * video_fps + 0.5)
+            ratio = abs((frame_num - expected_frame_num) / frame_num)
+            if ratio > 0.1:
+                print("Warning: The difference between the actual number of frames and the expected number of frames is two large")
+                frame_num = expected_frame_num
+
+            if fps == -1:
+                fps = video_fps
+
+            target_num = int(frame_num / video_fps * fps)
+            print("target_num: {}".format(target_num))
+            idxs = get_frame_indices(frame_num, video_fps, target_num, fps)
+            frames = video_reader.get_batch(idxs).asnumpy()
+
+            logger.info(f"Processing pose meta")
+
+            tpl_pose_metas = self.pose2d(frames)
+            pose_valid_flags = self._get_pose_valid_flags(tpl_pose_metas)
+            if drop_tail_invalid_frames:
+                frames, tpl_pose_metas, pose_valid_flags = self._trim_tail_invalid_frames(frames, tpl_pose_metas, pose_valid_flags, "Animate")
+            tpl_pose_meta0 = tpl_pose_metas[0]
+            face_images = self._build_face_images(frames, tpl_pose_metas, pose_valid_flags)
+
+            if retarget_flag:
+                if use_flux:
+                    tpl_prompt, refer_prompt = self.get_editing_prompts(tpl_pose_metas, refer_pose_meta)
+                    refer_input = Image.fromarray(refer_img)
+                    refer_edit = self.flux_kontext(
+                        image=refer_input,
+                        height=refer_img.shape[0],
+                        width=refer_img.shape[1],
+                        prompt=refer_prompt,
+                        guidance_scale=2.5,
+                        num_inference_steps=28,
+                    ).images[0]
+
+                    refer_edit = Image.fromarray(padding_resize(np.array(refer_edit), refer_img.shape[0], refer_img.shape[1]))
+                    refer_edit_path = os.path.join(output_path, "refer_edit.png")
+                    refer_edit.save(refer_edit_path)
+                    refer_edit_pose_meta = self.pose2d([np.array(refer_edit)])[0]
+
+                    tpl_img = frames[1]
+                    tpl_input = Image.fromarray(tpl_img)
+
+                    tpl_edit = self.flux_kontext(
+                        image=tpl_input,
+                        height=tpl_img.shape[0],
+                        width=tpl_img.shape[1],
+                        prompt=tpl_prompt,
+                        guidance_scale=2.5,
+                        num_inference_steps=28,
+                    ).images[0]
+
+                    tpl_edit = Image.fromarray(padding_resize(np.array(tpl_edit), tpl_img.shape[0], tpl_img.shape[1]))
+                    tpl_edit_path = os.path.join(output_path, "tpl_edit.png")
+                    tpl_edit.save(tpl_edit_path)
+                    tpl_edit_pose_meta0 = self.pose2d([np.array(tpl_edit)])[0]
+                    tpl_retarget_pose_metas = get_retarget_pose(tpl_pose_meta0, refer_pose_meta, tpl_pose_metas, tpl_edit_pose_meta0, refer_edit_pose_meta)
+                else:
+                    tpl_retarget_pose_metas = get_retarget_pose(tpl_pose_meta0, refer_pose_meta, tpl_pose_metas, None, None)
+            else:
+                tpl_retarget_pose_metas = [AAPoseMeta.from_humanapi_meta(meta) for meta in tpl_pose_metas]
+
+            cond_images = []
+            for idx, meta in enumerate(tpl_retarget_pose_metas):
+                if retarget_flag:
+                    canvas = np.zeros_like(refer_img)
+                    conditioning_image = draw_aapose_by_meta_new(canvas, meta)
+                else:
+                    canvas = np.zeros_like(frames[0])
+                    conditioning_image = draw_aapose_by_meta_new(canvas, meta)
+                    conditioning_image = padding_resize(conditioning_image, refer_img.shape[0], refer_img.shape[1])
+
+                cond_images.append(conditioning_image)
+
+            src_face_path = os.path.join(output_path, "src_face.mp4")
+            mpy.ImageSequenceClip(face_images, fps=fps).write_videofile(src_face_path)
+
+            src_pose_path = os.path.join(output_path, "src_pose.mp4")
+            mpy.ImageSequenceClip(cond_images, fps=fps).write_videofile(src_pose_path)
+            return True
+
+    def get_editing_prompts(self, tpl_pose_metas, refer_pose_meta):
+        arm_visible = False
+        leg_visible = False
+        for tpl_pose_meta in tpl_pose_metas:
+            tpl_keypoints = tpl_pose_meta["keypoints_body"]
+            if tpl_keypoints[3].all() != 0 or tpl_keypoints[4].all() != 0 or tpl_keypoints[6].all() != 0 or tpl_keypoints[7].all() != 0:
+                if (
+                    (tpl_keypoints[3][0] <= 1 and tpl_keypoints[3][1] <= 1 and tpl_keypoints[3][2] >= 0.75)
+                    or (tpl_keypoints[4][0] <= 1 and tpl_keypoints[4][1] <= 1 and tpl_keypoints[4][2] >= 0.75)
+                    or (tpl_keypoints[6][0] <= 1 and tpl_keypoints[6][1] <= 1 and tpl_keypoints[6][2] >= 0.75)
+                    or (tpl_keypoints[7][0] <= 1 and tpl_keypoints[7][1] <= 1 and tpl_keypoints[7][2] >= 0.75)
+                ):
+                    arm_visible = True
+            if tpl_keypoints[9].all() != 0 or tpl_keypoints[12].all() != 0 or tpl_keypoints[10].all() != 0 or tpl_keypoints[13].all() != 0:
+                if (
+                    (tpl_keypoints[9][0] <= 1 and tpl_keypoints[9][1] <= 1 and tpl_keypoints[9][2] >= 0.75)
+                    or (tpl_keypoints[12][0] <= 1 and tpl_keypoints[12][1] <= 1 and tpl_keypoints[12][2] >= 0.75)
+                    or (tpl_keypoints[10][0] <= 1 and tpl_keypoints[10][1] <= 1 and tpl_keypoints[10][2] >= 0.75)
+                    or (tpl_keypoints[13][0] <= 1 and tpl_keypoints[13][1] <= 1 and tpl_keypoints[13][2] >= 0.75)
+                ):
+                    leg_visible = True
+            if arm_visible and leg_visible:
+                break
+
+        if leg_visible:
+            if tpl_pose_meta["width"] > tpl_pose_meta["height"]:
+                tpl_prompt = "Change the person to a standard T-pose (facing forward with arms extended). The person is standing. Feet and Hands are visible in the image."
+            else:
+                tpl_prompt = "Change the person to a standard pose with the face oriented forward and arms extending straight down by the sides. The person is standing. Feet and Hands are visible in the image."
+
+            if refer_pose_meta["width"] > refer_pose_meta["height"]:
+                refer_prompt = "Change the person to a standard T-pose (facing forward with arms extended). The person is standing. Feet and Hands are visible in the image."
+            else:
+                refer_prompt = "Change the person to a standard pose with the face oriented forward and arms extending straight down by the sides. The person is standing. Feet and Hands are visible in the image."
+        elif arm_visible:
+            if tpl_pose_meta["width"] > tpl_pose_meta["height"]:
+                tpl_prompt = "Change the person to a standard T-pose (facing forward with arms extended). Hands are visible in the image."
+            else:
+                tpl_prompt = "Change the person to a standard pose with the face oriented forward and arms extending straight down by the sides. Hands are visible in the image."
+
+            if refer_pose_meta["width"] > refer_pose_meta["height"]:
+                refer_prompt = "Change the person to a standard T-pose (facing forward with arms extended). Hands are visible in the image."
+            else:
+                refer_prompt = "Change the person to a standard pose with the face oriented forward and arms extending straight down by the sides. Hands are visible in the image."
+        else:
+            tpl_prompt = "Change the person to face forward."
+            refer_prompt = "Change the person to face forward."
+
+        return tpl_prompt, refer_prompt
+
+    def get_mask(self, frames, th_step, kp2ds_all, use_valid_body_keypoints=True):
+        frame_num = len(frames)
+        masks = [None] * frame_num
+        if frame_num < th_step:
+            num_step = 1
+        else:
+            num_step = (frame_num + th_step) // th_step
+
+        for index in range(num_step):
+            chunk_start = index * th_step
+            each_frames = frames[chunk_start : chunk_start + th_step]
+            kp2ds = kp2ds_all[chunk_start : chunk_start + th_step]
+            if len(each_frames) == 0:
+                continue
+
+            if len(each_frames) > 4:
+                key_frame_num = 4
+            else:
+                key_frame_num = 1
+
+            key_frame_step = max(len(kp2ds) // key_frame_num, 1)
+            key_frame_index_list = list(range(0, len(kp2ds), key_frame_step))[:key_frame_num]
+            if use_valid_body_keypoints:
+                key_frame_index_list = [key_frame_index for key_frame_index in key_frame_index_list if self._is_valid_pose_meta(kp2ds[key_frame_index])]
+                if len(key_frame_index_list) == 0:
+                    valid_frame_indices = [idx for idx, meta in enumerate(kp2ds) if self._is_valid_pose_meta(meta)]
+                    if len(valid_frame_indices) > key_frame_num:
+                        selected_indices = np.linspace(0, len(valid_frame_indices) - 1, key_frame_num, dtype=np.int32)
+                        key_frame_index_list = [valid_frame_indices[idx] for idx in selected_indices]
+                    else:
+                        key_frame_index_list = valid_frame_indices
+
+            key_points_index = [0, 1, 2, 5, 8, 11, 10, 13]
+            key_frame_body_points_list = []
+            for key_frame_index in key_frame_index_list:
+                if use_valid_body_keypoints:
+                    points = self._get_body_prompt_points(kp2ds[key_frame_index], kp2ds[0]["width"], kp2ds[0]["height"])
+                else:
+                    keypoints_body_list = []
+                    body_key_points = kp2ds[key_frame_index]["keypoints_body"]
+                    for each_index in key_points_index:
+                        each_keypoint = body_key_points[each_index]
+                        if None is each_keypoint:
+                            continue
+                        keypoints_body_list.append(each_keypoint)
+
+                    if len(keypoints_body_list) == 0:
+                        key_frame_body_points_list.append(np.zeros((0, 2), dtype=np.int32))
+                        continue
+
+                    keypoints_body = np.array(keypoints_body_list)[:, :2]
+                    wh = np.array([[kp2ds[0]["width"], kp2ds[0]["height"]]])
+                    points = (keypoints_body * wh).astype(np.int32)
+                key_frame_body_points_list.append(points)
+
+            chunk_masks = {}
+            sam_ran = False
+            if any(points.shape[0] > 0 for points in key_frame_body_points_list):
+                inference_state = self.predictor.init_state_v2(frames=each_frames)
+                self.predictor.reset_state(inference_state)
+                ann_obj_id = 1
+                for ann_frame_idx, points in zip(key_frame_index_list, key_frame_body_points_list):
+                    if points.shape[0] == 0:
+                        continue
+                    labels = np.array([1] * points.shape[0], np.int32)
+                    self.predictor.add_new_points(
+                        inference_state=inference_state,
+                        frame_idx=ann_frame_idx,
+                        obj_id=ann_obj_id,
+                        points=points,
+                        labels=labels,
+                    )
+
+                video_segments = {}
+                for out_frame_idx, out_obj_ids, out_mask_logits in self.predictor.propagate_in_video(inference_state):
+                    video_segments[out_frame_idx] = {out_obj_id: (out_mask_logits[i] > 0.0).cpu().numpy() for i, out_obj_id in enumerate(out_obj_ids)}
+
+                for out_frame_idx in range(len(each_frames)):
+                    out_mask = None
+                    if out_frame_idx in video_segments:
+                        for _, mask_logits in video_segments[out_frame_idx].items():
+                            out_mask = mask_logits[0].astype(np.uint8)
+                            break
+                    chunk_masks[out_frame_idx] = out_mask
+                sam_ran = True
+
+            for local_idx in range(len(each_frames)):
+                global_idx = chunk_start + local_idx
+                if global_idx >= frame_num:
+                    continue
+                mask = chunk_masks.get(local_idx) if sam_ran else None
+                if mask is not None and mask.sum() > 0:
+                    masks[global_idx] = mask
+
+        return masks

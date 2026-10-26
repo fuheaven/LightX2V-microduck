@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-28",
+  "projects": [
+    {
+      "id": "velstand",
+      "title": "官方 VelStand",
+      "group": "motion",
+      "integration": "native",
+      "description": "新版行走与站立网络，与原官方策略在相同条件下比较。",
+      "note": "独立固定版本；不改变 TinyVLA 原教师与验收基准。",
+      "source_url": "https://huggingface.co/pollen-robotics/microduck-policies",
+      "latest_revision": "1b56c396825c052a4e26e95cf2b8d8298af9e9b4",
+      "upstream_updated_at": "2026-09-14T08:32:58.000Z",
+      "workflow": "velstand",
+      "local_check": "seed 2：向左转圈通过；向前行走距离不足。2 次诊断，不作为正式验收。",
+      "required_assets": [
+        "official-velstand"
+      ],
+      "is_new": true,
+      "local_revision": "1b56c396825c052a4e26e95cf2b8d8298af9e9b4"
+    },
+    {
+      "id": "duckbatch",
+      "title": "Duckbatch 轻量学生",
+      "group": "motion",
+      "integration": "native",
+      "description": "从官方 VelStand 蒸馏的 26K 参数运动策略，可用 CPU 推理。",
+      "note": "本地 BAM 迁移实验；模型更小不代表运动更可靠。",
+      "source_url": "https://huggingface.co/craigm26/microduck-duckbatch-b002-128x128",
+      "latest_revision": "a5a2db1c561c2e7b1158259b3eb6ea605af9ba4c",
+      "upstream_updated_at": "2026-09-24T21:36:03.000Z",
+      "workflow": "duckbatch",
+      "local_check": "seed 2：行走距离与转圈幅度未达标。2 次诊断，不作为正式验收。",
+      "required_assets": [
+        "duckbatch-128"
+      ],
+      "is_new": true,
+      "local_revision": "a5a2db1c561c2e7b1158259b3eb6ea605af9ba4c"
+    },
+    {
+      "id": "laya",
+      "title": "Laya Vision · 视觉选技能",
+      "group": "brain",
+      "integration": "upstream",
+      "description": "头部图像 → 前进、转向或踢球 → 现有运动策略。",
+      "note": "201M 模型已公开；作者仿真报告 86/100。本地尚未迁移，不计入我们的成绩。",
+      "source_url": "https://huggingface.co/thaitea/laya-vision-microduck-kick",
+      "latest_revision": "7505ee2f2cf211cdff7faa2c66ef0c1472088e0b",
+      "upstream_updated_at": "2026-09-25T23:21:28.000Z",
+      "is_new": true,
+      "demo_url": "https://huggingface.co/spaces/thaitea/laya-vision-microduck-kick-demo"
+    },
+    {
+      "id": "quackd",
+      "title": "VLM 技能规划",
+      "group": "brain",
+      "integration": "adapter",
+      "description": "视觉模型选择下一步技能，本地官方策略保持运动控制。",
+      "note": "本地独立适配，借鉴 quackd 编排；需配置模型服务，尚无自主任务验收。",
+      "source_url": "https://github.com/rokbenko/quackd",
+      "latest_revision": "2c8d9cebdb335038ec878686505fab0366a63015",
+      "upstream_updated_at": "2026-09-25T15:39:34Z",
+      "workflow": "skill_planner",
+      "requires_service": true,
+      "required_assets": [],
+      "local_revision": "independent-adapter"
+    },
+    {
+      "id": "tricks",
+      "title": "助跑翻滚与滚轮绕桩",
+      "group": "motion",
+      "integration": "native",
+      "description": "社区 ONNX 与官方策略在同一任务中比较。",
+      "note": "翻滚已有短时记录；绕桩使用真值路径，BAM 迁移尚未验收。",
+      "source_url": "https://huggingface.co/langli11/microduck-tricks",
+      "latest_revision": "ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158",
+      "upstream_updated_at": "2026-09-09T22:06:32.000Z",
+      "workflow": "run_roll",
+      "required_assets": [
+        "roulade-elan-v2",
+        "roller-slalom-v2"
+      ],
+      "local_revision": "ae7284e0dc54e6ae10e5f099f4a4d3b93aed7158",
+      "extra_workflow": "cone_slalom"
+    },
+    {
+      "id": "detector",
+      "title": "发现另一只鸭子",
+      "group": "perception",
+      "integration": "native",
+      "description": "官方检测器读取渲染 RGB，显示检测框与跟踪 ID。",
+      "note": "检测实验已接入；当前仿真外观下尚未达标，不代表自主社交。",
+      "source_url": "https://huggingface.co/pollen-robotics/microduck-duck-detector",
+      "latest_revision": "da261782ed87dbc465e67d46a5ec86ed31fc807f",
+      "upstream_updated_at": "2026-09-10T15:50:27.000Z",
+      "workflow": "duck_detector",
+      "required_assets": [
+        "duck-detector-v2"
+      ],
+      "local_revision": "da261782ed87dbc465e67d46a5ec86ed31fc807f"
+    },
+    {
+      "id": "tracking",
+      "title": "同色球目标跟踪",
+      "group": "perception",
+      "integration": "native",
+      "description": "两只红球同时出现，持续跟踪最初选中的目标。",
+      "note": "本地独立实现；丢失身份不读真值补回，任务仍属实验。",
+      "source_url": "https://github.com/AlexBodner/microduck-tracking",
+      "latest_revision": "b0bb1db50d9f74e6b4a4b40a71c636720403149b",
+      "upstream_updated_at": "2026-09-02T19:05:02Z",
+      "workflow": "rgb_tracking",
+      "required_assets": [],
+      "local_revision": "independent-adapter"
+    },
+    {
+      "id": "world",
+      "title": "Water Court 庭院",
+      "group": "world",
+      "integration": "scene",
+      "description": "在 AI World 庭院中运行寻球与策略比较。",
+      "note": "已接入场景资产和碰撞；原项目 VLM 大脑未接入。",
+      "source_url": "https://github.com/shaibuafeez/microduck-ai-world",
+      "latest_revision": "be5742a22678a4cf0fbec8a2ce341b301db3937c",
+      "upstream_updated_at": "2026-08-31T19:54:33Z",
+      "workflow": "ai_world",
+      "required_assets": [],
+      "local_revision": "be5742a22678a4cf0fbec8a2ce341b301db3937c"
+    },
+    {
+      "id": "lab",
+      "title": "Microduck Lab · 跟随",
+      "group": "brain",
+      "integration": "native",
+      "description": "follow-v4 高层策略调用运动能力，使用人形目标场景。",
+      "note": "本地含几何检测与真值里程计；上游世界和机器人抽象更新未整体迁移。",
+      "source_url": "https://github.com/jonathanhawkins/microduck-lab",
+      "latest_revision": "47c62e3fb5193191d6d7e1181cc61089eaa768c7",
+      "upstream_updated_at": "2026-09-22T23:14:02Z",
+      "workflow": "follow",
+      "required_assets": [
+        "follow-v4"
+      ],
+      "local_revision": "54989dff8e4ec8735a89ff5969c17e12882bf0c0"
+    },
+    {
+      "id": "basketball",
+      "title": "篮球上保持平衡",
+      "group": "motion",
+      "integration": "native",
+      "description": "带 LSTM 记忆的关节策略，在球上保持平衡。",
+      "note": "从球上初始化；不包含自行上球，也不是 TinyVLA 成果。",
+      "source_url": "https://huggingface.co/HannesVonEssen/microduck-basketball",
+      "latest_revision": "6d8f74b97c75b1597efead1754ff54ca2af4900c",
+      "upstream_updated_at": "2026-09-11T09:41:07.000Z",
+      "workflow": "basketball",
+      "required_assets": [
+        "basketball"
+      ],
+      "local_revision": "8e7e8d281a45181871fe9f60d4fc5d9dbc751b11"
+    },
+    {
+      "id": "climb",
+      "title": "爬梯与桌面恢复",
+      "group": "motion",
+      "integration": "native",
+      "description": "27 级梯子、0.66 米桌面，爬梯和起身双策略。",
+      "note": "首次本地测试未上桌；策略切换读取真值，仍属实验。",
+      "source_url": "https://github.com/Vottivott/microduck-playground",
+      "latest_revision": "4289c236864ea7d8f9a72951667b31c4fcd4b935",
+      "upstream_updated_at": "2026-09-24T12:17:26Z",
+      "workflow": "climb_desk",
+      "required_assets": [
+        "climb-climber",
+        "climb-getup",
+        "climb-scene"
+      ],
+      "local_revision": "748a6a8ad16c5e5796f5960d0957861ac1329810"
+    },
+    {
+      "id": "chimney",
+      "title": "窄缝攀爬",
+      "group": "motion",
+      "integration": "upstream",
+      "description": "进入窄缝、支撑上爬、退出平台并起身。",
+      "note": "9 月新增；需要专用几何与多策略切换，本地尚未移植。",
+      "source_url": "https://huggingface.co/HannesVonEssen/microduck-chimney-climb",
+      "latest_revision": "c62960d9c21c0cb7449cef1be7ae7827174d0c82",
+      "upstream_updated_at": "2026-09-24T12:24:34.000Z",
+      "is_new": true,
+      "demo_url": "https://github.com/Vottivott/microduck-playground/tree/4289c236864ea7d8f9a72951667b31c4fcd4b935/experiments/chimney-climb"
+    },
+    {
+      "id": "headstand",
+      "title": "倒立动作组",
+      "group": "motion",
+      "integration": "upstream",
+      "description": "六种倒立姿态与转换，公开权重和逐次评测记录。",
+      "note": "作者成绩来自原 checkpoint；ONNX、接触交接与本地动力学仍需核对。",
+      "source_url": "https://huggingface.co/ZachGarner/microduck-headstand-fold",
+      "latest_revision": "a889f49599a658c1c6ca780e446ed98c381b4093",
+      "upstream_updated_at": "2026-09-22T13:57:20.000Z",
+      "is_new": true
+    },
+    {
+      "id": "academy",
+      "title": "Academy · 自然语言动作实验",
+      "group": "training",
+      "integration": "upstream",
+      "description": "自然语言描述动作，数值判据与视觉复核共同检查结果。",
+      "note": "装死、啄食权重已公开，但视觉复核有保留意见。Academy Space 此次访问返回 401，仅链接公开工件。",
+      "source_url": "https://huggingface.co/tfrere/microduck-move-play-dead-flat",
+      "latest_revision": "6eed3e2cd3bfaa930eab03fb1825395b356de9e3",
+      "upstream_updated_at": "2026-09-24T12:51:14.000Z",
+      "is_new": true
+    },
+    {
+      "id": "school",
+      "title": "鸭子学校",
+      "group": "training",
+      "integration": "tool",
+      "description": "描述任务，搜索高层参数，再调用官方运动策略测试。",
+      "note": "本地采用课程与 CEM 参数搜索，不重新训练官方底层 RL。",
+      "source_url": "https://huggingface.co/spaces/ysharma/gr-workflow-microduck-school",
+      "latest_revision": "b18978c3246a20b4476f6d6ce1f4940c7e4675a1",
+      "upstream_updated_at": "2026-09-01T06:18:14.000Z",
+      "internal_url": "/school",
+      "local_revision": "independent-course-adapter"
+    },
+    {
+      "id": "rough",
+      "title": "复杂地形策略对照",
+      "group": "motion",
+      "integration": "native",
+      "description": "加载 rough-walk-g，在当前平台检查行走表现。",
+      "note": "目前提供平地对照，未完整迁移作者的复杂地形场景。",
+      "source_url": "https://huggingface.co/RemiFabre/microduck-rough-walk-g",
+      "latest_revision": "242876a0aa8b40b702142fb0a5677fd43bc88a4c",
+      "upstream_updated_at": "2026-08-30T20:51:31.000Z",
+      "workflow": "rough",
+      "required_assets": [
+        "rough-walk-g"
+      ],
+      "local_revision": "242876a0aa8b40b702142fb0a5677fd43bc88a4c"
+    }
+  ],
+  "discovery": {
+    "hf_models": 94,
+    "hf_spaces": 37,
+    "github_total_matches": 328,
+    "github_inspected_search_results": 40,
+    "note": "关键词调查快照，不代表穷尽。无工件镜像不进入可运行目录；沿用移除 TorchRL 的决定。"
+  }
+}

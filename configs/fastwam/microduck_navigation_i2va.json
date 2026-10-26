@@ -1,0 +1,19 @@
+{
+  "adapter_model_path": "/path/to/trained_microduck_navigation.pt",
+  "dataset_stats_path": "/path/to/train_only_dataset_stats.json",
+  "camera_size": 256,
+  "action_chunk_size": 32,
+  "actions_per_plan": 1,
+  "action_infer_steps": 20,
+  "action_sample_shift": 1.0,
+  "action_dim_hidden": 1024,
+  "action_dim": 5,
+  "robot_state_dim": 48,
+  "policy_profile": "microduck_navigation",
+  "vae_std_reciprocal_fp32": true,
+  "vae_rms_norm_mode": "fastwam_reference",
+  "normalize_mode": "min-max",
+  "binarize_gripper": false,
+  "gripper_postprocess": false,
+  "default_prompt": "A video recorded from a robot's point of view executing the following instruction: {task_prompt}"
+}

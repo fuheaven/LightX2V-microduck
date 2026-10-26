@@ -1,0 +1,30 @@
+{
+  "schema": "microduck_historical_evidence_export_v1",
+  "scope": "Historical development reports. Current exported runtime has later fixes; these are not fresh acceptance results.",
+  "files": {
+    "expanded-clear-development-assessment-v1.json": {
+      "source_relative_path": "artifacts/navigation/expanded-clear-development-assessment-v1.json",
+      "sha256": "b32fc7ad46e79b28f987d5ebdec82fe4d758af4a18303682959d00b28b4157d7"
+    },
+    "single-obstacle-assessment.json": {
+      "source_relative_path": "artifacts/navigation/capability-showcase-v1/single-obstacle-assessment.json",
+      "sha256": "52fb461792e6d2b40a8e1d8e049f9417e62c2ac55f2f1541d16d58531b3b51ef"
+    },
+    "plain-no-age-analysis.json": {
+      "source_relative_path": "artifacts/navigation/plain-no-age-retest-v1/analysis.json",
+      "sha256": "81b42d80c0e2b2a30d73998941d77f41f4129ec548f5c214fadc4f8d70a51d4e"
+    },
+    "expanded-clear-development-protocol-v1.json": {
+      "source_relative_path": "artifacts/navigation/expanded-clear-development-protocol-v1.json",
+      "sha256": "9c6bc89a15f41169cee85be73d225f738027b7ec9b13443171074af72b37f2f6"
+    },
+    "retained-historical-offline-report.json": {
+      "source_relative_path": "H200 world-action/reports/realtime-control-step000250-dev-v1/report.json",
+      "sha256": "ef0cf79caa98f0178fc98595e71591873844af5298856593c4a1abb576477549"
+    },
+    "plain-ttl1000-analysis.json": {
+      "source_relative_path": "artifacts/navigation/plain-ttl1000-retest-v1/split-completed/analysis.json",
+      "sha256": "11e269570a8e5c621a25f437db0f1f5f8a794ac5f01cd47b8638bbca248030ab"
+    }
+  }
+}

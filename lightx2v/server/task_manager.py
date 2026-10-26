@@ -1,0 +1,338 @@
+import os
+import threading
+import uuid
+from collections import OrderedDict
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, Optional
+
+from loguru import logger
+
+from .metrics import monitor_cli
+
+
+def _env_positive_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        logger.warning(f"Invalid {name}={raw!r} (not an int); using default {default}")
+        return default
+    if value <= 0:
+        logger.warning(f"Invalid {name}={value} (must be > 0); using default {default}")
+        return default
+    return value
+
+
+class TaskStatus(Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+
+@dataclass
+class TaskInfo:
+    task_id: str
+    status: TaskStatus
+    message: Any
+    start_time: datetime = field(default_factory=datetime.now)
+    end_time: Optional[datetime] = None
+    error: Optional[str] = None
+    error_type: Optional[str] = None
+    save_result_path: Optional[str] = None
+    result_png: Optional[bytes] = None
+    usage: Optional[dict] = None
+    result_data: Optional[dict] = None
+    stop_event: threading.Event = field(default_factory=threading.Event)
+    thread: Optional[threading.Thread] = None
+
+
+class TaskManager:
+    def __init__(self, max_queue_size: int = 100, result_png_keep_count: Optional[int] = None):
+        self.max_queue_size = max_queue_size
+        if result_png_keep_count is None:
+            result_png_keep_count = _env_positive_int("LIGHTX2V_RESULT_PNG_KEEP_COUNT", 50)
+        self.result_png_keep_count = result_png_keep_count
+
+        self._tasks: OrderedDict[str, TaskInfo] = OrderedDict()
+        self._lock = threading.RLock()
+        self._task_available = threading.Condition(self._lock)
+
+        self._processing_lock = threading.Lock()
+        self._current_processing_task: Optional[str] = None
+
+        self.total_tasks = 0
+        self.completed_tasks = 0
+        self.failed_tasks = 0
+        self._emit_queue_metrics_unlocked()
+
+    def create_task(self, message: Any) -> str:
+        with self._task_available:
+            if hasattr(message, "task_id") and message.task_id in self._tasks:
+                raise RuntimeError(f"Task ID {message.task_id} already exists")
+
+            active_tasks = sum(1 for t in self._tasks.values() if t.status in [TaskStatus.PENDING, TaskStatus.PROCESSING])
+            if active_tasks >= self.max_queue_size:
+                raise RuntimeError(f"Task queue is full (max {self.max_queue_size} tasks)")
+
+            task_id = getattr(message, "task_id", str(uuid.uuid4()))
+            task_info = TaskInfo(task_id=task_id, status=TaskStatus.PENDING, message=message, save_result_path=getattr(message, "save_result_path", None))
+
+            self._tasks[task_id] = task_info
+            self.total_tasks += 1
+
+            self._cleanup_old_tasks()
+            self._emit_queue_metrics_unlocked()
+            self._task_available.notify()
+
+            return task_id
+
+    def start_task(self, task_id: str) -> TaskInfo:
+        with self._lock:
+            if task_id not in self._tasks:
+                raise KeyError(f"Task {task_id} not found")
+
+            task = self._tasks[task_id]
+            task.status = TaskStatus.PROCESSING
+            task.start_time = datetime.now()
+
+            self._tasks.move_to_end(task_id)
+            self._emit_queue_metrics_unlocked()
+
+            return task
+
+    def complete_task(
+        self,
+        task_id: str,
+        save_result_path: Optional[str] = None,
+        result_png: Optional[bytes] = None,
+        usage: Optional[dict] = None,
+        result_data: Optional[dict] = None,
+    ):
+        with self._lock:
+            if task_id not in self._tasks:
+                logger.warning(f"Task {task_id} not found for completion")
+                return
+
+            task = self._tasks[task_id]
+            task.status = TaskStatus.COMPLETED
+            task.end_time = datetime.now()
+            task.save_result_path = save_result_path
+            task.result_png = result_png
+            task.usage = usage
+            task.result_data = result_data
+
+            if result_png is not None:
+                self._evict_old_result_png_unlocked()
+
+            self.completed_tasks += 1
+            self._emit_queue_metrics_unlocked()
+
+    def fail_task(self, task_id: str, error: str, error_type: Optional[str] = None):
+        with self._lock:
+            if task_id not in self._tasks:
+                logger.warning(f"Task {task_id} not found for failure")
+                return
+
+            task = self._tasks[task_id]
+            task.status = TaskStatus.FAILED
+            task.end_time = datetime.now()
+            task.error = error
+            task.error_type = error_type
+
+            self.failed_tasks += 1
+            self._emit_queue_metrics_unlocked()
+
+    def cancel_task(self, task_id: str) -> bool:
+        with self._lock:
+            if task_id not in self._tasks:
+                return False
+
+            task = self._tasks[task_id]
+
+            if task.status in [TaskStatus.COMPLETED, TaskStatus.FAILED]:
+                return False
+
+            task.stop_event.set()
+            task.status = TaskStatus.CANCELLED
+            task.end_time = datetime.now()
+            task.error = "Task cancelled by user"
+
+            if task.thread and task.thread.is_alive():
+                task.thread.join(timeout=5)
+
+            self._emit_queue_metrics_unlocked()
+            return True
+
+    def cancel_all_tasks(self):
+        with self._lock:
+            for task_id, task in list(self._tasks.items()):
+                if task.status in [TaskStatus.PENDING, TaskStatus.PROCESSING]:
+                    self.cancel_task(task_id)
+
+    def get_task(self, task_id: str) -> Optional[TaskInfo]:
+        with self._lock:
+            return self._tasks.get(task_id)
+
+    def get_task_result_png(self, task_id: str) -> Optional[bytes]:
+        with self._lock:
+            task = self._tasks.get(task_id)
+            if not task:
+                return None
+            return task.result_png
+
+    def get_task_result_usage(self, task_id: str) -> Optional[dict]:
+        with self._lock:
+            task = self._tasks.get(task_id)
+            if not task:
+                return None
+            return task.usage
+
+    def get_task_result_data(self, task_id: str) -> Optional[dict]:
+        with self._lock:
+            task = self._tasks.get(task_id)
+            if not task:
+                return None
+            return task.result_data
+
+    def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
+        task = self.get_task(task_id)
+        if not task:
+            return None
+
+        return {
+            "task_id": task.task_id,
+            "status": task.status.value,
+            "start_time": task.start_time,
+            "end_time": task.end_time,
+            "error": task.error,
+            "error_type": task.error_type or "",
+            "save_result_path": task.save_result_path,
+        }
+
+    def get_all_tasks(self):
+        with self._lock:
+            return {task_id: self.get_task_status(task_id) for task_id in self._tasks}
+
+    def get_active_task_count(self) -> int:
+        with self._lock:
+            return sum(1 for t in self._tasks.values() if t.status in [TaskStatus.PENDING, TaskStatus.PROCESSING])
+
+    def get_pending_task_count(self) -> int:
+        with self._lock:
+            return sum(1 for t in self._tasks.values() if t.status == TaskStatus.PENDING)
+
+    def is_processing(self) -> bool:
+        with self._lock:
+            return self._current_processing_task is not None
+
+    def acquire_processing_lock(self, task_id: str, timeout: Optional[float] = None) -> bool:
+        acquired = self._processing_lock.acquire(timeout=timeout if timeout else False)
+        if acquired:
+            with self._lock:
+                self._current_processing_task = task_id
+                logger.info(f"Task {task_id} acquired processing lock")
+        return acquired
+
+    def release_processing_lock(self, task_id: str):
+        with self._lock:
+            if self._current_processing_task == task_id:
+                self._current_processing_task = None
+                try:
+                    self._processing_lock.release()
+                    logger.info(f"Task {task_id} released processing lock")
+                except RuntimeError as e:
+                    logger.warning(f"Task {task_id} tried to release lock but failed: {e}")
+
+    def get_next_pending_task(self) -> Optional[str]:
+        with self._lock:
+            return self._get_next_pending_task_unlocked()
+
+    def wait_for_next_pending_task(self, timeout: Optional[float] = None) -> Optional[str]:
+        with self._task_available:
+            task_id = self._get_next_pending_task_unlocked()
+            if task_id:
+                return task_id
+            self._task_available.wait(timeout=timeout)
+            return self._get_next_pending_task_unlocked()
+
+    def _get_next_pending_task_unlocked(self) -> Optional[str]:
+        for task_id, task in self._tasks.items():
+            if task.status == TaskStatus.PENDING:
+                return task_id
+        return None
+
+    def get_service_status(self) -> Dict[str, Any]:
+        with self._lock:
+            active_tasks = [task_id for task_id, task in self._tasks.items() if task.status == TaskStatus.PROCESSING]
+
+            pending_count = sum(1 for t in self._tasks.values() if t.status == TaskStatus.PENDING)
+
+            return {
+                "service_status": "busy" if self._current_processing_task else "idle",
+                "current_task": self._current_processing_task,
+                "active_tasks": active_tasks,
+                "pending_tasks": pending_count,
+                "queue_size": self.max_queue_size,
+                "total_tasks": self.total_tasks,
+                "completed_tasks": self.completed_tasks,
+                "failed_tasks": self.failed_tasks,
+            }
+
+    def set_max_queue_size(self, max_queue_size: int):
+        if max_queue_size <= 0:
+            raise ValueError("max_queue_size must be positive")
+        with self._lock:
+            self.max_queue_size = max_queue_size
+            self._emit_queue_metrics_unlocked()
+
+    def _cleanup_old_tasks(self, keep_count: int = 1000):
+        if len(self._tasks) <= keep_count:
+            return
+
+        completed_tasks = [(task_id, task) for task_id, task in self._tasks.items() if task.status in [TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED]]
+
+        completed_tasks.sort(key=lambda x: x[1].end_time or x[1].start_time)
+
+        remove_count = len(self._tasks) - keep_count
+        for task_id, _ in completed_tasks[:remove_count]:
+            del self._tasks[task_id]
+            logger.debug(f"Cleaned up old task: {task_id}")
+
+    def _evict_old_result_png_unlocked(self):
+        """Free the oldest result_png blob once the cap is exceeded.
+
+        Caller must hold ``self._lock``. Only the heavy bytes are dropped (set to None); the
+        task record and its metadata stay in ``_tasks`` so ``get_task_status`` still works.
+
+        Runs after every blob-adding completion, so the cache is at most one blob over the
+        cap and evicting a single oldest entry restores it -- no full sort needed. ``_tasks``
+        is in start order (start_task's move_to_end), not completion order, so the oldest is
+        selected explicitly by ``end_time``.
+        """
+        keep = self.result_png_keep_count
+        blob_tasks = [(task_id, task) for task_id, task in self._tasks.items() if task.result_png is not None]
+        if len(blob_tasks) <= keep:
+            return
+
+        oldest_id, oldest = min(blob_tasks, key=lambda x: x[1].end_time or x[1].start_time)
+        oldest.result_png = None
+        logger.debug(f"Evicted oldest result_png blob (task {oldest_id}), keeping {keep} most recent")
+
+    def _emit_queue_metrics_unlocked(self):
+        pending_tasks = sum(1 for t in self._tasks.values() if t.status == TaskStatus.PENDING)
+        active_tasks = sum(1 for t in self._tasks.values() if t.status in [TaskStatus.PENDING, TaskStatus.PROCESSING])
+        try:
+            monitor_cli.lightx2v_task_queue_pending_size.set(pending_tasks)
+            monitor_cli.lightx2v_task_queue_active_size.set(active_tasks)
+            monitor_cli.lightx2v_task_queue_capacity.set(self.max_queue_size)
+        except Exception as e:
+            logger.debug(f"Failed to emit queue metrics: {e}")
+
+
+task_manager = TaskManager()

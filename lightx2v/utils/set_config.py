@@ -1,0 +1,470 @@
+import json
+import os
+
+import torch
+import torch.distributed as dist
+from loguru import logger
+from torch.distributed.tensor.device_mesh import init_device_mesh
+
+from lightx2v.utils.input_info import ALL_INPUT_INFO_KEYS
+from lightx2v.utils.lockable_dict import LockableDict
+from lightx2v.utils.utils import find_torch_model_path, is_main_process
+from lightx2v_platform.base.global_var import AI_DEVICE
+
+
+def get_default_config():
+    default_config = {
+        "do_mm_calib": False,
+        "cpu_offload": False,
+        "max_area": False,
+        "vae_stride": (4, 8, 8),
+        "patch_size": (1, 2, 2),
+        "feature_caching": "NoCaching",  # ["NoCaching", "TaylorSeer", "Tea"]
+        "teacache_thresh": 0.26,
+        "use_ret_steps": False,
+        "use_bfloat16": True,
+        "lora_configs": None,  # List of dicts with 'path' and 'strength' keys
+        "parallel": False,
+        "seq_parallel": False,
+        "cfg_parallel": False,
+        "enable_cfg": False,
+        "warmup": False,
+        "use_image_encoder": True,
+    }
+    default_config = LockableDict(default_config)
+    return default_config
+
+
+def validate_model_task_args(args):
+    """Validate model/task combinations before assembling the runtime config."""
+    task = getattr(args, "task", None)
+    model_cls = getattr(args, "model_cls", None)
+    has_omni_vision_subtask = hasattr(args, "omni_vision_subtask")
+    omni_vision_subtask = getattr(args, "omni_vision_subtask", None)
+
+    if task == "omni_vision_task":
+        if model_cls != "sensenova_vision":
+            raise ValueError("--task omni_vision_task requires --model_cls sensenova_vision")
+        # Offline inference exposes this argument and must select one subtask.
+        # The resident server omits it because each request chooses a subtask
+        # after the complete model has been loaded.
+        if has_omni_vision_subtask and not omni_vision_subtask:
+            raise ValueError("--omni_vision_subtask is required when --task omni_vision_task")
+    else:
+        if model_cls == "sensenova_vision":
+            raise ValueError("--model_cls sensenova_vision requires --task omni_vision_task")
+        if omni_vision_subtask:
+            raise ValueError("--omni_vision_subtask is only valid with --task omni_vision_task")
+
+
+def set_args2config(args):
+    config = get_default_config()
+    config.update({k: v for k, v in vars(args).items() if k not in ALL_INPUT_INFO_KEYS and v is not None})
+
+    # Snapshot worldmirror-specific CLI flags so they can win over JSON
+    # defaults after auto_calc_config merges the JSON in. See the
+    # ``worldmirror`` branch of ``auto_calc_config`` for the replay logic.
+    _wm_cli_keys = (
+        "subfolder",
+        "disable_heads",
+        "enable_bf16",
+        "save_rendered",
+        "render_interp_per_pair",
+        "render_depth",
+        "wm_config_path",
+        "wm_ckpt_path",
+    )
+    config["_wm_cli_snapshot"] = {k: getattr(args, k, None) for k in _wm_cli_keys if hasattr(args, k)}
+    return config
+
+
+def auto_calc_config(config):
+    cli_num_iterations = config.get("num_iterations", None)
+    if config.get("config_json", None) is not None:
+        logger.info(f"Loading some config from {config['config_json']}")
+        with open(config["config_json"], "r") as f:
+            config_json = json.load(f)
+        config.update(config_json)
+        if cli_num_iterations is not None:
+            config["num_iterations"] = cli_num_iterations
+
+    if config.get("model_cls") == "ltx2_5":
+        # Match Wan's checkpoint lookup contract: an explicit component path
+        # wins; otherwise find the released filename below --model_path.
+        component_files = {
+            "dit_original_ckpt": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+            "text_encoder_original_ckpt": "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+            "video_vae_original_ckpt": "vae/ltx-2.5-video-vae-bf16.safetensors",
+            "audio_vae_original_ckpt": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+            "duration_head_original_ckpt": "model_patches/ltx-2.5-duration-head-bf16.safetensors",
+            "upsampler_original_ckpt": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+        }
+        for key, filename in component_files.items():
+            config[key] = find_torch_model_path(config, key, filename, subdir=[])
+
+        # The release root has no config.json; the authoritative transformer
+        # architecture is embedded in the safetensors metadata.  Merge it in
+        # just like the directory-based LTX-2 loader does, while retaining
+        # LightX2V's rope implementation selector.
+        transformer_path = config.get("dit_original_ckpt")
+        if transformer_path and os.path.isfile(transformer_path):
+            try:
+                from safetensors import safe_open
+
+                with safe_open(transformer_path, framework="pt", device="cpu") as f:
+                    metadata = f.metadata() or {}
+                checkpoint_config = json.loads(metadata.get("config", "{}"))
+                transformer_config = dict(checkpoint_config.get("transformer", {}))
+                transformer_config.pop("rope_type", None)
+                config.update(transformer_config)
+                config["ltx_model_version"] = metadata.get("model_version", "")
+            except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+                raise ValueError(f"Failed to read LTX-2.5 transformer metadata from {transformer_path}: {exc}") from exc
+
+    assert os.path.exists(config["model_path"]), f"Model path not found: {config['model_path']}"
+
+    if config["model_cls"] == "hunyuan_video_1.5":  # Special config for hunyuan video 1.5 model folder structure
+        config["transformer_model_path"] = os.path.join(config["model_path"], "transformer", config["transformer_model_name"])  # transformer_model_name: [480p_t2v, 480p_i2v, 720p_t2v, 720p_i2v]
+        if os.path.exists(os.path.join(config["transformer_model_path"], "config.json")):
+            with open(os.path.join(config["transformer_model_path"], "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+    elif config["model_cls"] in ["worldplay_distill", "worldplay_ar", "worldplay_bi"]:  # Special config for WorldPlay models
+        config["transformer_model_path"] = os.path.join(config["model_path"], "transformer", config["transformer_model_name"])
+        if os.path.exists(os.path.join(config["transformer_model_path"], "config.json")):
+            with open(os.path.join(config["transformer_model_path"], "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+    elif config["model_cls"] == "hunyuan3d":
+        # Hunyuan3D shape loads hunyuan3d-dit-v2-1/config.yaml + checkpoint in the runner.
+        pass
+    elif config["model_cls"] == "hidream_o1_image":
+        pass
+    elif config["model_cls"] == "sensenova_vision":
+        llm_config_path = os.path.join(config["model_path"], "llm_config.json")
+        vit_config_path = os.path.join(config["model_path"], "vit_config.json")
+        missing = [path for path in (llm_config_path, vit_config_path) if not os.path.isfile(path)]
+        if missing:
+            raise FileNotFoundError(f"SenseNova-Vision model_path must contain llm_config.json and vit_config.json; missing: {missing}")
+        with open(llm_config_path, "r") as f:
+            config["llm_config"] = json.load(f)
+        with open(vit_config_path, "r") as f:
+            config["vit_config"] = json.load(f)
+
+        # SenseNova's root config.json is project metadata, not a Bagel model
+        # config. Assemble the shared Bagel structure explicitly instead.
+        config["vae_config"] = {"z_channels": 16, "downsample": 8}
+        config["visual_gen"] = True
+        config["visual_und"] = True
+        config["latent_patch_size"] = 2
+        config["max_latent_size_update"] = 64
+        config["vit_max_num_patch_per_side"] = 70
+        config["connector_act"] = "gelu_pytorch_tanh"
+        config["interpolate_pos"] = False
+        config["enable_vision_context"] = True
+        sensenova_source_path = os.getenv("SENSENOVA_SOURCE_PATH", "").strip()
+        if sensenova_source_path:
+            config["sensenova_source_path"] = sensenova_source_path
+    elif config["model_cls"] == "wan2.2_s2v":
+        config_path = os.path.join(config["model_path"], "config.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        config.setdefault("text_dim", 4096)
+        config.setdefault("patch_size", (1, 2, 2))
+        config.setdefault("window_size", (-1, -1))
+        config.setdefault("qk_norm", True)
+        config.setdefault("cross_attn_norm", True)
+    elif config["model_cls"] == "worldmirror":
+        # WorldMirror weights live under {model_path}/{subfolder}/, with a config.json
+        # alongside model.safetensors. The runner loads this config directly; here we
+        # only expose the resolved transformer path for logging.
+        subfolder = config.get("subfolder", "HY-WorldMirror-2.0")
+        candidate = os.path.join(config["model_path"], subfolder)
+        if os.path.isdir(candidate):
+            config["transformer_model_path"] = candidate
+        else:
+            config["transformer_model_path"] = config["model_path"]
+
+        # Re-apply worldmirror-specific CLI overrides. ``auto_calc_config`` just
+        # finished merging the JSON, which will have clobbered any store_true /
+        # default-bearing CLI flags that the user set on the command line. We
+        # pull those specific keys back from the original args snapshot so that
+        # ``--enable_bf16`` / ``--save_rendered`` / ``--disable_heads`` etc.
+        # always win over JSON defaults.
+        #
+        # Caveat: ``argparse``'s ``store_true`` flags look the same (value
+        # ``False``) whether the user omitted them or explicitly wants False,
+        # so we only treat non-False, non-None values as explicit overrides.
+        # This matches the documented "CLI overrides JSON-true is not possible
+        # without a dedicated --no_xxx flag" behaviour.
+        _cli_snapshot = config.pop("_wm_cli_snapshot", None)
+        if isinstance(_cli_snapshot, dict):
+            for k, v in _cli_snapshot.items():
+                if v is None or v is False:
+                    continue
+                config[k] = v
+            # Translate the ``--wm_config_path`` / ``--wm_ckpt_path`` CLI
+            # aliases to the runner-visible keys, and don't leave the
+            # aliases lying around in the printed/locked config.
+            wm_config = config.pop("wm_config_path", None)
+            wm_ckpt = config.pop("wm_ckpt_path", None)
+            if wm_config:
+                config["config_path"] = wm_config
+            if wm_ckpt:
+                config["ckpt_path"] = wm_ckpt
+    elif config["model_cls"] == "dreamzero":
+        config_path = os.path.join(config["model_path"], "config.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+            action_head_config = model_config.get("action_head_cfg", {}).get("config", {})
+            diffusion_model_config = action_head_config.get("diffusion_model_cfg", {})
+            config.update(action_head_config)
+            config.update(diffusion_model_config)
+            if "num_frames" in config:
+                config["target_video_length"] = config["num_frames"]
+            if "out_dim" in config:
+                config["num_channels_latents"] = config["out_dim"]
+    elif config["model_cls"] == "longcat_image":  # Special config for longcat_image: load both root and transformer config
+        if os.path.exists(os.path.join(config["model_path"], "config.json")):
+            with open(os.path.join(config["model_path"], "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        if os.path.exists(os.path.join(config["model_path"], "transformer", "config.json")):
+            with open(os.path.join(config["model_path"], "transformer", "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+    elif config["model_cls"] == "cosmos3":
+        transformer_config_path = os.path.join(config["model_path"], "transformer", "config.json")
+        if os.path.exists(transformer_config_path):
+            with open(transformer_config_path, "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        config.setdefault("target_video_length", 1)
+        config.setdefault("target_fps", config.get("base_fps", 24))
+        config.setdefault("enable_cfg", True)
+    elif config["model_cls"] == "lingbot_video":
+        transformer_config_path = os.path.join(config["model_path"], "transformer", "config.json")
+        if os.path.exists(transformer_config_path):
+            with open(transformer_config_path, "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        config.setdefault("target_video_length", 1)
+        config.setdefault("target_fps", 24)
+        config.setdefault("enable_cfg", True)
+        config.setdefault("vae_stride", (4, 8, 8))
+        config.setdefault("vae_scale_factor_spatial", 8)
+        config.setdefault("vae_scale_factor_temporal", 4)
+        config.setdefault("vae_scale_factor", 8)
+    elif config["model_cls"] == "minimax_h3":
+        supported_tasks = {"t2av", "i2av", "l2av", "fl2av", "ref2av"}
+        task = config.get("task")
+        if task not in supported_tasks:
+            raise ValueError(f"MiniMax-H3 supports {sorted(supported_tasks)}, got {task!r}")
+        transformer_subfolder = "transformer_ref" if task == "ref2av" else "transformer"
+        transformer_path = os.path.join(config["model_path"], transformer_subfolder)
+        transformer_config_path = os.path.join(transformer_path, "config.json")
+        if not os.path.isfile(transformer_config_path):
+            raise FileNotFoundError(f"MiniMax-H3 transformer config not found: {transformer_config_path}")
+        with open(transformer_config_path, "r") as f:
+            model_config = json.load(f)
+        config.update(model_config)
+        config["dit_original_ckpt"] = transformer_path
+        if config.get("dit_quantized_ckpt"):
+            config["dit_quantized"] = True
+            config["dit_quant_scheme"] = {
+                "fp8": "fp8-q8f",
+                "int8": "int8-q8f",
+            }.get(config.get("dit_quant_scheme"), config.get("dit_quant_scheme", "Default"))
+        config["enable_cfg"] = False
+        config["fps"] = 24
+        config["vae_spatial_scale_factor"] = 16
+        config["vae_scale_factor"] = 16
+        config.setdefault("video_flow_shift", 12.0)
+        config.setdefault("audio_flow_shift", 3.0)
+        config.setdefault("audio_sampling_rate", 32000)
+    else:
+        if os.path.exists(os.path.join(config["model_path"], "config.json")):
+            with open(os.path.join(config["model_path"], "config.json"), "r") as f:
+                model_config = json.load(f)
+            if config["model_cls"] in ["ltx2", "ltx2_ar", "ltx2_5"]:
+                # LTX uses rope_type for the layout ("split"), while LightX2V
+                # uses it to select a registered RoPE implementation.
+                model_config.pop("rope_type", None)
+            config.update(model_config)
+        elif os.path.exists(os.path.join(config["model_path"], "low_noise_model", "config.json")):  # 需要一个更优雅的update方法
+            with open(os.path.join(config["model_path"], "low_noise_model", "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        elif os.path.exists(os.path.join(config["model_path"], "distill_models", "low_noise_model", "config.json")):  # 需要一个更优雅的update方法
+            with open(os.path.join(config["model_path"], "distill_models", "low_noise_model", "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        elif os.path.exists(os.path.join(config["model_path"], "original", "config.json")):
+            with open(os.path.join(config["model_path"], "original", "config.json"), "r") as f:
+                model_config = json.load(f)
+            config.update(model_config)
+        elif os.path.exists(os.path.join(config["model_path"], "transformer", "config.json")):
+            with open(os.path.join(config["model_path"], "transformer", "config.json"), "r") as f:
+                model_config = json.load(f)
+            if config["model_cls"] in ["ltx2", "ltx2_ar", "ltx2_5"]:
+                # Upstream LTX2 uses rope_type for the layout name ("split"),
+                # while LightX2V uses it as the registered RoPE implementation.
+                model_config.pop("rope_type", None)
+            elif config["model_cls"] == "z_image":
+                # https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/blob/main/transformer/config.json
+                z_image_patch_size = model_config.pop("all_patch_size", [2])
+                z_image_f_patch_size = model_config.pop("all_f_patch_size", [1])
+                if not (len(z_image_patch_size) == 1 and len(z_image_f_patch_size) == 1):
+                    raise ValueError(
+                        f"Expected 'all_patch_size' and 'all_f_patch_size' in z_image config to be lists of length 1, "
+                        f"but got lengths {len(z_image_patch_size)} and {len(z_image_f_patch_size)} respectively. "
+                        f"If the official z-image configs have been updated, ensure the current lightx2v's z-image model "
+                        f"implementation matches the new configs then update this check."
+                    )
+
+                model_config["patch_size"] = z_image_patch_size[0]
+                model_config["f_patch_size"] = z_image_f_patch_size[0]
+
+            config.update(model_config)
+        # load quantized config
+        if config.get("dit_quantized_ckpt", None) is not None:
+            config_path = os.path.join(config["dit_quantized_ckpt"], "config.json")
+            if os.path.exists(config_path):
+                with open(config_path, "r") as f:
+                    model_config = json.load(f)
+                config.update(model_config)
+
+    # Some upstream/offical configs use `num_inference_steps`, while the shared
+    # LightX2V scheduler stack expects `infer_steps`.
+    if "infer_steps" not in config and "num_inference_steps" in config:
+        config["infer_steps"] = config["num_inference_steps"]
+
+    if config["model_cls"] == "hunyuan_image3":
+        from lightx2v.models.networks.hunyuan_image3.config import normalize_hunyuan_image3_config
+
+        normalize_hunyuan_image3_config(config)
+
+    if config["model_cls"] == "lingbot_va" and "target_video_length" not in config:
+        ar_config = config.get("ar_config", {})
+        required_keys = ("num_frame_per_chunk", "num_chunks")
+        missing_keys = [key for key in required_keys if key not in ar_config]
+        if missing_keys:
+            raise ValueError(f"LingBot-VA requires ar_config.{', ar_config.'.join(missing_keys)} to derive target_video_length.")
+        latent_frames = int(ar_config["num_frame_per_chunk"]) * int(ar_config["num_chunks"])
+        temporal_stride = int(config["vae_stride"][0])
+        if latent_frames <= 0 or temporal_stride <= 0:
+            raise ValueError(f"LingBot-VA requires positive latent frame count and VAE temporal stride, got latent_frames={latent_frames}, temporal_stride={temporal_stride}.")
+        config["target_video_length"] = (latent_frames - 1) * temporal_stride + 1
+        logger.info(f"Auto-set LingBot-VA target_video_length={config['target_video_length']} from {latent_frames} latent frames and temporal stride {temporal_stride}.")
+
+    if config["model_cls"] != "minimax_h3" and config["task"] in ["i2v", "t2av", "i2av", "i2va", "s2v", "rs2v", "ltx2_s2v", "v2av"] and "target_video_length" in config and "vae_stride" in config:
+        if config["target_video_length"] % config["vae_stride"][0] != 1:
+            logger.warning(f"`num_frames - 1` has to be divisible by {config['vae_stride'][0]}. Rounding to the nearest number.")
+            config["target_video_length"] = config["target_video_length"] // config["vae_stride"][0] * config["vae_stride"][0] + 1
+
+    # Load diffusers vae config
+    if os.path.exists(os.path.join(config["model_path"], "vae", "config.json")):
+        with open(os.path.join(config["model_path"], "vae", "config.json"), "r") as f:
+            vae_config = json.load(f)
+            if "temperal_downsample" in vae_config:
+                config["vae_scale_factor"] = 2 ** len(vae_config["temperal_downsample"])
+            elif "block_out_channels" in vae_config:
+                config["vae_scale_factor"] = 2 ** (len(vae_config["block_out_channels"]) - 1)
+            if config["model_cls"] == "ernie_image":
+                config["vae_scale_factor"] = 2 ** len(vae_config["block_out_channels"])
+
+    if config["model_cls"] == "cosmos3" and os.path.exists(os.path.join(config["model_path"], "vae", "config.json")):
+        with open(os.path.join(config["model_path"], "vae", "config.json"), "r") as f:
+            vae_config = json.load(f)
+        config["vae_scale_factor_spatial"] = int(vae_config.get("scale_factor_spatial", 16))
+        config["vae_scale_factor_temporal"] = int(vae_config.get("scale_factor_temporal", 4))
+        config["vae_scale_factor"] = config["vae_scale_factor_spatial"]
+    if config["model_cls"] == "lingbot_video":
+        config["vae_scale_factor_spatial"] = int(config.get("vae_scale_factor_spatial", 8))
+        config["vae_scale_factor_temporal"] = int(config.get("vae_scale_factor_temporal", 4))
+        config["vae_scale_factor"] = config["vae_scale_factor_spatial"]
+    if config["model_cls"] == "minimax_h3":
+        # The generic Diffusers-VAE heuristic above counts six encoder stages
+        # and would incorrectly derive 32. H3 downsamples space by exactly 16.
+        config["vae_spatial_scale_factor"] = 16
+        config["vae_scale_factor"] = 16
+    if config["model_cls"] == "cosmos3" and os.path.exists(os.path.join(config["model_path"], "sound_tokenizer", "config.json")):
+        with open(os.path.join(config["model_path"], "sound_tokenizer", "config.json"), "r") as f:
+            sound_config = json.load(f)
+        config["sound_sampling_rate"] = int(sound_config.get("sampling_rate", 48000))
+        config["sound_hop_size"] = int(sound_config.get("hop_size", 1920))
+
+    return config
+
+
+def set_config(args):
+    validate_model_task_args(args)
+    config = set_args2config(args)
+    config = auto_calc_config(config)
+    return config
+
+
+def set_parallel_config(config):
+    if config["parallel"]:
+        tensor_p_size = int(config["parallel"].get("tensor_p_size", 1))
+        cfg_p_size = int(config["parallel"].get("cfg_p_size", 1))
+        seq_p_size = int(config["parallel"].get("seq_p_size", 1))
+        world_size = dist.get_world_size()
+        expected_world_size = tensor_p_size * cfg_p_size * seq_p_size
+        if expected_world_size != world_size:
+            raise ValueError(
+                f"Parallel sizes must match the distributed world size: tensor_p_size ({tensor_p_size}) * cfg_p_size ({cfg_p_size}) * seq_p_size ({seq_p_size}) != world_size ({world_size})."
+            )
+
+        phase_aware = bool(config.get("model_cls") == "hunyuan_image3" and config["parallel"].get("phase_aware", False))
+        if phase_aware:
+            from lightx2v.models.networks.hunyuan_image3.parallel import initialize_hunyuan_image3_parallel_runtime
+
+            initialize_hunyuan_image3_parallel_runtime(config)
+        elif tensor_p_size > 1:
+            # Tensor parallel is the innermost dimension. Optional CFG and
+            # sequence dimensions are prepended so ranks with the same
+            # non-TP coordinates form contiguous TP groups. For TP+SP+CFG:
+            #   mesh shape/names = [cfg_p, seq_p, tensor_p].
+            mesh_shape = []
+            mesh_dim_names = []
+            if cfg_p_size > 1:
+                mesh_shape.append(cfg_p_size)
+                mesh_dim_names.append("cfg_p")
+            if seq_p_size > 1:
+                mesh_shape.append(seq_p_size)
+                mesh_dim_names.append("seq_p")
+            mesh_shape.append(tensor_p_size)
+            mesh_dim_names.append("tensor_p")
+            config["device_mesh"] = init_device_mesh(
+                AI_DEVICE,
+                tuple(mesh_shape),
+                mesh_dim_names=tuple(mesh_dim_names),
+            )
+            config["tensor_parallel"] = True
+            config["seq_parallel"] = seq_p_size > 1
+            config["cfg_parallel"] = bool(config.get("enable_cfg", False) and cfg_p_size > 1)
+        else:
+            # Original 2D mesh for cfg_p and seq_p
+            config["device_mesh"] = init_device_mesh(AI_DEVICE, (cfg_p_size, seq_p_size), mesh_dim_names=("cfg_p", "seq_p"))
+            config["tensor_parallel"] = False
+            config["seq_parallel"] = seq_p_size > 1
+            config["cfg_parallel"] = bool(config.get("enable_cfg", False) and cfg_p_size > 1)
+
+        # warmup dist
+        if AI_DEVICE == "cuda":
+            warmup_device = f"{AI_DEVICE}:{torch.cuda.current_device()}"
+        else:
+            warmup_device = AI_DEVICE
+        _a = torch.zeros([1], device=warmup_device)
+        dist.all_reduce(_a)
+
+
+def print_config(config):
+    config_to_print = config.copy()
+    if is_main_process():
+        logger.info(f"config:\n{json.dumps(config_to_print, ensure_ascii=False, indent=4, default=str)}")

@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    "roller_glide",
+    "roller_crouch",
+    "roller_slalom"
+  ],
+  "goal_tasks": [],
+  "episodes": 200,
+  "max_steps": 250,
+  "action_horizon": 50,
+  "execute_steps": 5,
+  "mode": "teacher",
+  "seed": 0,
+  "split_fractions": [
+    0.8,
+    0.1,
+    0.1
+  ]
+}

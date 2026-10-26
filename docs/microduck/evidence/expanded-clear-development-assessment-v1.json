@@ -1,0 +1,5519 @@
+{
+  "status": "complete",
+  "created_unix": 1791717284.0865788,
+  "assessor_sha256": "2176cdab589d6fc3d7610f9d668690c6dcf66ea6e02c839f66654fcdda193422",
+  "assessment_plan_sha256": "257b1d3fabcf9f1adcc0ffbab2213e808fecf073c082a2f88d9f454be623f28b",
+  "manifest_sha256": "f3517128dcbb00fe615e3f8b8f6848daf2ecd9095f4f44ebae4e2c6d0b87f3a2",
+  "execution_plan_sha256": "708b8edfd9e0b69ec5de7d57d0d2b088558faa366cb0372963b51d2517e3ad9f",
+  "checkpoint_sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+  "raw_evidence_audits": {
+    "plain": {
+      "execution": {
+        "episodes": 60,
+        "verified_ticks": 90000,
+        "rows": [
+          {
+            "task": "find_red_ball",
+            "seed": 2000,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2000,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2000,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2001,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2001,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2001,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2002,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2002,
+            "verified_ticks": 1500,
+            "counts": {
+              "model_ticks": 1,
+              "stand_ticks": 0,
+              "fallback_ticks": 1499
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2002,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2003,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2003,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2003,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2004,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2004,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2004,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2005,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2005,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2005,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2006,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2006,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2006,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2007,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2007,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2007,
+            "verified_ticks": 1500,
+            "counts": {
+              "model_ticks": 1,
+              "stand_ticks": 0,
+              "fallback_ticks": 1499
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2008,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2008,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2008,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2009,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2009,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2009,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2010,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2010,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2010,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2011,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2011,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2011,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2012,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2012,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2012,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2013,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2013,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2013,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2014,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2014,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2014,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2015,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2015,
+            "verified_ticks": 1500,
+            "counts": {
+              "model_ticks": 1,
+              "stand_ticks": 0,
+              "fallback_ticks": 1499
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2015,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2016,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2016,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2016,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2017,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2017,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 1
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2017,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2018,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2018,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2018,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2019,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2019,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2019,
+            "verified_ticks": 1500,
+            "counts": {
+              "fallback_ticks": 1500
+            },
+            "accepted_plans": 0
+          }
+        ],
+        "scope": "Every recorded accepted-plan choice, age index, TTL tick and command decoding. Wall-clock expiry cannot be reconstructed from tick traces alone."
+      },
+      "clock_rows": [
+        {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "verified_ticks": 1500,
+          "model_ticks": 1,
+          "fallback_ticks": 1499,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 499669707,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "verified_ticks": 1500,
+          "model_ticks": 1,
+          "fallback_ticks": 1499,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 499146181,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "verified_ticks": 1500,
+          "model_ticks": 1,
+          "fallback_ticks": 1499,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 499890133,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 1,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "verified_ticks": 1500,
+          "model_ticks": 0,
+          "fallback_ticks": 1500,
+          "accepted_plans": 0,
+          "maximum_executed_source_age_ns": 0,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        }
+      ],
+      "latency_rows": [
+        {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.2563083022833,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 580.9365212917328,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 575.1110576093197,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 564.5306169986725,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 564.2728842794895,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.0224405378103,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.7466271668673,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 563.6858869343996,
+          "executed_observation_age_p95_ms": 499.669707,
+          "accepted_plans": 1,
+          "model_ticks": 1,
+          "fallback_ticks": 1499
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 565.9313648939133,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 1,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 575.4654265940189,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 564.3504172563553,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.8498338460922,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.8687514960766,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.069483757019,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.4722234755754,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.2091303616762,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 568.8148520886898,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 575.324422121048,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.9630856066942,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 577.9110413044691,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 1,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.1687296628952,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 577.44927899912,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 564.1903541982174,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.5926309078932,
+          "executed_observation_age_p95_ms": 499.146181,
+          "accepted_plans": 1,
+          "model_ticks": 1,
+          "fallback_ticks": 1499
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 573.8732930272818,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 582.2193559259176,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 574.4746160693467,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 574.5162886567414,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 575.1836307346821,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 598.0380688793956,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 565.0084469467402,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 563.5575521737337,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.4242801070213,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.4740037918091,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 573.8711126148701,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 577.9339499771595,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 570.2846899628639,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "completed_inferences": 51,
+          "model_latency_p95_ms": 618.9668104052544,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.5254561007023,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.1783994883299,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.1473579704762,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.6863946020603,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 568.5322400182486,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 565.4391828924417,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.1780413985252,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.1984657645226,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 562.1316503733397,
+          "executed_observation_age_p95_ms": 499.890133,
+          "accepted_plans": 1,
+          "model_ticks": 1,
+          "fallback_ticks": 1499
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.5112839341164,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.6506927460432,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 568.2716932147741,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.5661887079477,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 570.016299188137,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.503528624773,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 1,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 569.1591750830412,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 571.490940824151,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 574.3011709302664,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 567.2784436494112,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 566.2987362593412,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 570.027394965291,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 568.8865382224321,
+          "executed_observation_age_p95_ms": null,
+          "accepted_plans": 0,
+          "model_ticks": 0,
+          "fallback_ticks": 1500
+        }
+      ],
+      "pooled_steady_inference_p95_ms": 572.6395993493497,
+      "pooled_executed_source_age_p95_ms": 499.86809039999997,
+      "latency_pool_scope": "Descriptive request-weighted latency; episodes of differing lengths contribute differing request counts."
+    },
+    "optimized": {
+      "execution": {
+        "episodes": 60,
+        "verified_ticks": 32508,
+        "rows": [
+          {
+            "task": "find_red_ball",
+            "seed": 2000,
+            "verified_ticks": 668,
+            "counts": {
+              "model_ticks": 668,
+              "stand_ticks": 123
+            },
+            "accepted_plans": 78
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2000,
+            "verified_ticks": 452,
+            "counts": {
+              "model_ticks": 452,
+              "stand_ticks": 122
+            },
+            "accepted_plans": 53
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2000,
+            "verified_ticks": 598,
+            "counts": {
+              "model_ticks": 598,
+              "stand_ticks": 156
+            },
+            "accepted_plans": 69
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2001,
+            "verified_ticks": 610,
+            "counts": {
+              "model_ticks": 610,
+              "stand_ticks": 118
+            },
+            "accepted_plans": 71
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2001,
+            "verified_ticks": 564,
+            "counts": {
+              "model_ticks": 564,
+              "stand_ticks": 119
+            },
+            "accepted_plans": 66
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2001,
+            "verified_ticks": 482,
+            "counts": {
+              "model_ticks": 482,
+              "stand_ticks": 139
+            },
+            "accepted_plans": 56
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2002,
+            "verified_ticks": 587,
+            "counts": {
+              "model_ticks": 587,
+              "stand_ticks": 123
+            },
+            "accepted_plans": 68
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2002,
+            "verified_ticks": 392,
+            "counts": {
+              "model_ticks": 392,
+              "stand_ticks": 127
+            },
+            "accepted_plans": 46
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2002,
+            "verified_ticks": 454,
+            "counts": {
+              "model_ticks": 454,
+              "stand_ticks": 151
+            },
+            "accepted_plans": 53
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2003,
+            "verified_ticks": 439,
+            "counts": {
+              "model_ticks": 439,
+              "stand_ticks": 126
+            },
+            "accepted_plans": 50
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2003,
+            "verified_ticks": 502,
+            "counts": {
+              "model_ticks": 502,
+              "stand_ticks": 135
+            },
+            "accepted_plans": 58
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2003,
+            "verified_ticks": 502,
+            "counts": {
+              "model_ticks": 502,
+              "stand_ticks": 122
+            },
+            "accepted_plans": 59
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2004,
+            "verified_ticks": 492,
+            "counts": {
+              "model_ticks": 492,
+              "stand_ticks": 152
+            },
+            "accepted_plans": 56
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2004,
+            "verified_ticks": 570,
+            "counts": {
+              "model_ticks": 570,
+              "stand_ticks": 128
+            },
+            "accepted_plans": 67
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2004,
+            "verified_ticks": 583,
+            "counts": {
+              "model_ticks": 583,
+              "stand_ticks": 121
+            },
+            "accepted_plans": 68
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2005,
+            "verified_ticks": 467,
+            "counts": {
+              "model_ticks": 467,
+              "stand_ticks": 129
+            },
+            "accepted_plans": 54
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2005,
+            "verified_ticks": 665,
+            "counts": {
+              "model_ticks": 665,
+              "stand_ticks": 135
+            },
+            "accepted_plans": 77
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2005,
+            "verified_ticks": 555,
+            "counts": {
+              "model_ticks": 555,
+              "stand_ticks": 124
+            },
+            "accepted_plans": 65
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2006,
+            "verified_ticks": 616,
+            "counts": {
+              "model_ticks": 616,
+              "stand_ticks": 127
+            },
+            "accepted_plans": 72
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2006,
+            "verified_ticks": 445,
+            "counts": {
+              "model_ticks": 445,
+              "stand_ticks": 135
+            },
+            "accepted_plans": 51
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2006,
+            "verified_ticks": 578,
+            "counts": {
+              "model_ticks": 578,
+              "stand_ticks": 142
+            },
+            "accepted_plans": 68
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2007,
+            "verified_ticks": 541,
+            "counts": {
+              "model_ticks": 541,
+              "stand_ticks": 130
+            },
+            "accepted_plans": 63
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2007,
+            "verified_ticks": 663,
+            "counts": {
+              "model_ticks": 663,
+              "stand_ticks": 143
+            },
+            "accepted_plans": 77
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2007,
+            "verified_ticks": 472,
+            "counts": {
+              "model_ticks": 472,
+              "stand_ticks": 135
+            },
+            "accepted_plans": 55
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2008,
+            "verified_ticks": 424,
+            "counts": {
+              "model_ticks": 424,
+              "stand_ticks": 122
+            },
+            "accepted_plans": 50
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2008,
+            "verified_ticks": 579,
+            "counts": {
+              "model_ticks": 579,
+              "stand_ticks": 143
+            },
+            "accepted_plans": 68
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2008,
+            "verified_ticks": 405,
+            "counts": {
+              "model_ticks": 405,
+              "stand_ticks": 111
+            },
+            "accepted_plans": 47
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2009,
+            "verified_ticks": 450,
+            "counts": {
+              "model_ticks": 450,
+              "stand_ticks": 157
+            },
+            "accepted_plans": 52
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2009,
+            "verified_ticks": 429,
+            "counts": {
+              "model_ticks": 429,
+              "stand_ticks": 121
+            },
+            "accepted_plans": 50
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2009,
+            "verified_ticks": 539,
+            "counts": {
+              "model_ticks": 539,
+              "stand_ticks": 124
+            },
+            "accepted_plans": 63
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2010,
+            "verified_ticks": 462,
+            "counts": {
+              "model_ticks": 462,
+              "stand_ticks": 142
+            },
+            "accepted_plans": 53
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2010,
+            "verified_ticks": 488,
+            "counts": {
+              "model_ticks": 488,
+              "stand_ticks": 131
+            },
+            "accepted_plans": 57
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2010,
+            "verified_ticks": 543,
+            "counts": {
+              "model_ticks": 543,
+              "stand_ticks": 128
+            },
+            "accepted_plans": 63
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2011,
+            "verified_ticks": 465,
+            "counts": {
+              "model_ticks": 465,
+              "stand_ticks": 131
+            },
+            "accepted_plans": 54
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2011,
+            "verified_ticks": 390,
+            "counts": {
+              "model_ticks": 390,
+              "stand_ticks": 125
+            },
+            "accepted_plans": 45
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2011,
+            "verified_ticks": 548,
+            "counts": {
+              "model_ticks": 548,
+              "stand_ticks": 120
+            },
+            "accepted_plans": 64
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2012,
+            "verified_ticks": 715,
+            "counts": {
+              "model_ticks": 715,
+              "stand_ticks": 119
+            },
+            "accepted_plans": 83
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2012,
+            "verified_ticks": 484,
+            "counts": {
+              "model_ticks": 484,
+              "stand_ticks": 144
+            },
+            "accepted_plans": 56
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2012,
+            "verified_ticks": 543,
+            "counts": {
+              "model_ticks": 543,
+              "stand_ticks": 127
+            },
+            "accepted_plans": 63
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2013,
+            "verified_ticks": 618,
+            "counts": {
+              "model_ticks": 618,
+              "stand_ticks": 118
+            },
+            "accepted_plans": 71
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2013,
+            "verified_ticks": 488,
+            "counts": {
+              "model_ticks": 488,
+              "stand_ticks": 138
+            },
+            "accepted_plans": 57
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2013,
+            "verified_ticks": 1500,
+            "counts": {
+              "model_ticks": 1500,
+              "stand_ticks": 1083
+            },
+            "accepted_plans": 175
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2014,
+            "verified_ticks": 585,
+            "counts": {
+              "model_ticks": 585,
+              "stand_ticks": 149
+            },
+            "accepted_plans": 69
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2014,
+            "verified_ticks": 460,
+            "counts": {
+              "model_ticks": 460,
+              "stand_ticks": 122
+            },
+            "accepted_plans": 54
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2014,
+            "verified_ticks": 443,
+            "counts": {
+              "model_ticks": 443,
+              "stand_ticks": 118
+            },
+            "accepted_plans": 51
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2015,
+            "verified_ticks": 472,
+            "counts": {
+              "model_ticks": 472,
+              "stand_ticks": 138
+            },
+            "accepted_plans": 54
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2015,
+            "verified_ticks": 729,
+            "counts": {
+              "model_ticks": 729,
+              "stand_ticks": 125
+            },
+            "accepted_plans": 85
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2015,
+            "verified_ticks": 555,
+            "counts": {
+              "model_ticks": 555,
+              "stand_ticks": 144
+            },
+            "accepted_plans": 65
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2016,
+            "verified_ticks": 432,
+            "counts": {
+              "model_ticks": 432,
+              "stand_ticks": 128
+            },
+            "accepted_plans": 50
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2016,
+            "verified_ticks": 584,
+            "counts": {
+              "model_ticks": 584,
+              "stand_ticks": 149
+            },
+            "accepted_plans": 68
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2016,
+            "verified_ticks": 439,
+            "counts": {
+              "model_ticks": 439,
+              "stand_ticks": 124
+            },
+            "accepted_plans": 51
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2017,
+            "verified_ticks": 406,
+            "counts": {
+              "model_ticks": 406,
+              "stand_ticks": 120
+            },
+            "accepted_plans": 48
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2017,
+            "verified_ticks": 532,
+            "counts": {
+              "model_ticks": 532,
+              "stand_ticks": 127
+            },
+            "accepted_plans": 62
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2017,
+            "verified_ticks": 452,
+            "counts": {
+              "model_ticks": 452,
+              "stand_ticks": 122
+            },
+            "accepted_plans": 52
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2018,
+            "verified_ticks": 487,
+            "counts": {
+              "model_ticks": 487,
+              "stand_ticks": 147
+            },
+            "accepted_plans": 57
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2018,
+            "verified_ticks": 676,
+            "counts": {
+              "model_ticks": 676,
+              "stand_ticks": 126
+            },
+            "accepted_plans": 79
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2018,
+            "verified_ticks": 566,
+            "counts": {
+              "model_ticks": 566,
+              "stand_ticks": 146
+            },
+            "accepted_plans": 66
+          },
+          {
+            "task": "find_red_ball",
+            "seed": 2019,
+            "verified_ticks": 739,
+            "counts": {
+              "model_ticks": 739,
+              "stand_ticks": 144
+            },
+            "accepted_plans": 87
+          },
+          {
+            "task": "find_blue_ball",
+            "seed": 2019,
+            "verified_ticks": 555,
+            "counts": {
+              "model_ticks": 555,
+              "stand_ticks": 120
+            },
+            "accepted_plans": 65
+          },
+          {
+            "task": "find_yellow_ball",
+            "seed": 2019,
+            "verified_ticks": 429,
+            "counts": {
+              "model_ticks": 429,
+              "stand_ticks": 117
+            },
+            "accepted_plans": 50
+          }
+        ],
+        "scope": "Every recorded accepted-plan choice, age index, TTL tick and command decoding. Wall-clock expiry cannot be reconstructed from tick traces alone."
+      },
+      "clock_rows": [
+        {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "verified_ticks": 668,
+          "model_ticks": 668,
+          "fallback_ticks": 0,
+          "accepted_plans": 78,
+          "maximum_executed_source_age_ns": 460667485,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "verified_ticks": 452,
+          "model_ticks": 452,
+          "fallback_ticks": 0,
+          "accepted_plans": 53,
+          "maximum_executed_source_age_ns": 440079021,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "verified_ticks": 598,
+          "model_ticks": 598,
+          "fallback_ticks": 0,
+          "accepted_plans": 69,
+          "maximum_executed_source_age_ns": 440377816,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "verified_ticks": 610,
+          "model_ticks": 610,
+          "fallback_ticks": 0,
+          "accepted_plans": 71,
+          "maximum_executed_source_age_ns": 459879504,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "verified_ticks": 564,
+          "model_ticks": 564,
+          "fallback_ticks": 0,
+          "accepted_plans": 66,
+          "maximum_executed_source_age_ns": 440123491,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "verified_ticks": 482,
+          "model_ticks": 482,
+          "fallback_ticks": 0,
+          "accepted_plans": 56,
+          "maximum_executed_source_age_ns": 440161058,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "verified_ticks": 587,
+          "model_ticks": 587,
+          "fallback_ticks": 0,
+          "accepted_plans": 68,
+          "maximum_executed_source_age_ns": 440112014,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "verified_ticks": 392,
+          "model_ticks": 392,
+          "fallback_ticks": 0,
+          "accepted_plans": 46,
+          "maximum_executed_source_age_ns": 440072894,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "verified_ticks": 454,
+          "model_ticks": 454,
+          "fallback_ticks": 0,
+          "accepted_plans": 53,
+          "maximum_executed_source_age_ns": 440102608,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "verified_ticks": 439,
+          "model_ticks": 439,
+          "fallback_ticks": 0,
+          "accepted_plans": 50,
+          "maximum_executed_source_age_ns": 440180554,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "verified_ticks": 502,
+          "model_ticks": 502,
+          "fallback_ticks": 0,
+          "accepted_plans": 58,
+          "maximum_executed_source_age_ns": 440198210,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "verified_ticks": 502,
+          "model_ticks": 502,
+          "fallback_ticks": 0,
+          "accepted_plans": 59,
+          "maximum_executed_source_age_ns": 440136291,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "verified_ticks": 492,
+          "model_ticks": 492,
+          "fallback_ticks": 0,
+          "accepted_plans": 56,
+          "maximum_executed_source_age_ns": 458669615,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "verified_ticks": 570,
+          "model_ticks": 570,
+          "fallback_ticks": 0,
+          "accepted_plans": 67,
+          "maximum_executed_source_age_ns": 442545816,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "verified_ticks": 583,
+          "model_ticks": 583,
+          "fallback_ticks": 0,
+          "accepted_plans": 68,
+          "maximum_executed_source_age_ns": 460125260,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "verified_ticks": 467,
+          "model_ticks": 467,
+          "fallback_ticks": 0,
+          "accepted_plans": 54,
+          "maximum_executed_source_age_ns": 440120841,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "verified_ticks": 665,
+          "model_ticks": 665,
+          "fallback_ticks": 0,
+          "accepted_plans": 77,
+          "maximum_executed_source_age_ns": 460449602,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "verified_ticks": 555,
+          "model_ticks": 555,
+          "fallback_ticks": 0,
+          "accepted_plans": 65,
+          "maximum_executed_source_age_ns": 440110547,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "verified_ticks": 616,
+          "model_ticks": 616,
+          "fallback_ticks": 0,
+          "accepted_plans": 72,
+          "maximum_executed_source_age_ns": 440144180,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "verified_ticks": 445,
+          "model_ticks": 445,
+          "fallback_ticks": 0,
+          "accepted_plans": 51,
+          "maximum_executed_source_age_ns": 460116360,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "verified_ticks": 578,
+          "model_ticks": 578,
+          "fallback_ticks": 0,
+          "accepted_plans": 68,
+          "maximum_executed_source_age_ns": 440115035,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "verified_ticks": 541,
+          "model_ticks": 541,
+          "fallback_ticks": 0,
+          "accepted_plans": 63,
+          "maximum_executed_source_age_ns": 440093978,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "verified_ticks": 663,
+          "model_ticks": 663,
+          "fallback_ticks": 0,
+          "accepted_plans": 77,
+          "maximum_executed_source_age_ns": 440452979,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "verified_ticks": 472,
+          "model_ticks": 472,
+          "fallback_ticks": 0,
+          "accepted_plans": 55,
+          "maximum_executed_source_age_ns": 440006493,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "verified_ticks": 424,
+          "model_ticks": 424,
+          "fallback_ticks": 0,
+          "accepted_plans": 50,
+          "maximum_executed_source_age_ns": 440109323,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "verified_ticks": 579,
+          "model_ticks": 579,
+          "fallback_ticks": 0,
+          "accepted_plans": 68,
+          "maximum_executed_source_age_ns": 440162070,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "verified_ticks": 405,
+          "model_ticks": 405,
+          "fallback_ticks": 0,
+          "accepted_plans": 47,
+          "maximum_executed_source_age_ns": 440098916,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "verified_ticks": 450,
+          "model_ticks": 450,
+          "fallback_ticks": 0,
+          "accepted_plans": 52,
+          "maximum_executed_source_age_ns": 440209416,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "verified_ticks": 429,
+          "model_ticks": 429,
+          "fallback_ticks": 0,
+          "accepted_plans": 50,
+          "maximum_executed_source_age_ns": 441120795,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "verified_ticks": 539,
+          "model_ticks": 539,
+          "fallback_ticks": 0,
+          "accepted_plans": 63,
+          "maximum_executed_source_age_ns": 441040648,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "verified_ticks": 462,
+          "model_ticks": 462,
+          "fallback_ticks": 0,
+          "accepted_plans": 53,
+          "maximum_executed_source_age_ns": 440258502,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "verified_ticks": 488,
+          "model_ticks": 488,
+          "fallback_ticks": 0,
+          "accepted_plans": 57,
+          "maximum_executed_source_age_ns": 440136334,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "verified_ticks": 543,
+          "model_ticks": 543,
+          "fallback_ticks": 0,
+          "accepted_plans": 63,
+          "maximum_executed_source_age_ns": 442988712,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "verified_ticks": 465,
+          "model_ticks": 465,
+          "fallback_ticks": 0,
+          "accepted_plans": 54,
+          "maximum_executed_source_age_ns": 440093390,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "verified_ticks": 390,
+          "model_ticks": 390,
+          "fallback_ticks": 0,
+          "accepted_plans": 45,
+          "maximum_executed_source_age_ns": 440266718,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "verified_ticks": 548,
+          "model_ticks": 548,
+          "fallback_ticks": 0,
+          "accepted_plans": 64,
+          "maximum_executed_source_age_ns": 440615555,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "verified_ticks": 715,
+          "model_ticks": 715,
+          "fallback_ticks": 0,
+          "accepted_plans": 83,
+          "maximum_executed_source_age_ns": 460078604,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "verified_ticks": 484,
+          "model_ticks": 484,
+          "fallback_ticks": 0,
+          "accepted_plans": 56,
+          "maximum_executed_source_age_ns": 440802818,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "verified_ticks": 543,
+          "model_ticks": 543,
+          "fallback_ticks": 0,
+          "accepted_plans": 63,
+          "maximum_executed_source_age_ns": 440773994,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "verified_ticks": 618,
+          "model_ticks": 618,
+          "fallback_ticks": 0,
+          "accepted_plans": 71,
+          "maximum_executed_source_age_ns": 440160199,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "verified_ticks": 488,
+          "model_ticks": 488,
+          "fallback_ticks": 0,
+          "accepted_plans": 57,
+          "maximum_executed_source_age_ns": 440145484,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "verified_ticks": 1500,
+          "model_ticks": 1500,
+          "fallback_ticks": 0,
+          "accepted_plans": 175,
+          "maximum_executed_source_age_ns": 440502719,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "verified_ticks": 585,
+          "model_ticks": 585,
+          "fallback_ticks": 0,
+          "accepted_plans": 69,
+          "maximum_executed_source_age_ns": 440126766,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "verified_ticks": 460,
+          "model_ticks": 460,
+          "fallback_ticks": 0,
+          "accepted_plans": 54,
+          "maximum_executed_source_age_ns": 440153212,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "verified_ticks": 443,
+          "model_ticks": 443,
+          "fallback_ticks": 0,
+          "accepted_plans": 51,
+          "maximum_executed_source_age_ns": 441693610,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "verified_ticks": 472,
+          "model_ticks": 472,
+          "fallback_ticks": 0,
+          "accepted_plans": 54,
+          "maximum_executed_source_age_ns": 440116427,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "verified_ticks": 729,
+          "model_ticks": 729,
+          "fallback_ticks": 0,
+          "accepted_plans": 85,
+          "maximum_executed_source_age_ns": 440163625,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "verified_ticks": 555,
+          "model_ticks": 555,
+          "fallback_ticks": 0,
+          "accepted_plans": 65,
+          "maximum_executed_source_age_ns": 440138423,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "verified_ticks": 432,
+          "model_ticks": 432,
+          "fallback_ticks": 0,
+          "accepted_plans": 50,
+          "maximum_executed_source_age_ns": 440179652,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "verified_ticks": 584,
+          "model_ticks": 584,
+          "fallback_ticks": 0,
+          "accepted_plans": 68,
+          "maximum_executed_source_age_ns": 440093887,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "verified_ticks": 439,
+          "model_ticks": 439,
+          "fallback_ticks": 0,
+          "accepted_plans": 51,
+          "maximum_executed_source_age_ns": 440188960,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "verified_ticks": 406,
+          "model_ticks": 406,
+          "fallback_ticks": 0,
+          "accepted_plans": 48,
+          "maximum_executed_source_age_ns": 440232468,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "verified_ticks": 532,
+          "model_ticks": 532,
+          "fallback_ticks": 0,
+          "accepted_plans": 62,
+          "maximum_executed_source_age_ns": 440189101,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "verified_ticks": 452,
+          "model_ticks": 452,
+          "fallback_ticks": 0,
+          "accepted_plans": 52,
+          "maximum_executed_source_age_ns": 464119407,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "verified_ticks": 487,
+          "model_ticks": 487,
+          "fallback_ticks": 0,
+          "accepted_plans": 57,
+          "maximum_executed_source_age_ns": 480107727,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "verified_ticks": 676,
+          "model_ticks": 676,
+          "fallback_ticks": 0,
+          "accepted_plans": 79,
+          "maximum_executed_source_age_ns": 440123600,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "verified_ticks": 566,
+          "model_ticks": 566,
+          "fallback_ticks": 0,
+          "accepted_plans": 66,
+          "maximum_executed_source_age_ns": 440233516,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "verified_ticks": 739,
+          "model_ticks": 739,
+          "fallback_ticks": 0,
+          "accepted_plans": 87,
+          "maximum_executed_source_age_ns": 440140272,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "verified_ticks": 555,
+          "model_ticks": 555,
+          "fallback_ticks": 0,
+          "accepted_plans": 65,
+          "maximum_executed_source_age_ns": 460067808,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "verified_ticks": 429,
+          "model_ticks": 429,
+          "fallback_ticks": 0,
+          "accepted_plans": 50,
+          "maximum_executed_source_age_ns": 440161057,
+          "wall_clock_expiry_verified": true,
+          "not_task_acceptance": true
+        }
+      ],
+      "latency_rows": [
+        {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "completed_inferences": 77,
+          "model_latency_p95_ms": 174.14396591484547,
+          "executed_observation_age_p95_ms": 412.49137165,
+          "accepted_plans": 78,
+          "model_ticks": 668,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 174.3515955284238,
+          "executed_observation_age_p95_ms": 411.92948144999997,
+          "accepted_plans": 53,
+          "model_ticks": 452,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "completed_inferences": 68,
+          "model_latency_p95_ms": 179.16201436892152,
+          "executed_observation_age_p95_ms": 419.72698585,
+          "accepted_plans": 69,
+          "model_ticks": 598,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "completed_inferences": 70,
+          "model_latency_p95_ms": 177.2313017398119,
+          "executed_observation_age_p95_ms": 420.04760754999995,
+          "accepted_plans": 71,
+          "model_ticks": 610,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "completed_inferences": 65,
+          "model_latency_p95_ms": 175.6894152611494,
+          "executed_observation_age_p95_ms": 412.3976977,
+          "accepted_plans": 66,
+          "model_ticks": 564,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "completed_inferences": 55,
+          "model_latency_p95_ms": 174.7373392805457,
+          "executed_observation_age_p95_ms": 412.13677974999996,
+          "accepted_plans": 56,
+          "model_ticks": 482,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "completed_inferences": 67,
+          "model_latency_p95_ms": 175.31172651797533,
+          "executed_observation_age_p95_ms": 417.12462329999966,
+          "accepted_plans": 68,
+          "model_ticks": 587,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "completed_inferences": 45,
+          "model_latency_p95_ms": 173.90087135136127,
+          "executed_observation_age_p95_ms": 412.49289835,
+          "accepted_plans": 46,
+          "model_ticks": 392,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 173.9818557165563,
+          "executed_observation_age_p95_ms": 415.99324339999987,
+          "accepted_plans": 53,
+          "model_ticks": 454,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "completed_inferences": 49,
+          "model_latency_p95_ms": 180.53219430148602,
+          "executed_observation_age_p95_ms": 420.08412239999996,
+          "accepted_plans": 50,
+          "model_ticks": 439,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "completed_inferences": 57,
+          "model_latency_p95_ms": 178.83187606930733,
+          "executed_observation_age_p95_ms": 420.0782656,
+          "accepted_plans": 58,
+          "model_ticks": 502,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "completed_inferences": 58,
+          "model_latency_p95_ms": 174.0812923759222,
+          "executed_observation_age_p95_ms": 412.9290967,
+          "accepted_plans": 59,
+          "model_ticks": 502,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "completed_inferences": 55,
+          "model_latency_p95_ms": 180.42721766978502,
+          "executed_observation_age_p95_ms": 420.1062396,
+          "accepted_plans": 56,
+          "model_ticks": 492,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "completed_inferences": 66,
+          "model_latency_p95_ms": 173.96853026002645,
+          "executed_observation_age_p95_ms": 412.5387509,
+          "accepted_plans": 67,
+          "model_ticks": 570,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "completed_inferences": 67,
+          "model_latency_p95_ms": 177.46494859457016,
+          "executed_observation_age_p95_ms": 419.4266179,
+          "accepted_plans": 68,
+          "model_ticks": 583,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 177.16127038002014,
+          "executed_observation_age_p95_ms": 419.5193119,
+          "accepted_plans": 54,
+          "model_ticks": 467,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "completed_inferences": 76,
+          "model_latency_p95_ms": 178.1747224740684,
+          "executed_observation_age_p95_ms": 420.0606378,
+          "accepted_plans": 77,
+          "model_ticks": 665,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "completed_inferences": 64,
+          "model_latency_p95_ms": 174.2193028330803,
+          "executed_observation_age_p95_ms": 412.1705769,
+          "accepted_plans": 65,
+          "model_ticks": 555,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "completed_inferences": 71,
+          "model_latency_p95_ms": 174.1734156385064,
+          "executed_observation_age_p95_ms": 414.23377675,
+          "accepted_plans": 72,
+          "model_ticks": 616,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "completed_inferences": 50,
+          "model_latency_p95_ms": 178.10885086655617,
+          "executed_observation_age_p95_ms": 420.0539366,
+          "accepted_plans": 51,
+          "model_ticks": 445,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "completed_inferences": 67,
+          "model_latency_p95_ms": 175.15112273395061,
+          "executed_observation_age_p95_ms": 419.78825625,
+          "accepted_plans": 68,
+          "model_ticks": 578,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "completed_inferences": 62,
+          "model_latency_p95_ms": 174.6757618151605,
+          "executed_observation_age_p95_ms": 412.607464,
+          "accepted_plans": 63,
+          "model_ticks": 541,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "completed_inferences": 76,
+          "model_latency_p95_ms": 177.14580614119768,
+          "executed_observation_age_p95_ms": 419.2520028,
+          "accepted_plans": 77,
+          "model_ticks": 663,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "completed_inferences": 54,
+          "model_latency_p95_ms": 174.782841373235,
+          "executed_observation_age_p95_ms": 411.95411405,
+          "accepted_plans": 55,
+          "model_ticks": 472,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "completed_inferences": 49,
+          "model_latency_p95_ms": 174.63373728096485,
+          "executed_observation_age_p95_ms": 411.66105795,
+          "accepted_plans": 50,
+          "model_ticks": 424,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "completed_inferences": 67,
+          "model_latency_p95_ms": 175.43438579887152,
+          "executed_observation_age_p95_ms": 412.2803502,
+          "accepted_plans": 68,
+          "model_ticks": 579,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "completed_inferences": 46,
+          "model_latency_p95_ms": 174.17250201106071,
+          "executed_observation_age_p95_ms": 412.1517128,
+          "accepted_plans": 47,
+          "model_ticks": 405,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "completed_inferences": 51,
+          "model_latency_p95_ms": 175.92330742627382,
+          "executed_observation_age_p95_ms": 420.08785955,
+          "accepted_plans": 52,
+          "model_ticks": 450,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "completed_inferences": 49,
+          "model_latency_p95_ms": 174.01489950716496,
+          "executed_observation_age_p95_ms": 412.5045562,
+          "accepted_plans": 50,
+          "model_ticks": 429,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "completed_inferences": 62,
+          "model_latency_p95_ms": 176.32268788293004,
+          "executed_observation_age_p95_ms": 413.5746077999998,
+          "accepted_plans": 63,
+          "model_ticks": 539,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "completed_inferences": 52,
+          "model_latency_p95_ms": 180.5076289921999,
+          "executed_observation_age_p95_ms": 420.06852345,
+          "accepted_plans": 53,
+          "model_ticks": 462,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "completed_inferences": 56,
+          "model_latency_p95_ms": 175.69193802773952,
+          "executed_observation_age_p95_ms": 417.2796802999999,
+          "accepted_plans": 57,
+          "model_ticks": 488,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "completed_inferences": 62,
+          "model_latency_p95_ms": 177.34265169128776,
+          "executed_observation_age_p95_ms": 420.06721330000005,
+          "accepted_plans": 63,
+          "model_ticks": 543,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 174.53348338603973,
+          "executed_observation_age_p95_ms": 417.1956911999997,
+          "accepted_plans": 54,
+          "model_ticks": 465,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "completed_inferences": 44,
+          "model_latency_p95_ms": 174.53187722712755,
+          "executed_observation_age_p95_ms": 419.0771716499999,
+          "accepted_plans": 45,
+          "model_ticks": 390,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "completed_inferences": 63,
+          "model_latency_p95_ms": 174.3581872433424,
+          "executed_observation_age_p95_ms": 412.62613669999996,
+          "accepted_plans": 64,
+          "model_ticks": 548,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "completed_inferences": 82,
+          "model_latency_p95_ms": 179.12413561716676,
+          "executed_observation_age_p95_ms": 420.0496966,
+          "accepted_plans": 83,
+          "model_ticks": 715,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "completed_inferences": 55,
+          "model_latency_p95_ms": 178.85055150836706,
+          "executed_observation_age_p95_ms": 420.0870091,
+          "accepted_plans": 56,
+          "model_ticks": 484,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "completed_inferences": 62,
+          "model_latency_p95_ms": 178.80320847034454,
+          "executed_observation_age_p95_ms": 420.08086979999996,
+          "accepted_plans": 63,
+          "model_ticks": 543,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "completed_inferences": 70,
+          "model_latency_p95_ms": 177.94429333880544,
+          "executed_observation_age_p95_ms": 420.0767892,
+          "accepted_plans": 71,
+          "model_ticks": 618,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "completed_inferences": 56,
+          "model_latency_p95_ms": 174.43266417831182,
+          "executed_observation_age_p95_ms": 412.74472525000004,
+          "accepted_plans": 57,
+          "model_ticks": 488,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "completed_inferences": 174,
+          "model_latency_p95_ms": 174.93127789348364,
+          "executed_observation_age_p95_ms": 412.55934615,
+          "accepted_plans": 175,
+          "model_ticks": 1500,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "completed_inferences": 68,
+          "model_latency_p95_ms": 174.76177141070366,
+          "executed_observation_age_p95_ms": 412.06735019999996,
+          "accepted_plans": 69,
+          "model_ticks": 585,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 174.22118037939072,
+          "executed_observation_age_p95_ms": 412.8210329999997,
+          "accepted_plans": 54,
+          "model_ticks": 460,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "completed_inferences": 50,
+          "model_latency_p95_ms": 177.26357579231262,
+          "executed_observation_age_p95_ms": 420.05682179999997,
+          "accepted_plans": 51,
+          "model_ticks": 443,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "completed_inferences": 53,
+          "model_latency_p95_ms": 180.23889921605587,
+          "executed_observation_age_p95_ms": 420.0786076,
+          "accepted_plans": 54,
+          "model_ticks": 472,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "completed_inferences": 84,
+          "model_latency_p95_ms": 175.71307886391878,
+          "executed_observation_age_p95_ms": 420.0316788,
+          "accepted_plans": 85,
+          "model_ticks": 729,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "completed_inferences": 64,
+          "model_latency_p95_ms": 174.286403413862,
+          "executed_observation_age_p95_ms": 412.61644309999997,
+          "accepted_plans": 65,
+          "model_ticks": 555,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "completed_inferences": 49,
+          "model_latency_p95_ms": 175.38261897861958,
+          "executed_observation_age_p95_ms": 415.3238907499999,
+          "accepted_plans": 50,
+          "model_ticks": 432,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "completed_inferences": 67,
+          "model_latency_p95_ms": 174.0156577900052,
+          "executed_observation_age_p95_ms": 412.4460719,
+          "accepted_plans": 68,
+          "model_ticks": 584,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "completed_inferences": 50,
+          "model_latency_p95_ms": 174.14122642949224,
+          "executed_observation_age_p95_ms": 412.3923301,
+          "accepted_plans": 51,
+          "model_ticks": 439,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "completed_inferences": 47,
+          "model_latency_p95_ms": 174.12242870777845,
+          "executed_observation_age_p95_ms": 412.3528555,
+          "accepted_plans": 48,
+          "model_ticks": 406,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "completed_inferences": 61,
+          "model_latency_p95_ms": 174.14254508912563,
+          "executed_observation_age_p95_ms": 412.55218005,
+          "accepted_plans": 62,
+          "model_ticks": 532,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "completed_inferences": 51,
+          "model_latency_p95_ms": 176.53493210673332,
+          "executed_observation_age_p95_ms": 420.0258856,
+          "accepted_plans": 52,
+          "model_ticks": 452,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "completed_inferences": 56,
+          "model_latency_p95_ms": 174.00485090911388,
+          "executed_observation_age_p95_ms": 420.0461382,
+          "accepted_plans": 57,
+          "model_ticks": 487,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "completed_inferences": 78,
+          "model_latency_p95_ms": 174.05423671007156,
+          "executed_observation_age_p95_ms": 412.5742515,
+          "accepted_plans": 79,
+          "model_ticks": 676,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "completed_inferences": 65,
+          "model_latency_p95_ms": 174.10965710878372,
+          "executed_observation_age_p95_ms": 419.94441425,
+          "accepted_plans": 66,
+          "model_ticks": 566,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "completed_inferences": 86,
+          "model_latency_p95_ms": 174.01283094659448,
+          "executed_observation_age_p95_ms": 413.56124900000015,
+          "accepted_plans": 87,
+          "model_ticks": 739,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "completed_inferences": 64,
+          "model_latency_p95_ms": 174.13848973810673,
+          "executed_observation_age_p95_ms": 419.9495431,
+          "accepted_plans": 65,
+          "model_ticks": 555,
+          "fallback_ticks": 0
+        },
+        {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "completed_inferences": 49,
+          "model_latency_p95_ms": 175.12709014117718,
+          "executed_observation_age_p95_ms": 416.1231781999998,
+          "accepted_plans": 50,
+          "model_ticks": 429,
+          "fallback_ticks": 0
+        }
+      ],
+      "pooled_steady_inference_p95_ms": 176.691110804677,
+      "pooled_executed_source_age_p95_ms": 419.49774314999996,
+      "latency_pool_scope": "Descriptive request-weighted latency; episodes of differing lengths contribute differing request counts."
+    }
+  },
+  "paired_assessment": {
+    "status": "complete",
+    "checkpoint_sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+    "episodes_per_variant": 60,
+    "runtime_provenance": {
+      "source_sha256": {
+        "lightx2v_microduck.navigation": "b90d3bc42d2ef09f8a337ddeeea3d6c1df05f4193af161b5428b74b8deb25a84",
+        "lightx2v_microduck.navigation_eval": "4e1bcd462eecd03fae4886e36ddae0da14c15e696715f75ce4fe57fff34f72f2",
+        "lightx2v_microduck.navigation_requests": "f31f62bdd90ba9f4b6d4011677e90fee70c0d5b7a0594acf434361120c9a3eb9",
+        "lightx2v_microduck.wam_policy": "00894423571b5ba677cbcdf3d03eee8931608a7cc1158f9839387a9a3280750d",
+        "lightx2v_microduck.wam_history_policy": "e30b7be349ad2697f5312dc922a5674c3188b87166d34d9871850b3eab986151",
+        "lightx2v_microduck.navigation_history": "bca11e03d3949bb2ca5b024ac9b7e0a711e28ee672ed5a5c13a929bcfa5d4679",
+        "lightx2v_microduck.navigation_visual_memory": "41f23adc66a6cc39e6228fa7720d760c5bde85d3f79e1ad41e32229cdd115fe9",
+        "lightx2v/models/runners/wan/fastwam_runner.py": "4ab7ff36f56169344bccd3a58a34cc9bdf51cf102f4d698146def113bbe51c35",
+        "lightx2v/models/networks/wan/fastwam_model.py": "5ddf59fea333accecf64a0a879d7505135f74852c1cb8dc7b55d6758768b71c5"
+      },
+      "evaluation_script_sha256": "6c54bd55b852d1ed6aad9c504492e55709721f8d5584b7cc31480dad085b88e7",
+      "model_config_sha256": "c24a4f400df9ff69409c4e4ecf5ead5b477558d9853ef9255b787e5aca377155",
+      "torch_version": "2.7.1+cu128",
+      "cuda_version": "12.8",
+      "gpu_name": "NVIDIA H200",
+      "gpu_uuid": "17d31821-3a0b-306c-05e1-3e94ed488e92",
+      "max_age_ticks": 25,
+      "max_wall_age_s": 0.5,
+      "warmup_predictions": 1
+    },
+    "optimization_flags": {
+      "control": {
+        "cache_prompt": false,
+        "action_context_cache": false,
+        "action_cuda_graph": false
+      },
+      "candidate": {
+        "cache_prompt": true,
+        "action_context_cache": true,
+        "action_cuda_graph": true
+      }
+    },
+    "strict_successes_without_timing_gate": {
+      "control": 0,
+      "candidate": 59
+    },
+    "realtime_successes": {
+      "control": 0,
+      "candidate": 59
+    },
+    "paired_improvements": 59,
+    "paired_regressions": 0,
+    "rows": [
+      {
+        "task": "find_blue_ball",
+        "seed": 2000,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978378461857,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 580.9365212917328,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2000,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999926894761798,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.3515955284238,
+          "observation_age_p95_ms": 411.92948144999997
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2001,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997519335344,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 564.2728842794895,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2001,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999942864941463,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.6894152611494,
+          "observation_age_p95_ms": 412.3976977
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2002,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999970247436671,
+          "fallback_ticks": 1499,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 563.6858869343996,
+          "observation_age_p95_ms": 499.669707
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2002,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999991664276284,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 173.90087135136127,
+          "observation_age_p95_ms": 412.49289835
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2003,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978119555307,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 564.3504172563553,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2003,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999934940454485,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 178.83187606930733,
+          "observation_age_p95_ms": 420.0782656
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2004,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978166742112,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.069483757019,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2004,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999939449367418,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 173.96853026002645,
+          "observation_age_p95_ms": 412.5387509
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2005,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978575901393,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 568.8148520886898,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2005,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999950600373804,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 178.1747224740684,
+          "observation_age_p95_ms": 420.0606378
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2006,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978560379417,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 577.9110413044691,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2006,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999992600498076,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 178.10885086655617,
+          "observation_age_p95_ms": 420.0539366
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2007,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999970731100674,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 564.1903541982174,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2007,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999951381995239,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.14580614119768,
+          "observation_age_p95_ms": 419.2520028
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2008,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999975546633396,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 582.2193559259176,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2008,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999943744508218,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.43438579887152,
+          "observation_age_p95_ms": 412.2803502
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2009,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999975679501435,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 575.1836307346821,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2009,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999932975529834,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.01489950716496,
+          "observation_age_p95_ms": 412.5045562
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2010,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978158670685,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 563.5575521737337,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2010,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999931962615886,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.69193802773952,
+          "observation_age_p95_ms": 417.2796802999999
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2011,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978728016764,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 573.8711126148701,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2011,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999991913940711,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.53187722712755,
+          "observation_age_p95_ms": 419.0771716499999
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2012,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978300231099,
+          "fallback_ticks": 1500,
+          "rejected_plans": 52,
+          "model_latency_p95_ms": 618.9668104052544,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2012,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999932835853057,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 178.85055150836706,
+          "observation_age_p95_ms": 420.0870091
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2013,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978174813539,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.1473579704762,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2013,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999932783237382,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.43266417831182,
+          "observation_age_p95_ms": 412.74472525000004
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2014,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997685792934,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 565.4391828924417,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2014,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999922009226326,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.22118037939072,
+          "observation_age_p95_ms": 412.8210329999997
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2015,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999975775737634,
+          "fallback_ticks": 1499,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 562.1316503733397,
+          "observation_age_p95_ms": 499.890133
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2015,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999954963231672,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.71307886391878,
+          "observation_age_p95_ms": 420.0316788
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2016,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999974728936242,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 568.2716932147741,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2016,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999944285468327,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.0156577900052,
+          "observation_age_p95_ms": 412.4460719
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2017,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978700077206,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 569.503528624773,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2017,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999938817873043,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.14254508912563,
+          "observation_age_p95_ms": 412.55218005
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2018,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978084165204,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 574.3011709302664,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2018,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999951766044571,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.05423671007156,
+          "observation_age_p95_ms": 412.5742515
+        }
+      },
+      {
+        "task": "find_blue_ball",
+        "seed": 2019,
+        "control": {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997831885747,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 570.027394965291,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_blue_ball",
+          "seed": 2019,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999940872609112,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.13848973810673,
+          "observation_age_p95_ms": 419.9495431
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2000,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978092236631,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 569.2563083022833,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2000,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999950757704589,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.14396591484547,
+          "observation_age_p95_ms": 412.49137165
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2001,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978567209086,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 564.5306169986725,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2001,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999946990316113,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.2313017398119,
+          "observation_age_p95_ms": 420.04760754999995
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2002,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978333137688,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.7466271668673,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2002,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999937766588753,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.31172651797533,
+          "observation_age_p95_ms": 417.12462329999966
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2003,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978273533302,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 575.4654265940189,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2003,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999912996050473,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 180.53219430148602,
+          "observation_age_p95_ms": 420.08412239999996
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2004,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978763406872,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.8687514960766,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2004,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999928411866262,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 180.42721766978502,
+          "observation_age_p95_ms": 420.1062396
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2005,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999975392034607,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.2091303616762,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2005,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999930773656904,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.16127038002014,
+          "observation_age_p95_ms": 419.5193119
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2006,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997826235748,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.9630856066942,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2006,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999946807310295,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.1734156385064,
+          "observation_age_p95_ms": 414.23377675
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2007,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978490840963,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 577.44927899912,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2007,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999938835789843,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.6757618151605,
+          "observation_age_p95_ms": 412.607464
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2008,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997837039043,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 573.8732930272818,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2008,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999909943148115,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.63373728096485,
+          "observation_age_p95_ms": 411.66105795
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2009,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978715599183,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 574.5162886567414,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2009,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999992315199092,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.92330742627382,
+          "observation_age_p95_ms": 420.08785955
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2010,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978557275021,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 565.0084469467402,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2010,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999992823602277,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 180.5076289921999,
+          "observation_age_p95_ms": 420.06852345
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2011,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978741055224,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.4740037918091,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2011,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999992976395014,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.53348338603973,
+          "observation_age_p95_ms": 417.1956911999997
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2012,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997825552781,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 570.2846899628639,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2012,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999953515626921,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 179.12413561716676,
+          "observation_age_p95_ms": 420.0496966
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2013,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978790104672,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 567.1783994883299,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2013,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999994795368555,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.94429333880544,
+          "observation_age_p95_ms": 420.0767892
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2014,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997801897291,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 568.5322400182486,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2014,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999943382912835,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.76177141070366,
+          "observation_age_p95_ms": 412.06735019999996
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2015,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999974532117736,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 567.1984657645226,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2015,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999931903972343,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 180.23889921605587,
+          "observation_age_p95_ms": 420.0786076
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2016,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978426890421,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.6506927460432,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2016,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999913307296208,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.38261897861958,
+          "observation_age_p95_ms": 415.3238907499999
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2017,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978280362971,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 570.016299188137,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2017,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999991716674597,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.12242870777845,
+          "observation_age_p95_ms": 412.3528555
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2018,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978536165134,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.490940824151,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2018,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999993397765905,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.00485090911388,
+          "observation_age_p95_ms": 420.0461382
+        }
+      },
+      {
+        "task": "find_red_ball",
+        "seed": 2019,
+        "control": {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997814314871,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 566.2987362593412,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_red_ball",
+          "seed": 2019,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999955559298994,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.01283094659448,
+          "observation_age_p95_ms": 413.56124900000015
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2000,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997844737943,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 575.1110576093197,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2000,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999946227343385,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 179.16201436892152,
+          "observation_age_p95_ms": 419.72698585
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2001,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978279742092,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 569.0224405378103,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2001,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999993248861184,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.7373392805457,
+          "observation_age_p95_ms": 412.13677974999996
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2002,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "success": false,
+          "timing_qualified": false,
+          "real_time_factor": 0.9999978322582744,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 565.9313648939133,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2002,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999929306059636,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 173.9818557165563,
+          "observation_age_p95_ms": 415.99324339999987
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2003,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999975341743436,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 569.8498338460922,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2003,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999934571269676,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.0812923759222,
+          "observation_age_p95_ms": 412.9290967
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2004,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999974952452535,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.4722234755754,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2004,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999943675142012,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.46494859457016,
+          "observation_age_p95_ms": 419.4266179
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2005,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978194681667,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 575.324422121048,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2005,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999940355773173,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.2193028330803,
+          "observation_age_p95_ms": 412.1705769
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2006,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999973573481341,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.1687296628952,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2006,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999939663744846,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.15112273395061,
+          "observation_age_p95_ms": 419.78825625
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2007,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997818040145,
+          "fallback_ticks": 1499,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 567.5926309078932,
+          "observation_age_p95_ms": 499.146181
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2007,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.999993087400685,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.782841373235,
+          "observation_age_p95_ms": 411.95411405
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2008,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.999997847345635,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 574.4746160693467,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2008,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999917511255427,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.17250201106071,
+          "observation_age_p95_ms": 412.1517128
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2009,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978289055277,
+          "fallback_ticks": 1500,
+          "rejected_plans": 53,
+          "model_latency_p95_ms": 598.0380688793956,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2009,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999938958761028,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 176.32268788293004,
+          "observation_age_p95_ms": 413.5746077999998
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2010,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978502637665,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.4242801070213,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2010,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999939116778173,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.34265169128776,
+          "observation_age_p95_ms": 420.06721330000005
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2011,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978695731052,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 577.9339499771595,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2011,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999940515557366,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.3581872433424,
+          "observation_age_p95_ms": 412.62613669999996
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2012,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978476560745,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 567.5254561007023,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2012,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999936816800129,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 178.80320847034454,
+          "observation_age_p95_ms": 420.08086979999996
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2013,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999974512249622,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 567.6863946020603,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2013,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978330654171,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.93127789348364,
+          "observation_age_p95_ms": 412.55934615
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2014,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978707527755,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.1780413985252,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2014,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999922144393502,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 177.26357579231262,
+          "observation_age_p95_ms": 420.05682179999997
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2015,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "success": false,
+          "timing_qualified": false,
+          "real_time_factor": 0.9999978329412413,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 569.5112839341164,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2015,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999941372664714,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.286403413862,
+          "observation_age_p95_ms": 412.61644309999997
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2016,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978359214607,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 571.5661887079477,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2016,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999925319433991,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.14122642949224,
+          "observation_age_p95_ms": 412.3923301
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2017,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978633643145,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 569.1591750830412,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2017,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999927933212602,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 176.53493210673332,
+          "observation_age_p95_ms": 420.0258856
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2018,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978448000308,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 567.2784436494112,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2018,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999941736470109,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 174.10965710878372,
+          "observation_age_p95_ms": 419.94441425
+        }
+      },
+      {
+        "task": "find_yellow_ball",
+        "seed": 2019,
+        "control": {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "success": false,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999978061192681,
+          "fallback_ticks": 1500,
+          "rejected_plans": 54,
+          "model_latency_p95_ms": 568.8865382224321,
+          "observation_age_p95_ms": null
+        },
+        "candidate": {
+          "task": "find_yellow_ball",
+          "seed": 2019,
+          "success": true,
+          "timing_qualified": true,
+          "real_time_factor": 0.9999923160963898,
+          "fallback_ticks": 0,
+          "rejected_plans": 0,
+          "model_latency_p95_ms": 175.12709014117718,
+          "observation_age_p95_ms": 416.1231781999998
+        }
+      }
+    ],
+    "formal_acceptance": false,
+    "automatic_promotion": false,
+    "scope": "Paired development trials only. One run per condition does not establish statistical causality or independent acceptance."
+  },
+  "distinct_development_layouts": 20,
+  "cases_per_variant": 60,
+  "layout_results": [
+    {
+      "seed": 2000,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2001,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2002,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2003,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2004,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2005,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2006,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2007,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2008,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2009,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2010,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2011,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2012,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2013,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 2
+      },
+      "paired_difference": 2
+    },
+    {
+      "seed": 2014,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2015,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2016,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2017,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2018,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    },
+    {
+      "seed": 2019,
+      "trials_per_variant": 3,
+      "successes": {
+        "plain": 0,
+        "optimized": 3
+      },
+      "paired_difference": 3
+    }
+  ],
+  "successes": {
+    "plain": 0,
+    "optimized": 59
+  },
+  "paired_gains": 59,
+  "paired_regressions": 0,
+  "scope": "20new development layouts, three color commands per layout; descriptive generalization evidence. Clear-room only, not final200layout or obstacle acceptance.",
+  "initial_inputs_equal": true,
+  "formal_acceptance": false,
+  "obstacle_acceptance": false,
+  "hardware_validated": false,
+  "automatic_promotion": false
+}

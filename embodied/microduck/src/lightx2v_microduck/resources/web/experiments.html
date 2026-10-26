@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroDuck experiments</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#101719;color:#e9efeb}
+*{box-sizing:border-box}body{margin:0}main{max-width:1260px;margin:auto;padding:32px}h1{font-size:30px;margin:0 0 8px}h2{font-size:21px;margin:0 0 6px}p{color:#b8c8c0;line-height:1.6;margin:8px 0 16px}
+button,select,input{font:inherit;padding:10px;border:1px solid #52675d;border-radius:7px;background:#213329;color:#fff;min-width:0;max-width:100%}select,input:not([type=radio]){width:100%}button{cursor:pointer;background:#376447}button:disabled{cursor:not-allowed;opacity:.5}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #a7e7bc;outline-offset:3px}
+fieldset{min-width:0;border:0;padding:0;margin:0}legend{font-weight:600;margin-bottom:12px}label{display:flex;flex-direction:column;gap:8px;min-width:0}small,.hint{font-size:13px;color:#b8c8c0;line-height:1.6}.hint{margin:8px 0 0}.section-note{margin-bottom:20px}
+.categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:24px}.category{padding:18px;border:1px solid #42554c;border-radius:10px;background:#18251e;cursor:pointer;flex-direction:row;align-items:flex-start}.category:has(input:checked){border-color:#a7e7bc;background:#244233}.category input{margin:5px 0 0;accent-color:#a7e7bc}.category strong{display:block;margin-bottom:6px}.category small{display:block}
+.surface{padding:24px;border-radius:12px;background:#18251e}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:20px}.model-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.note{border-left:3px solid #6d9980;padding:2px 0 2px 14px;margin:16px 0}.note p{margin:4px 0}.model{border-top:1px solid #42554c;margin-top:20px;padding-top:20px}.model legend{float:left;width:100%}.model .fields{clear:both}
+details{margin-top:18px}summary{cursor:pointer;color:#cfe7d7}.advanced{max-width:760px}.launch-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:22px}.launch-row button{padding:12px 24px;font-weight:600}.launch-row p{margin:0;flex:1;min-width:200px}#job{white-space:pre-wrap;overflow-wrap:anywhere}#launch-summary{margin-top:18px}#run-hint:empty{display:none}
+.replays{margin-top:36px;border-top:1px solid #42554c;padding-top:28px}.replay-tools{display:flex;gap:18px;flex-wrap:wrap}.replay-tools label{min-width:210px}.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:20px}.panels article{min-width:0;padding:18px;border-radius:10px;background:#18251e}.panels p{margin:10px 0;font-size:14px}.panels img{width:100%;aspect-ratio:1;object-fit:contain;background:#0b1110;border-radius:6px}.panels pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto;font-size:12px}.timeline{margin:22px 0 14px}.status{font-weight:600}.success{color:#a7e7bc}.failure{color:#f3c196}[hidden]{display:none!important}
+@media(max-width:760px){main{padding:18px}.categories,.fields,.panels{grid-template-columns:1fr}.categories{gap:8px}.category{padding:14px}.surface{padding:18px}.replay-tools label{flex:1}.launch-row button{width:100%}h1{font-size:25px}}
+.history-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.history-tabs button{background:#213329}.history-tabs button[aria-pressed=true]{background:#376447;border-color:#a7e7bc}.history-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.history-table-wrap{overflow:auto;margin-top:18px;border:1px solid #42554c;border-radius:8px}.history-table{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}.history-table th,.history-table td{text-align:left;padding:12px;border-bottom:1px solid #35473e}.history-table th{color:#b8c8c0}.history-table .group td{background:#213329;font-weight:600}.history-table small{display:block}.history-table button{padding:6px 10px;font-size:13px;white-space:nowrap}.history-table button[aria-pressed=true]{border-color:#a7e7bc;background:#427254}.history-actions{display:flex;gap:6px}.pagination{display:flex;gap:14px;align-items:center;margin:16px 0}.pagination button{padding:7px 14px}.comparison-title{font-size:15px;overflow-wrap:anywhere;margin:8px 0;color:#dcebe2}.live-panel{margin-top:24px;border:1px solid #82b698}.live-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.live-image{display:block;width:min(100%,680px);aspect-ratio:1;object-fit:contain;background:#0b1110;border-radius:8px;margin:16px auto}.live-tools{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.live-tools label{min-width:220px}.live-tools p{margin:0}.check-label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;margin-top:16px}.check-label input{width:auto!important}.run-mode{max-width:360px;margin-top:18px}
+@media(max-width:760px){.history-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.live-panel{padding:16px}.history-tabs button{font-size:13px}.comparison-title{font-size:14px}}
+</style>
+<main>
+  <nav style="display:flex;gap:24px;margin-bottom:24px"><a href="/" style="color:#a7e7bc">← 能力展厅</a><a href="/#community" style="color:#a7e7bc">社区探索</a></nav>
+  <h1>MicroDuck 实验室</h1>
+  <p class="section-note">官方 BAM 仿真 · 策略比较与记录回放 · 尚未进行真机验证</p>
+  <p><a href="/training" style="display:inline-block;color:#a7e7bc;border:1px solid #6d9980;padding:12px 18px;border-radius:8px;font-weight:600">TinyVLA 训练进度 → 曲线、闭环结果与行为验收</a></p>
+  <p><a href="/school" style="color:#a7e7bc">进入鸭子学校 → 描述目标、训练任务技能、测试与实时运行</a></p>
+  <form id="launch">
+    <fieldset><legend>1 · 选择任务类别</legend><div id="categories" class="categories"></div></fieldset>
+    <div class="surface">
+      <h2>2 · 配置新实验</h2>
+      <p id="workflow-description">正在加载任务选项…</p>
+      <label id="project-field" hidden>实验方案<select id="project" name="workflow"></select></label>
+      <div class="fields">
+        <label>具体任务<select id="tasks" name="task" required></select></label>
+        <label id="policy-field">控制策略<select id="policy" name="policy" required></select></label>
+        <label id="scene-field">实验场景<select id="scene" name="scene" required></select></label>
+      </div>
+      <label class="run-mode" id="mode-field">运行方式<select id="mode" name="mode"><option value="live">实时运行 · 边跑边看</option><option value="offline">离线评测 · 结束后回放</option></select></label>
+      <p class="hint" id="task-hint"></p>
+      <div class="note"><p id="policy-description"></p></div>
+      <fieldset id="model-fields" class="model" hidden disabled>
+        <legend>TinyVLA 模型</legend>
+        <p class="hint">需要训练模型及其配套目录。接入后端不代表已复现作者的行为能力。</p>
+        <div class="fields"><label>模型版本<select id="model-version" name="model_id"></select></label></div>
+        <p id="model-score" class="hint" role="status"></p>
+        <div id="local-model-paths" class="fields model-fields">
+          <label>模型工件目录<input id="model-path" name="model_path" placeholder="服务器上的完整 checkpoint 目录" autocomplete="off"><small>包含权重、归一化统计与模型清单。</small></label>
+          <label>Qwen 配套目录<input id="backbone-path" name="backbone_path" placeholder="服务器上的 Qwen 配置与 tokenizer 目录" autocomplete="off"><small>填写服务器路径，无需上传文件。</small></label>
+        </div>
+        <details id="model-runtime-options"><summary>模型运行选项</summary><div class="fields model-fields">
+          <label>推理设备<select name="device"><option value="cpu">CPU</option><option value="cuda">CUDA GPU</option></select></label>
+          <label>推理精度<select name="precision"><option value="fp32">FP32</option><option value="bf16">BF16</option></select></label>
+        </div></details>
+      </fieldset>
+      <fieldset id="planner-fields" hidden disabled><legend>外部 VLM 服务</legend><div class="fields model-fields">
+        <label>服务地址<input id="planner-endpoint" name="endpoint" placeholder="http://GPU 主机:8000/v1" autocomplete="off"></label>
+        <label>模型名称<input id="planner-model" name="planner_model" placeholder="服务实际加载的模型名称" autocomplete="off"></label>
+        <label id="planner-context-field" hidden>决策依据<select id="planner-context" name="planner_context" disabled><option value="feedback">当前画面＋近期动作反馈与记忆</option><option value="current_frame">对照：只看当前画面与状态</option></select></label>
+      </div><p class="hint">需预先启动兼容 Chat Completions 的视觉模型服务。本页面不启动训练或自动下载模型。</p></fieldset>
+      <details class="advanced"><summary>高级实验选项</summary><div class="fields model-fields">
+        <label>随机种子 Seed<input id="seed" name="seed" type="number" min="0" step="1" value="2" required></label>
+      </div><p class="hint" id="mode-hint">同一场景、任务和种子可用于比较不同策略。</p></details>
+      <p id="launch-summary"></p>
+      <p id="run-hint" class="hint" role="status"></p>
+      <div class="launch-row"><button id="run" disabled>开始实时运行</button><p class="hint" id="launch-note">启动真实仿真并持续显示当前画面，结束后自动保存记录。</p></div>
+      <p id="job" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+  <section id="live-panel" class="surface live-panel" aria-labelledby="live-heading" hidden>
+    <div class="live-heading"><div><h2 id="live-heading">正在实时运行</h2><p id="live-context"></p></div><button id="stop-live" type="button">停止本次运行</button></div>
+    <div class="live-tools"><label>实时视角<select id="live-view"><option value="observer">鸭子与周围环境</option><option value="camera">鸭子摄像头</option><option value="perception">检测框与跟踪 ID · 感知任务</option></select></label><p id="live-status" role="status"></p></div>
+    <details><summary>本次策略决策与感知</summary><pre id="live-diagnostics"></pre></details>
+    <p id="live-metrics" class="hint"></p><img id="live-image" class="live-image" alt="正在运行的 MuJoCo 仿真画面" hidden>
+    <p class="hint">画面来自当前仿真。网络刷新只影响显示，仿真按自己的时钟推进。</p>
+  </section>
+  <section class="replays" aria-labelledby="replay-heading">
+    <h2 id="replay-heading">3 · 已保存的实验</h2>
+    <p>先选类别和任务，再把记录放入左侧或右侧比较。筛选历史记录不会改变正在运行的实验。</p>
+    <div id="history-tabs" class="history-tabs" aria-label="历史实验类别"></div>
+    <div class="history-filters">
+      <label>历史任务<select id="history-task"></select></label>
+      <label>历史场景<select id="history-scene"></select></label>
+      <label>历史策略<select id="history-policy"></select></label>
+      <label>任务结果<select id="history-result"><option value="all">全部结果</option><option value="success">成功</option><option value="failed">未通过</option><option value="cancelled">手动停止</option></select></label>
+    </div>
+    <label class="check-label"><input id="history-camera" type="checkbox" checked>只看有画面的记录</label>
+    <p id="replay-count" class="hint" role="status"></p>
+    <div class="history-table-wrap"><table class="history-table"><thead><tr><th>时间 / 记录</th><th>场景 / 策略</th><th>种子 / 模式</th><th>结果</th><th>选择对比</th></tr></thead><tbody id="history-rows"></tbody></table></div>
+    <div class="pagination"><button id="history-prev" type="button">上一页</button><span id="history-page"></span><button id="history-next" type="button">下一页</button></div>
+    <label style="max-width:260px">回放视角<select id="view"><option value="observer">鸭子与周围环境</option><option value="camera">鸭子摄像头</option></select></label>
+    <div class="panels">
+      <article><strong>左侧实验</strong><p id="leftTitle" class="comparison-title">从上方列表选择记录</p><p id="leftContext"></p><p id="leftStatus" class="status"></p><p id="leftView"></p><img id="leftImage" alt="左侧实验记录画面" hidden><details><summary>执行证据 / Execution evidence</summary><pre id="leftInfo"></pre></details></article>
+      <article><strong>右侧实验</strong><p id="rightTitle" class="comparison-title">从上方列表选择记录</p><p id="rightContext"></p><p id="rightStatus" class="status"></p><p id="rightView"></p><img id="rightImage" alt="右侧实验记录画面" hidden><details><summary>执行证据 / Execution evidence</summary><pre id="rightInfo"></pre></details></article>
+    </div>
+    <label class="timeline">回放时间 <output id="tick">0.0 秒 · tick 0</output><input id="position" aria-label="回放时间" type="range" min="0" max="0" value="0" disabled></label>
+    <button type="button" id="play" aria-pressed="false">播放回放</button>
+    <p class="hint">播放和暂停仅控制记录回放。分数来自评测器；单次运行不代表通过能力验收。</p>
+  </section>
+</main>
+<script src="/app.js" defer></script>
+</html>

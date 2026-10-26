@@ -1,0 +1,26 @@
+{
+  "tasks": [
+    "walk_forward",
+    "circle_left",
+    "figure_eight",
+    "zigzag",
+    "sway_circle",
+    "kick_left",
+    "kick_right",
+    "ground_touch",
+    "sit_walk",
+    "roll_circle"
+  ],
+  "goal_tasks": [],
+  "episodes": 200,
+  "max_steps": 250,
+  "action_horizon": 50,
+  "execute_steps": 5,
+  "mode": "teacher",
+  "seed": 0,
+  "split_fractions": [
+    0.8,
+    0.1,
+    0.1
+  ]
+}

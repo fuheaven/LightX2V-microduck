@@ -1,0 +1,60 @@
+{
+  "schema": "microduck_fastwam_inference_files_v1",
+  "model_id": "clear-room-realtime-control-pilot-v1-step250",
+  "public_backbone": {
+    "repo": "Wan-AI/Wan2.2-TI2V-5B",
+    "revision": "921dbaf3f1674a56f47e83fb80a34bac8a8f203e"
+  },
+  "files": {
+    "models/microduck/model.pt": {
+      "bytes": 12042063744,
+      "sha256": "8ea7793290f0a22bff56ec4e44168232564ec5d57a9e21515a8a8c4a989114ea",
+      "distribution": "obtain_from_project_owner"
+    },
+    "models/microduck/navigation_checkpoint.json": {
+      "bytes": 4148,
+      "sha256": "8e08e832159d58a78d88942db8b9ee6683b944d2256938d69271643f5b716d12",
+      "distribution": "obtain_from_project_owner"
+    },
+    "models/microduck/dataset_stats.json": {
+      "bytes": 27434,
+      "sha256": "f8805f43eeba0dc79daa30481e96e6721c41f9c5eb6e24b37798d5c0719c0b87",
+      "distribution": "obtain_from_project_owner"
+    },
+    "models/Wan2.2-TI2V-5B/config.json": {
+      "bytes": 251,
+      "sha256": "d1fea36899d00c2501b836c13ad65af56e2f9529ba622e50886d3f5c3e6c02bc",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth": {
+      "bytes": 2818839170,
+      "sha256": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth": {
+      "bytes": 11361920418,
+      "sha256": "7cace0da2b446bbbbc57d031ab6cf163a3d59b366da94e5afe36745b746fd81d",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/google/umt5-xxl/special_tokens_map.json": {
+      "bytes": 6623,
+      "sha256": "7b8a9f5040adb67b5805abdfd42c1f8d0f3d0e711f10726580eb3789cd0ad61d",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/google/umt5-xxl/spiece.model": {
+      "bytes": 4548313,
+      "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer.json": {
+      "bytes": 16837417,
+      "sha256": "6e197b4d3dbd71da14b4eb255f4fa91c9c1f2068b20a2de2472967ca3d22602b",
+      "distribution": "public_backbone"
+    },
+    "models/Wan2.2-TI2V-5B/google/umt5-xxl/tokenizer_config.json": {
+      "bytes": 61728,
+      "sha256": "ed9a3a8b0faa71a70a32847e0435fe036e6e112d4df4edb7bb48a921e344dc05",
+      "distribution": "public_backbone"
+    }
+  }
+}

@@ -1,0 +1,180 @@
+import asyncio
+import threading
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Optional
+
+from fastapi import FastAPI
+from loguru import logger
+from starlette.responses import RedirectResponse
+
+from ..metrics import monitor_cli
+from ..services import DistributedInferenceService
+from ..task_manager import TaskStatus, task_manager
+from .deps import ServiceContainer, get_services
+from .router import create_api_router
+
+TASK_PROCESSING_IDLE_WAIT_TIMEOUT_SECONDS = 0.2
+
+
+class ApiServer:
+    def __init__(self, max_queue_size: int = 10, app: Optional[FastAPI] = None):
+        self.app = app or FastAPI(title="LightX2V API", version="1.0.0")
+        self.max_queue_size = max_queue_size
+
+        self.processing_thread = None
+        self.stop_processing = threading.Event()
+
+        self._setup_routes()
+
+    def _setup_routes(self):
+        @self.app.middleware("http")
+        async def metrics_middleware(request, call_next):
+            start_time = time.monotonic()
+            method = request.method
+            endpoint = request.url.path
+            monitor_cli.lightx2v_api_request_total.labels(method=method, endpoint=endpoint).inc()
+
+            try:
+                response = await call_next(request)
+                status_code = response.status_code
+                status_label = "success" if status_code < 400 else "error"
+                if status_code >= 400:
+                    monitor_cli.lightx2v_api_request_error_total.labels(
+                        method=method,
+                        endpoint=endpoint,
+                        error_type=f"http_{status_code}",
+                    ).inc()
+                return response
+            except Exception as e:
+                status_label = "error"
+                monitor_cli.lightx2v_api_request_error_total.labels(
+                    method=method,
+                    endpoint=endpoint,
+                    error_type=type(e).__name__,
+                ).inc()
+                raise
+            finally:
+                duration = time.monotonic() - start_time
+                monitor_cli.lightx2v_api_request_e2e_duration_seconds.labels(
+                    method=method,
+                    endpoint=endpoint,
+                    status=status_label,
+                ).observe(duration)
+
+        @self.app.get("/")
+        def redirect_to_docs():
+            return RedirectResponse(url="/docs")
+
+        @self.app.get("/health")
+        def health_check():
+            return {"status": "ok"}
+
+        api_router = create_api_router()
+        self.app.include_router(api_router)
+
+    def _ensure_processing_thread_running(self):
+        if self.processing_thread is None or not self.processing_thread.is_alive():
+            self.stop_processing.clear()
+            self.processing_thread = threading.Thread(target=self._task_processing_loop, daemon=True)
+            self.processing_thread.start()
+            logger.info("Started task processing thread")
+
+    def _task_processing_loop(self):
+        logger.info("Task processing loop started")
+
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        loop = asyncio.get_event_loop()
+
+        while not self.stop_processing.is_set():
+            task_id = task_manager.wait_for_next_pending_task(timeout=TASK_PROCESSING_IDLE_WAIT_TIMEOUT_SECONDS)
+
+            if task_id is None:
+                continue
+
+            task_info = task_manager.get_task(task_id)
+            if task_info and task_info.status == TaskStatus.PENDING:
+                logger.info(f"Processing task {task_id}")
+                loop.run_until_complete(self._process_single_task(task_info))
+
+        loop.close()
+        logger.info("Task processing loop stopped")
+
+    async def _process_single_task(self, task_info: Any):
+        services = get_services()
+
+        task_id = task_info.task_id
+        message = task_info.message
+
+        lock_acquired = task_manager.acquire_processing_lock(task_id, timeout=1)
+        if not lock_acquired:
+            logger.error(f"Task {task_id} failed to acquire processing lock")
+            task_manager.fail_task(task_id, "Failed to acquire processing lock")
+            return
+
+        try:
+            pending_elapsed_ms = (datetime.now() - task_info.start_time).total_seconds() * 1000
+            logger.info(f"Task {task_id} scheduler pending wait {pending_elapsed_ms:.2f} ms")
+            task_manager.start_task(task_id)
+
+            if task_info.stop_event.is_set():
+                logger.info(f"Task {task_id} cancelled before processing")
+                task_manager.fail_task(task_id, "Task cancelled")
+                return
+
+            from ..schema import ImageTaskRequest, SenseNovaVisionTaskRequest
+
+            if isinstance(message, SenseNovaVisionTaskRequest):
+                generation_service = services.sensenova_vision_service
+            elif isinstance(message, ImageTaskRequest):
+                generation_service = services.image_service
+            else:
+                generation_service = services.video_service
+
+            if generation_service is None:
+                raise RuntimeError(f"Generation service is not initialized for request type {type(message)!r}")
+
+            result = await generation_service.generate_with_stop_event(message, task_info.stop_event)
+
+            if result:
+                task_manager.complete_task(
+                    task_id,
+                    save_result_path=result.save_result_path or None,
+                    result_png=getattr(result, "result_png", None),
+                    usage=getattr(result, "usage", None),
+                    result_data=getattr(result, "result_data", None),
+                )
+                logger.info(f"Task {task_id} completed successfully")
+            else:
+                if task_info.stop_event.is_set():
+                    task_manager.fail_task(task_id, "Task cancelled during processing")
+                    logger.info(f"Task {task_id} cancelled during processing")
+                else:
+                    task_manager.fail_task(task_id, "Generation failed")
+                    logger.error(f"Task {task_id} generation failed")
+
+        except Exception as e:
+            logger.exception(f"Task {task_id} processing failed: {str(e)}")
+            original_et = getattr(e, "original_error_type", "") or ""
+            task_manager.fail_task(task_id, str(e), error_type=original_et or None)
+        finally:
+            if lock_acquired:
+                task_manager.release_processing_lock(task_id)
+
+    def initialize_services(self, cache_dir: Path, inference_service: DistributedInferenceService):
+        container = ServiceContainer.get_instance()
+        container.initialize(cache_dir, inference_service, self.max_queue_size)
+        self._ensure_processing_thread_running()
+
+    async def cleanup(self):
+        self.stop_processing.set()
+        if self.processing_thread and self.processing_thread.is_alive():
+            self.processing_thread.join(timeout=5)
+
+        services = get_services()
+        if services.file_service:
+            await services.file_service.cleanup()
+
+    def get_app(self) -> FastAPI:
+        return self.app

@@ -1,0 +1,174 @@
+import random
+from typing import Any, Optional
+
+from pydantic import BaseModel, Field
+
+from ..utils.generate_task_id import generate_task_id
+
+
+class UsageInputTokensDetails(BaseModel):
+    image_tokens: int = 0
+    text_tokens: int = 0
+
+
+class UsageOutputTokensDetails(BaseModel):
+    image_tokens: int = 0
+    text_tokens: int = 0
+
+
+class Usage(BaseModel):
+    input_tokens: int
+    input_tokens_details: UsageInputTokensDetails
+    output_tokens: int
+    total_tokens: int
+    output_tokens_details: UsageOutputTokensDetails
+
+
+def generate_random_seed() -> int:
+    return random.randint(0, 2**32 - 1)
+
+
+class TalkObject(BaseModel):
+    audio: str = Field(..., description="Audio path")
+    mask: str = Field(..., description="Mask path")
+
+
+class DisaggOverrideRequest(BaseModel):
+    """Optional Mooncake / disagg overrides (merged into runner.config per request)."""
+
+    data_bootstrap_room: Optional[int] = Field(None, description="Per-request Mooncake bootstrap room (disagg)")
+    disagg_phase1_receiver_engine_rank: Optional[int] = Field(
+        None,
+        description="Transformer receiver rank for phase1 send (decentralized / multi-transformer)",
+    )
+    disagg_bootstrap_room: Optional[int] = Field(None, description="Alias for data_bootstrap_room in some clients")
+    disagg_decoder_bootstrap_room: Optional[int] = Field(None, description="Phase2 Mooncake room override")
+
+
+class BaseTaskRequest(DisaggOverrideRequest):
+    task_id: str = Field(default_factory=generate_task_id, description="Task ID (auto-generated)")
+    prompt: str = Field("", description="Generation prompt")
+    negative_prompt: str = Field("", description="Negative prompt")
+    image_path: str = Field("", description="Base64 encoded image or URL")
+    last_frame_path: str = Field("", description="Last frame image path (base64, or local path)")
+    image_mask_path: str = Field("", description="Mask image path (supports URL, base64, or local path)")
+    save_result_path: str = Field("", description="Save result path (optional, defaults to task_id, suffix auto-detected)")
+    presigned_url: str = Field("", description="Optional presigned URL for uploading final sync result")
+    infer_steps: int = Field(5, description="Inference steps")
+    seed: int = Field(default_factory=generate_random_seed, description="Random seed (auto-generated if not set)")
+    reuse: bool = Field(False, description="Reuse the previous successful request")
+    target_shape: list[int] = Field([], description="Return video or image shape")
+    lora_name: Optional[str] = Field(None, description="LoRA filename to load from lora_dir, None to disable LoRA")
+    lora_strength: float = Field(1.0, description="LoRA strength")
+    # Internal switch: sync API sets this True to return image from memory only.
+    prefer_memory_result: bool = Field(default=False, exclude=True)
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        if not self.save_result_path:
+            self.save_result_path = f"{self.task_id}"
+
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+
+
+class VideoTaskRequest(BaseTaskRequest):
+    target_video_length: int = Field(81, description="Target video length")
+    reuse_prefix_segments: int = Field(
+        0,
+        ge=0,
+        description="Number of prefix segments to reuse from the previous successful request",
+    )
+    video_path: str = Field("", description="Input video path (for SR/V2V-like tasks)")
+    sr_ratio: float = Field(2.0, gt=0, description="Super-resolution scale factor used when target_shape is not set")
+    audio_path: str = Field("", description="Input audio path (Wan-Audio)")
+    video_duration: int = Field(5, description="Video duration (Wan-Audio)")
+    talk_objects: Optional[list[TalkObject]] = Field(None, description="Talk objects (Wan-Audio)")
+    target_fps: Optional[int] = Field(16, description="Target FPS for video frame interpolation (overrides config)")
+    resize_mode: Optional[str] = Field("adaptive", description="Resize mode (adaptive, keep_ratio_fixed_area, fixed_min_area, fixed_max_area, fixed_shape, fixed_min_side)")
+
+
+class ImageTaskRequest(BaseTaskRequest):
+    aspect_ratio: str = Field("16:9", description="Output aspect ratio")
+    i2i_denoise_strength: Optional[float] = Field(None, description="Single-image I2I edit denoising strength in [0.0, 1.0]; omit to keep existing behavior")
+    sr_ratio: float = Field(2.0, gt=0, description="Super-resolution scale factor used when target_shape is not set")
+
+
+class SenseNovaVisionTaskRequest(BaseModel):
+    """One request for the multi-task SenseNova-Vision service."""
+
+    task_id: str = Field(default_factory=generate_task_id, description="Task ID (auto-generated)")
+    task: str = Field(..., description="Public SenseNova-Vision task name")
+    prompt: str = Field("", description="Task prompt or question")
+    images: list[str] = Field(
+        default_factory=list,
+        description="Input images as base64/data URLs, HTTP(S) URLs, or server-local paths",
+    )
+    seed: int = Field(default_factory=generate_random_seed, description="Random seed")
+    target_shape: list[int] = Field(default_factory=list, description="Optional output [height, width]")
+    visualize: bool = Field(True, description="Generate an official-style visualization when supported")
+    postprocess_3d: bool = Field(False, description="Generate a GLB scene for recon3d")
+
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+
+
+class SenseNovaArtifact(BaseModel):
+    kind: str
+    media_type: str
+    filename: str
+    url: str
+    size_bytes: int
+
+
+class SenseNovaVisionTaskSubmission(BaseModel):
+    task_id: str
+    task_status: str
+    task: str
+
+
+class SenseNovaVisionTaskResult(BaseModel):
+    task_id: str
+    status: str
+    task: str
+    runner_task: str
+    mode: str
+    text: Optional[str] = None
+    artifacts: list[SenseNovaArtifact] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
+class SenseNovaVisionGenerationResponse(BaseModel):
+    """Internal response passed from the generation service to TaskManager."""
+
+    task_id: str
+    task_status: str
+    save_result_path: str = ""
+    result_data: dict[str, Any]
+
+
+class TaskRequest(BaseTaskRequest):
+    target_video_length: int = Field(81, description="Target video length (video only)")
+    audio_path: str = Field("", description="Input audio path (Wan-Audio)")
+    video_duration: int = Field(5, description="Video duration (Wan-Audio)")
+    talk_objects: Optional[list[TalkObject]] = Field(None, description="Talk objects (Wan-Audio)")
+    aspect_ratio: str = Field("16:9", description="Output aspect ratio (T2I only)")
+    target_fps: Optional[int] = Field(16, description="Target FPS for video frame interpolation (overrides config)")
+
+
+class TaskStatusMessage(BaseModel):
+    task_id: str = Field(..., description="Task ID")
+
+
+class TaskResponse(BaseModel):
+    task_id: str
+    task_status: str
+    save_result_path: str
+    # Filled after image generation in-process; never serialized in JSON responses.
+    result_png: Optional[bytes] = Field(default=None, exclude=True)
+    usage: Optional[Usage] = Field(default=None, exclude=True)
+
+
+class StopTaskResponse(BaseModel):
+    stop_status: str
+    reason: str

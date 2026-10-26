@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TinyVLA 训练进度 · MicroDuck</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#101719;color:#edf3ef;--muted:#b5c5be;--line:#3a5145;--green:#a7e7bc;--blue:#8dbaf5;--amber:#e9be82;--red:#f39c99}*{box-sizing:border-box}body{margin:0}main{max-width:1320px;padding:30px;margin:auto}h1{font-size:29px;margin:15px 0 8px}h2{font-size:20px;margin:0 0 8px}h3{font-size:15px;margin:0 0 8px}p{line-height:1.65;color:var(--muted);margin:6px 0 14px}a{color:var(--green)}nav,.controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap}nav{justify-content:space-between}small{font-size:12px;color:var(--muted);line-height:1.55}button,select{font:inherit;padding:9px 14px;background:#244233;color:#fff;border:1px solid #658771;border-radius:7px;max-width:100%}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:4px}.controls{margin:20px 0}.controls label{display:flex;gap:8px;align-items:center;max-width:100%}select{max-width:420px}.freshness{padding:12px 15px;border:1px solid var(--line);border-radius:8px;background:#18251e;color:var(--muted);font-size:14px}.freshness.warn{border-color:var(--amber);color:var(--amber)}.freshness.error{border-color:var(--red);color:var(--red)}.cards{display:grid;grid-template-columns:1.45fr 1fr 1fr 1fr;gap:14px;margin:20px 0 28px}.card,.plot,.baseline{background:#18251e;border:1px solid #2c4436;border-radius:10px;padding:18px;min-width:0}.card .value{font-size:25px;font-weight:650;margin:12px 0 8px;overflow-wrap:anywhere}.card .label{font-size:13px;color:var(--muted)}.budget-track{height:7px;background:#0c1410;border-radius:9px;position:relative;overflow:hidden;margin:12px 0 7px}.budget-fill{height:100%;background:#78ba91;width:0}.budget-reserve{position:absolute;inset:0 0 0 83.3333%;border-left:2px solid var(--amber);background:#e9be8223}.section{border-top:1px solid var(--line);padding-top:24px;margin-top:28px}.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:15px}.plot.wide{grid-column:1/-1}.chart{min-height:245px;display:flex;align-items:center;justify-content:center}.chart svg{width:100%;height:auto;display:block;overflow:visible}.chart text{font-size:12px;fill:#b5c5be}.empty{color:#b5c5be;text-align:center;padding:35px 10px;line-height:1.7}.legend{display:flex;gap:15px;flex-wrap:wrap;margin:12px 0 4px;font-size:12px;color:var(--muted)}.legend i{display:inline-block;width:18px;border-top:3px solid;margin-right:6px;vertical-align:middle}.scope{padding:12px 16px;background:#283123;border-left:3px solid var(--amber);color:#e7d2b2;border-radius:0 7px 7px 0;margin:16px 0;line-height:1.65}.baseline-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.baseline .rate{font-size:29px;font-weight:650;margin:8px 0}.table-wrap{overflow:auto;margin-top:15px;border:1px solid var(--line);border-radius:8px}table{width:100%;border-collapse:collapse;min-width:820px;font-size:14px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #30463a;vertical-align:top}th{font-size:12px;color:var(--muted);font-weight:500;background:#18251e}td small{display:block;margin-top:4px;overflow-wrap:anywhere}.accepted{color:var(--green)}.pending{color:var(--muted)}.failed{color:var(--amber)}.artifact-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0;list-style:none}.artifact-list li{padding:12px 14px;border:1px solid var(--line);border-radius:7px;overflow-wrap:anywhere}.artifact-list small{display:block;margin-top:5px}.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.video-grid video{width:100%;max-height:280px;background:#000;border-radius:7px}figure{margin:0}figcaption{color:var(--muted);font-size:12px;overflow-wrap:anywhere;margin-top:7px}details{margin-top:16px}summary{cursor:pointer;color:var(--green)}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;padding:14px;background:#0a1210;border-radius:6px;font-size:12px}footer{padding:26px 0 0;color:var(--muted);font-size:12px;line-height:1.7}[hidden]{display:none!important}@media(max-width:800px){main{padding:18px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.plots,.artifact-list{grid-template-columns:1fr}.video-grid{grid-template-columns:1fr 1fr}.controls label{display:block}.controls select{margin-top:7px}.card .value{font-size:23px}}@media(max-width:480px){.cards,.baseline-grid,.video-grid{grid-template-columns:1fr}h1{font-size:25px}}
+.job-grid,.collection-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin:14px 0}.job-card,.collection-task{border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0;overflow-wrap:anywhere}.job-card strong,.collection-task strong{display:block;margin-bottom:8px}.job-card button{margin-top:10px}.collection-task progress{display:block;width:100%;height:10px;margin:12px 0;accent-color:var(--green)}.label-counts{display:flex;gap:24px;flex-wrap:wrap;margin:12px 0}.label-counts strong{display:block;font-size:23px}.label-counts span{color:var(--muted);font-size:13px}.label-track{display:flex;height:12px;border-radius:6px;overflow:hidden;background:#0c1410;margin:10px 0}.label-track .valid{background:#78ba91}.label-track .rejected{background:#b88053}.label-track .unknown{background:#748294}
+.collection-task.failed progress{accent-color:var(--red)}
+.video-grid figcaption small{display:block;margin-top:4px}.video-grid video{max-height:384px}@media(min-width:481px){.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.objective-table{min-width:0;table-layout:fixed}.objective-table th:first-child{width:38%}.objective-table caption{text-align:left;padding:10px 12px;font-size:12px;color:var(--muted)}.objective-table td{overflow-wrap:anywhere}.objective-table td a{display:block;margin-top:5px;font-size:12px}.comparison-evidence{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px}.comparison-development{margin-top:22px}.comparison-context{overflow-wrap:anywhere}@media(max-width:480px){.objective-table td,.objective-table th{padding:10px 8px;font-size:12px}}
+.diagnostic-table{min-width:720px}.diagnostic-table caption{text-align:left;padding:12px;color:var(--muted)}.diagnostic-table th:first-child{min-width:180px}.diagnostic-table td{text-align:center;vertical-align:middle;font-variant-numeric:tabular-nums}.diagnostic-table th small{display:block;font-size:11px}.diagnostic-table tbody th{color:#edf3ef;font-size:13px}.diagnostic-table td.good{background:#254a37}.diagnostic-table td.partial{background:#3f3925}.diagnostic-table td.low{background:#452d2b}.diagnostic-meta{display:flex;gap:24px;flex-wrap:wrap;margin:16px 0}.diagnostic-meta strong{display:block;font-size:24px}.diagnostic-meta span{font-size:12px;color:var(--muted)}.diagnostic-videos{margin-top:18px}@media(min-width:900px){.diagnostic-videos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.controls select{max-width:min(420px,100%)}
+#correction-by-task table{min-width:0;table-layout:fixed}#correction-by-task th,#correction-by-task td{text-align:right}#correction-by-task th:first-child,#correction-by-task td:first-child{text-align:left;width:36%}@media(max-width:480px){#correction-by-task th,#correction-by-task td{padding:10px 5px;font-size:11px;line-height:1.5}#correction-by-task th{font-size:10px}}
+#checkpoint-details table{table-layout:fixed;min-width:1000px}#checkpoint-details th:nth-child(1){width:110px}#checkpoint-details th:nth-child(2){width:160px}#checkpoint-details th:nth-child(3){width:110px}#checkpoint-details th:nth-child(4){width:150px}#checkpoint-details th:nth-child(6){width:70px}#checkpoint-details td:nth-child(5){overflow-wrap:anywhere}
+.outcome-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.outcome-grid .partial progress{accent-color:var(--amber)}.outcome-grid ul{padding-left:20px;margin:10px 0 0;font-size:13px;line-height:1.7}.outcome-grid li{margin:3px 0}.outcome-grid .outcome-rate{font-size:21px;margin:10px 0}.outcome-grid small{display:block}.outcome-grid .check-label{color:var(--muted)}@media(max-width:650px){.outcome-grid{grid-template-columns:1fr}}
+.padding-table{min-width:0;table-layout:fixed;width:100%}.padding-table th:first-child{width:28%}.padding-table td,.padding-table th{overflow-wrap:anywhere;vertical-align:top}.padding-table small{display:block;margin-top:5px}.padding-body{margin-top:24px}.padding-evidence{overflow-wrap:anywhere}.padding-evidence a{display:block;margin:8px 0}@media(max-width:480px){.padding-table th,.padding-table td{padding:10px 5px;font-size:12px}.padding-table small{font-size:11px}}
+.reselection-table th:not(:first-child){min-width:95px}.reselection-table td{white-space:nowrap}.reselection-table tbody th{text-align:left}
+</style>
+<main>
+  <nav><a href="/">← Simulator</a><a href="/school">鸭子学校</a></nav>
+  <div class="controls" aria-label="训练项目"><a href="/training">FastWAM · 视觉导航</a><strong aria-current="page">TinyVLA · 预设行为</strong></div>
+  <h1>TinyVLA 训练进度</h1>
+  <p>查看 H200 训练记录、闭环表现与本项目 13 项行为的验收进展。</p>
+  <div id="freshness" class="freshness" role="status">正在读取训练快照…</div>
+  <div class="cards">
+    <article class="card"><div class="label">当前 / 最近任务</div><div class="value" id="active-stage">—</div><small id="active-job">等待同步</small></article>
+    <article class="card"><div class="label">当前 / 最近任务进度</div><div class="value" id="active-progress">—</div><small id="active-status">尚无数据</small></article>
+    <article class="card"><div class="label">累计 GPU 用量</div><div class="value" id="budget">—</div><div class="budget-track" id="budget-track" hidden><div class="budget-fill" id="budget-fill"></div><div class="budget-reserve" id="budget-reserve"></div></div><small id="budget-policy">正在读取用量配置</small></article>
+    <article class="card"><div class="label">所选候选的正式验收</div><div class="value" id="acceptance">—</div><small id="acceptance-detail">离线与实时分别验收</small></article>
+  </div>
+  <section id="running-section" hidden aria-labelledby="running-title"><h2 id="running-title">运行中的任务</h2><p>CPU 示范采集与 GPU 训练、评测分别计数。选择一项查看它的数据和学习曲线。</p><div id="running-jobs" class="job-grid"></div></section>
+  <section class="section" aria-labelledby="learning-title">
+    <div class="section-head"><div><h2 id="learning-title">学习曲线与闭环验证</h2><p>损失和动作误差用于诊断；是否学会行为，以独立闭环任务结果为准。</p></div></div>
+    <div class="controls"><label>训练批次 / 模型<select id="run-select" aria-label="训练批次 / 模型"></select></label><button id="refresh">刷新数据</button><label><input id="auto-refresh" type="checkbox" checked> 每 30 秒刷新</label></div>
+    <p id="run-context"></p><div class="scope" id="run-scope" hidden></div><p id="development-summary" class="scope" hidden></p><p id="training-recipe" hidden></p>
+    <section id="development-progress-section" hidden aria-labelledby="development-progress-title"><h3 id="development-progress-title">各技能开发评测进度</h3><p id="development-progress-note" role="status"></p><div id="development-progress-tasks" class="collection-grid"></div><p id="development-progress-evidence"></p></section>
+    <section id="padding-development-section" hidden aria-labelledby="padding-development-title">
+      <h3 id="padding-development-title">候选模型开发集评测</h3>
+      <p id="padding-development-note" role="status"></p>
+      <p>腿式和滚轮各评测一个已选模型，每项使用 20 个开发条件。每项至少通过 18 集，才达到进入最终测试的门槛；正式验收另用每项 100 个独立条件。</p>
+      <div id="padding-development-bodies"></div>
+      <details class="padding-evidence"><summary>评测计划与模型选择依据</summary><div id="padding-development-evidence"></div></details>
+    </section>
+    <section id="padding-comparison-section" hidden aria-labelledby="padding-comparison-title">
+      <h3 id="padding-comparison-title">相同权重 · 填充处理对照</h3>
+      <p id="padding-comparison-note" role="status"></p>
+      <p>对照原填充处理与统一填充处理，检查训练和单条推理的差异。两组使用相同权重与固定验证条件；没有新增训练。这些诊断结果不计入正式验收。</p>
+      <div id="padding-comparison-bodies"></div>
+    </section>
+    <section id="precision-progress-section" hidden aria-labelledby="precision-progress-title">
+      <h3 id="precision-progress-title">推理精度对照 · FP32 新增评测</h3>
+      <p id="precision-progress-note" role="status"></p>
+      <p>使用同一 H200、相同权重及固定条件，比较 FP32 与已保存的 BF16 结果。进度条仅统计本轮新增记录；完整对照另列，验证结果不计入正式验收。</p>
+      <div id="precision-progress-bodies" class="collection-grid"></div>
+      <div id="precision-comparison-bodies"></div>
+    </section>
+    <section id="reselection-section" hidden aria-labelledby="reselection-title">
+      <h3 id="reselection-title">历史模型重新比较</h3>
+      <p id="reselection-note" role="status"></p>
+      <p>统一推理方式后，重新评测已有权重。每项使用相同的 5 个验证条件；完整比较后，为腿式和滚轮各选一个模型进入开发评测。这里的成绩不计入正式验收。</p>
+      <div id="reselection-bodies"></div>
+    </section>
+    <section id="collection-section" hidden><h3>各任务示范采集</h3><p id="collection-summary">记录数量不等于可训练数据量；还需文件校验、合并与数据审计。</p><div id="collection-tasks" class="collection-grid"></div></section>
+    <section id="correction-section" class="baseline" hidden><h3>实际轨迹上的教师纠偏标签</h3><p>从采集轨迹中的当前状态开始，由教师尝试完成任务。教师无法完成或需要接管的标签不进入有效监督。</p><div id="correction-counts" class="label-counts"></div><div id="correction-track" class="label-track" role="img"></div><small id="correction-note"></small><div id="correction-by-task" class="table-wrap" hidden></div></section>
+    <section id="mixed-collection-section" class="baseline" hidden>
+      <h3 id="mixed-collection-title">教师与学生混合采集 · 训练前数据门槛</h3>
+      <p id="mixed-collection-recipe"></p><p id="mixed-collection-status" role="status"></p>
+      <div class="table-wrap" id="mixed-coverage-table" hidden><table><thead><tr><th>轨迹阶段</th><th>学生动作后的有效教师分支标签</th><th>覆盖训练轨迹</th></tr></thead><tbody id="mixed-coverage-rows"></tbody></table></div>
+      <p id="mixed-collection-note">仅统计学生动作之后、教师能够从该状态独立完成任务的训练标签。教师帮助下的完成不算学生成功；正式评测关闭混合执行。</p>
+      <div id="mixed-coverage-evidence"></div>
+    </section>
+    <p id="collection-only-note" hidden>此 CPU 作业只采集和审计示范，不更新模型参数，因此没有训练损失曲线。</p>
+    <div class="plots" id="learning-plots">
+      <article class="plot"><h3>Flow matching 损失</h3><div class="chart" id="loss-chart"></div><div class="legend" id="loss-legend"></div><small id="validation-sampling-note">横轴：优化器步数。验证仅显示实际评估点，未评估的步数不填零。</small><div id="loss-tail-note" hidden></div></article>
+      <article class="plot"><h3>动作误差 · RMSE（rad）</h3><div class="chart" id="rmse-chart"></div><div class="legend" id="rmse-legend"></div><small>相对教师动作的均方根误差；前 5 步对应每次实际执行的动作前缀。</small></article>
+      <article class="plot wide"><h3>每个 checkpoint 的闭环严格成功率</h3><div class="chart" id="success-chart"></div><div class="legend" id="success-legend"></div><small>不同任务分开显示。训练期间的小样本验证用于选模型，不等于每项 100 条独立条件的正式验收。</small></article>
+    </div>
+    <div id="initialization-comparison" class="scope-note" hidden role="status"></div>
+    <section id="checkpoint-outcomes" class="section" hidden aria-labelledby="checkpoint-outcomes-title">
+      <div class="section-head"><div><h3 id="checkpoint-outcomes-title">各技能的验证结果与失败原因</h3><p>查看完整验证报告中的任务结果。一个失败条件可能同时触发多项检查，分类数量不能相加作为失败总数。</p></div></div>
+      <div class="controls"><label>已完成的 checkpoint<select id="outcome-checkpoint" aria-label="已完成的 checkpoint"></select></label></div>
+      <p id="checkpoint-outcomes-note" role="status"></p>
+      <div id="checkpoint-outcome-cards" class="collection-grid outcome-grid"></div>
+      <p id="checkpoint-outcomes-evidence"></p>
+    </section>
+    <details id="checkpoint-details"><summary>查看所选批次的 checkpoint 记录与失败检查项</summary><div class="table-wrap"><table><thead><tr><th>Checkpoint</th><th>任务</th><th>严格成功率</th><th>通过 / 总数</th><th>失败检查项</th><th>证据</th></tr></thead><tbody id="checkpoint-rows"></tbody></table></div></details>
+  </section>
+  <section id="paired-replay-section" class="section" hidden aria-labelledby="paired-replay-title">
+    <h2 id="paired-replay-title">相同条件 · 两个历史 checkpoint 的动作回放</h2>
+    <p id="paired-replay-context" role="status"></p>
+    <div id="paired-replay-content" hidden>
+      <p>CPU 重放已经保存的学生动作，并逐步核对物理状态与原评测。左右画面共用视频时间轴；这是观察者视角，不是模型输入或实时推理。</p>
+      <div class="controls"><label>并排视频<select id="paired-replay-select"></select></label></div>
+      <div id="paired-replay-video"></div>
+      <details><summary>查看全部配对条件与首次意外跌倒时间</summary><div class="table-wrap"><table><thead><tr><th>任务 / seed</th><th id="paired-replay-before">较早模型</th><th id="paired-replay-after">较晚模型</th></tr></thead><tbody id="paired-replay-rows"></tbody></table></div></details>
+      <p>视频固定展示每项前两个验证条件，成功和失败都保留。未检测到跌倒仍可能因轨迹、停止或其他条件失败；合法蹲伏使用原任务的阶段规则判断。</p>
+      <p id="paired-replay-evidence"></p>
+    </div>
+  </section>
+  <section id="critical-fit-section" class="section" hidden aria-labelledby="critical-fit-title">
+    <h2 id="critical-fit-title">关键动作启动 · 小样本拟合诊断</h2>
+    <p id="critical-fit-context" role="status"></p>
+    <div id="critical-fit-content" hidden>
+      <div class="controls"><label>训练状态<select id="critical-fit-state"></select></label></div>
+      <article class="plot"><h3>前 5 步动作误差（rad，越低越接近教师）</h3><div class="chart" id="critical-fit-chart"></div><div class="legend" id="critical-fit-legend"></div><p>横轴为本次诊断的优化步数；每个点汇总同一时刻的四条训练轨迹，使用同一固定采样噪声。</p></article>
+      <div class="table-wrap"><table class="diagnostic-table"><caption>本次未参与优化的其他训练状态 · 拟合前后误差</caption><thead><tr><th>任务</th><th>拟合前</th><th>冻结语言 · Huber · 160 步</th><th>冻结语言 · MSE · 160 步</th><th>解冻末两层 · Huber · 160 步</th></tr></thead><tbody id="critical-fit-probes"></tbody></table></div>
+      <p>这是一项 CPU 小样本拟合：48 个状态参与优化，另外 12 个训练状态用于检查误差是否恶化。它们均来自训练集，不是开发集或最终测试集。只比较动作误差，不横比不同损失函数的 loss 数值。</p>
+      <div class="scope">这些曲线没有驱动仿真，也不计入技能成功率。诊断权重未发布；闭环验证和项目行为验收仍须分别完成。</div>
+      <div id="critical-fit-evidence" class="comparison-evidence"></div>
+    </div>
+  </section>
+  <section id="onset-fit-section" class="section" hidden aria-labelledby="onset-fit-title">
+    <h2 id="onset-fit-title">启动动作 · 优化时间与相邻状态</h2>
+    <p id="onset-fit-context" role="status"></p>
+    <div id="onset-fit-content" hidden>
+      <div class="controls"><label>拟合方式<select id="onset-fit-arm"></select></label></div>
+      <article class="plot"><h3>前 5 步动作误差（rad）</h3><div class="chart" id="onset-fit-chart"></div><div class="legend" id="onset-fit-legend"></div></article>
+      <p>横轴为优化器步数。每条曲线是同一训练轨迹、同一时刻在三个固定推理噪声下的平均误差；未测量的时刻不补零。各时刻共同使用从零开始的纵轴。</p>
+      <div class="table-wrap"><table><caption>最后测量点 · 三个噪声的平均值与范围（不是置信区间）</caption><thead><tr><th>状态</th><th>是否参与优化</th><th>平均 RMSE</th><th>最小—最大</th></tr></thead><tbody id="onset-fit-rows"></tbody></table></div>
+      <div class="scope">这里仅有一条训练轨迹的三个状态，没有驱动物理闭环。诊断模型未发布；误差下降不计入技能验收。</div>
+      <p id="onset-fit-evidence"></p>
+    </div>
+  </section>
+  <section id="training-coverage-section" class="section" hidden aria-labelledby="training-coverage-title">
+    <h2 id="training-coverage-title">示范覆盖与动作拟合</h2>
+    <p id="training-coverage-context" class="comparison-context" role="status"></p>
+    <div id="training-coverage-content" hidden>
+      <p id="training-coverage-summary"></p>
+      <div class="table-wrap"><table class="diagnostic-table"><caption>教师轨迹状态上的前 5 步动作 RMSE（rad，越低越接近教师）</caption><thead id="training-coverage-head"></thead><tbody id="training-coverage-rows"></tbody></table></div>
+      <p>本表保留旧诊断：作者默认动作填充采样，与当前正式评测不同。正式采样配置的后续复核另列报告链接，二者不合并。这里每个时刻重新计算视觉与语言条件，只预测动作，不控制仿真，不能作为成功率或当前 GPU 闭环精度的直接对照。</p>
+      <div id="training-coverage-evidence" class="comparison-evidence"></div>
+    </div>
+  </section>
+  <section id="replay-diagnostic-section" class="section" hidden aria-labelledby="replay-diagnostic-title">
+    <h2 id="replay-diagnostic-title">闭环失败诊断 · 教师何时还能接手</h2>
+    <p id="replay-diagnostic-context" class="comparison-context" role="status"></p>
+    <div id="replay-diagnostic-content" hidden>
+      <p>重放已保存的学生动作，在指定时刻复制仿真状态，让官方教师接手并继续完成原任务。横轴为本实验 50Hz 控制下的仿真时间。</p>
+      <div id="replay-diagnostic-summary" class="diagnostic-meta"></div>
+      <div class="controls"><label>查看指标<select id="replay-diagnostic-metric"><option value="completion">教师接手后的任务完成数</option><option value="error">学生与教师前 5 步动作差异</option></select></label></div>
+      <div class="table-wrap"><table class="diagnostic-table"><caption id="replay-diagnostic-caption"></caption><thead id="replay-diagnostic-head"></thead><tbody id="replay-diagnostic-rows"></tbody></table></div>
+      <div class="scope">接手前发生的跌倒或错过的任务目标仍计入失败，所以教师接手后未完成任务，不等于教师无法扶起鸭子。教师分支不计入学生成功；这些验证状态只用于诊断，没有进入训练数据。动作差异变小也不代表任务完成。</div>
+      <h3>同一 checkpoint 的动作回放</h3>
+      <p>CPU 重放保存的动作，观察者视角；未重新调用 TinyVLA，也不是最新模型的实时画面。</p>
+      <div id="replay-diagnostic-videos" class="video-grid diagnostic-videos"></div>
+      <div id="replay-diagnostic-evidence" class="comparison-evidence"></div>
+    </div>
+  </section>
+  <section id="objective-comparison-section" class="section" hidden aria-labelledby="objective-comparison-title">
+    <h2 id="objective-comparison-title">Huber 与 MSE · 同条件对照</h2>
+    <p id="objective-comparison-context" class="comparison-context" role="status"></p>
+    <div id="objective-comparison-content" hidden>
+      <p>两组验证均使用 MSE，动作误差均以 rad 计。训练 Huber loss 与训练 MSE loss 的尺度不同，不直接横比。</p>
+      <div class="table-wrap"><table class="objective-table"><caption>最新同一步数的验证指标</caption><thead><tr><th>测量点 / 指标</th><th>Huber 训练</th><th>MSE 训练</th></tr></thead><tbody id="objective-latest"></tbody></table></div>
+      <div class="plots">
+        <article class="plot"><h3>同一步数 · 验证 MSE</h3><div class="chart" id="objective-mse-chart"></div><div class="legend" id="objective-mse-legend"></div></article>
+        <article class="plot"><h3>同一步数 · 前 5 步 RMSE（rad）</h3><div class="chart" id="objective-prefix-chart"></div><div class="legend" id="objective-prefix-legend"></div></article>
+      </div>
+      <p id="objective-paired-note"></p>
+      <h3>固定条件闭环验证 · 按 checkpoint 对齐</h3>
+      <p>仅显示已核对条件配方、执行方式、随机种子和初始状态哈希的固定验证报告。尚未评测的 checkpoint 保持待完成，不填零。</p>
+      <div class="table-wrap"><table class="objective-table"><thead><tr><th>Checkpoint</th><th>Huber 训练 · 严格通过</th><th>MSE 训练 · 严格通过</th></tr></thead><tbody id="objective-fixed-rows"></tbody></table></div>
+      <div class="comparison-development"><h3>所选模型的开发评测 · 单独记录</h3><p>开发集与上方训练期间的固定验证使用不同条件；下列结果不合并计算，也不与固定验证直接横比。</p><div id="objective-development" class="baseline-grid"></div></div>
+      <div class="scope">验证 MSE 或动作误差下降不代表学会行为。固定验证用于训练诊断和选模型，开发评测用于判断下一阶段门槛；两者都不计入 13 项正式行为验收。</div>
+      <div id="objective-comparison-evidence" class="comparison-evidence"></div>
+    </div>
+  </section>
+  <section id="refit-comparison-section" class="section" hidden aria-labelledby="refit-comparison-title">
+    <h2 id="refit-comparison-title">等权与前缀加权 · 同条件对照</h2>
+    <p id="refit-comparison-context"></p>
+    <p>两组使用相同的初始化、数据、归一化和验证样本，仅改变前 5 步动作的训练权重。横轴为各自本轮优化器步数；误差单位为 rad，越低越好。</p>
+    <div class="plots">
+      <article class="plot"><h3>每次实际执行的前 5 步 · RMSE</h3><div class="chart" id="refit-prefix-chart"></div><div class="legend" id="refit-prefix-legend"></div></article>
+      <article class="plot"><h3>完整 50 步动作块 · RMSE</h3><div class="chart" id="refit-full-chart"></div><div class="legend" id="refit-full-legend"></div></article>
+    </div>
+    <div id="refit-comparison-result" class="scope"></div>
+    <div id="refit-comparison-evidence"></div>
+  </section>
+  <section id="baseline-section" class="section" hidden><h2>基础稳定性与常量动作对照</h2><p id="baseline-context"></p><div class="baseline-grid"><article class="baseline"><h3>学生 · 开发集</h3><div class="rate" id="student-baseline">—</div><small id="student-baseline-count"></small></article><article class="baseline"><h3>常量动作 · 同范围对照</h3><div class="rate" id="constant-baseline">—</div><small id="constant-baseline-count"></small></article></div><div class="scope">站立通过只能证明这一组条件下保持稳定。如果常量动作也能通过，不能据此证明学生学会了反馈控制；此处结果不计入下方行为验收。</div></section>
+  <section id="prefix-diagnostic-section" class="section" hidden><h2>动作数据诊断 · CPU 对照</h2><p>小型 MLP 只读取机器人状态，预测接下来 5 步动作，用于检查数据能否支持闭环控制。此处独立展示诊断模型，与上方所选 TinyVLA 模型无关。</p><article class="baseline"><h3>状态 → 5 步动作 · 行走课程验证</h3><div class="rate" id="prefix-diagnostic-rate"></div><p id="prefix-diagnostic-detail"></p><div id="prefix-diagnostic-evidence"></div></article><div class="scope">仅使用 5 个训练期间验证条件。架构、训练步数、学习率与动作时域均不同，这一对照不能单独确定 TinyVLA 失败的原因，也不计入下方技能验收。</div></section>
+  <section class="section"><h2>行为验收矩阵</h2><p>本期范围：12 项原任务＋「官方低头近地后起身」。原 ground_touch 历史结果保留，近地动作不算触地复现。</p><small>教师列显示该任务最新教师验收记录，并保留各自条件版本。学生列按所选批次候选模型显示；离线验收列显示独立登记模型的正式测试结果，不代表所选新权重已通过；未评测保持空缺，基础站立不计入。正式目标：每项 ≥100 个不同测试条件、成功率 ≥90%。</small>
+    <p id="matrix-candidate" class="scope-note" hidden></p>
+    <div class="table-wrap"><table><thead><tr><th>任务</th><th>教师严格结果 / 条件版本</th><th>所选批次学生结果</th><th>登记模型离线验收</th><th>实时验收</th></tr></thead><tbody id="matrix-rows"></tbody></table></div>
+  </section>
+  <section class="section"><h2>日志、视频与报告</h2><p>按所选训练批次展示。视频是记录的评测轨迹；教师诊断和训练计划不会改变学生验收状态。</p><div id="videos" class="video-grid"></div><ul id="artifacts" class="artifact-list"></ul><details><summary>教师与实验诊断报告（全部版本）</summary><ul id="diagnostic-artifacts" class="artifact-list"></ul></details><details><summary>数据来源与同步信息</summary><pre id="provenance"></pre></details></section>
+  <footer>页面只读，不启动训练、不追加预算。数据来自服务器文件的同步快照；图表保留采样点，无数据时不生成曲线。尚未进行真机验证。</footer>
+</main>
+<script src="/training.js" defer></script>
+</html>

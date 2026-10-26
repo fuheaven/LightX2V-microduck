@@ -1,0 +1,198 @@
+from functools import lru_cache
+from typing import Tuple
+
+import torch
+from einops import rearrange
+from torch import nn
+
+from lightx2v.common.ops.rope import RopeTemplate
+from lightx2v.utils.registry_factory import ROPE_REGISTER
+
+from .cache import Cache
+from .rotary_embedding_torch import RotaryEmbedding, apply_rotary_emb
+
+
+class RotaryEmbeddingBase(nn.Module):
+    def __init__(self, dim: int, rope_dim: int):
+        super().__init__()
+        self.rope = RotaryEmbedding(
+            dim=dim // rope_dim,
+            freqs_for="pixel",
+            max_freq=256,
+        )
+        # 1. Set model.requires_grad_(True) after model creation will make
+        #    the `requires_grad=False` for rope freqs no longer hold.
+        # 2. Even if we don't set requires_grad_(True) explicitly,
+        #    FSDP is not memory efficient when handling fsdp_wrap
+        #    with mixed requires_grad=True/False.
+        # With above consideration, it is easier just remove the freqs
+        # out of nn.Parameters when `learned_freq=False`
+        freqs = self.rope.freqs
+        del self.rope.freqs
+        self.rope.register_buffer("freqs", freqs.data)
+
+    @lru_cache(maxsize=128)
+    def get_axial_freqs(self, *dims):
+        return self.rope.get_axial_freqs(*dims)
+
+
+class RotaryEmbedding3d(RotaryEmbeddingBase):
+    def __init__(self, dim: int):
+        super().__init__(dim, rope_dim=3)
+        self.mm = False
+
+    def forward(
+        self,
+        q: torch.FloatTensor,  # b h l d
+        k: torch.FloatTensor,  # b h l d
+        size: Tuple[int, int, int],
+    ) -> Tuple[
+        torch.FloatTensor,
+        torch.FloatTensor,
+    ]:
+        T, H, W = size
+        freqs = self.get_axial_freqs(T, H, W)
+        freqs = freqs.to(device=q.device, dtype=q.dtype)
+        q = rearrange(q, "b h (T H W) d -> b h T H W d", T=T, H=H, W=W)
+        k = rearrange(k, "b h (T H W) d -> b h T H W d", T=T, H=H, W=W)
+        q = apply_rotary_emb(freqs, q)
+        k = apply_rotary_emb(freqs, k)
+        q = rearrange(q, "b h T H W d -> b h (T H W) d")
+        k = rearrange(k, "b h T H W d -> b h (T H W) d")
+        return q, k
+
+
+class NaRotaryEmbedding3d(RotaryEmbedding3d):
+    def forward(
+        self,
+        q: torch.FloatTensor,
+        k: torch.FloatTensor,
+        shape: torch.LongTensor,
+        cache: Cache,
+    ) -> Tuple[torch.FloatTensor, torch.FloatTensor]:
+        freqs = cache("rope_freqs_3d", lambda: self.get_freqs(shape))
+        if freqs.device != q.device:
+            freqs = freqs.to(device=q.device, dtype=q.dtype)
+        q = rearrange(q, "L h d -> h L d")
+        k = rearrange(k, "L h d -> h L d")
+        q = apply_rotary_emb(freqs, q.float()).to(q.dtype)
+        k = apply_rotary_emb(freqs, k.float()).to(k.dtype)
+        q = rearrange(q, "h L d -> L h d")
+        k = rearrange(k, "h L d -> L h d")
+        return q, k
+
+    def get_freqs(self, shape: torch.LongTensor) -> torch.Tensor:
+        freq_list = []
+        for f, h, w in shape.tolist():
+            freqs = self.get_axial_freqs(f, h, w)
+            freq_list.append(freqs.view(-1, freqs.size(-1)))
+        return torch.cat(freq_list, dim=0)
+
+
+class MMRotaryEmbeddingBase(RotaryEmbeddingBase):
+    def __init__(self, dim: int, rope_dim: int):
+        super().__init__(dim, rope_dim)
+        self.rope = RotaryEmbedding(
+            dim=dim // rope_dim,
+            freqs_for="lang",
+            theta=10000,
+        )
+        freqs = self.rope.freqs
+        del self.rope.freqs
+        self.rope.register_buffer("freqs", freqs.data)
+        self.mm = True
+
+
+class NaMMRotaryEmbedding3d(MMRotaryEmbeddingBase):
+    def __init__(self, dim: int):
+        super().__init__(dim, rope_dim=3)
+
+    def forward(
+        self,
+        vid_q: torch.FloatTensor,  # L h d
+        vid_k: torch.FloatTensor,  # L h d
+        vid_shape: torch.LongTensor,  # B 3
+        txt_q: torch.FloatTensor,  # L h d
+        txt_k: torch.FloatTensor,  # L h d
+        txt_shape: torch.LongTensor,  # B 1
+        cache: Cache,
+    ) -> Tuple[
+        torch.FloatTensor,
+        torch.FloatTensor,
+        torch.FloatTensor,
+        torch.FloatTensor,
+    ]:
+        vid_freqs, txt_freqs = cache(
+            "mmrope_freqs_3d",
+            lambda: self.get_freqs(vid_shape, txt_shape),
+        )
+        if vid_freqs.device != vid_q.device:
+            vid_freqs = vid_freqs.to(device=vid_q.device, dtype=vid_q.dtype)
+        if txt_freqs.device != vid_q.device:
+            txt_freqs = txt_freqs.to(device=vid_q.device, dtype=vid_q.dtype)
+        vid_q = rearrange(vid_q, "L h d -> h L d")
+        vid_k = rearrange(vid_k, "L h d -> h L d")
+        vid_q = apply_rotary_emb(vid_freqs, vid_q)
+        vid_k = apply_rotary_emb(vid_freqs, vid_k)
+        vid_q = rearrange(vid_q, "h L d -> L h d")
+        vid_k = rearrange(vid_k, "h L d -> L h d")
+
+        txt_q = rearrange(txt_q, "L h d -> h L d")
+        txt_k = rearrange(txt_k, "L h d -> h L d")
+        txt_q = apply_rotary_emb(txt_freqs, txt_q)
+        txt_k = apply_rotary_emb(txt_freqs, txt_k)
+        txt_q = rearrange(txt_q, "h L d -> L h d")
+        txt_k = rearrange(txt_k, "h L d -> L h d")
+        return vid_q, vid_k, txt_q, txt_k
+
+    def get_freqs(
+        self,
+        vid_shape: torch.LongTensor,
+        txt_shape: torch.LongTensor,
+    ) -> Tuple[
+        torch.Tensor,
+        torch.Tensor,
+    ]:
+        vid_freqs = self.get_axial_freqs(1024, 128, 128)
+        txt_freqs = self.get_axial_freqs(1024)
+        vid_freq_list, txt_freq_list = [], []
+        for (f, h, w), le in zip(vid_shape.tolist(), txt_shape[:, 0].tolist()):
+            vid_freq = vid_freqs[le : le + f, :h, :w].reshape(-1, vid_freqs.size(-1))
+            txt_freq = txt_freqs[:le].repeat(1, 3).reshape(-1, vid_freqs.size(-1))
+            vid_freq_list.append(vid_freq)
+            txt_freq_list.append(txt_freq)
+        return torch.cat(vid_freq_list, dim=0), torch.cat(txt_freq_list, dim=0)
+
+
+class SeedVRRopeBase(RopeTemplate):
+    multimodal = False
+    implementation_class = None
+
+    def __init__(self, layout="interleaved", compute_dtype=torch.float32):
+        super().__init__(layout=layout, compute_dtype=compute_dtype)
+        if layout != "interleaved":
+            raise ValueError("SeedVR RoPE only supports interleaved layout.")
+        self.implementation = None
+
+    def set_config(self, config=None):
+        super().set_config(config)
+        if config is not None:
+            self.implementation = self.implementation_class(dim=config["rope_dim"])
+
+    def apply(self, q, k, shape, *, cache, txt_q=None, txt_k=None, txt_shape=None, **kwargs):
+        if self.implementation is None:
+            raise RuntimeError("SeedVR RoPE must be configured before apply().")
+        if self.multimodal:
+            return self.implementation(q, k, shape, txt_q, txt_k, txt_shape, cache)
+        return self.implementation(q, k, shape, cache)
+
+
+@ROPE_REGISTER("rope3d")
+class SeedVRRope3D(SeedVRRopeBase):
+    implementation_class = NaRotaryEmbedding3d
+
+
+@ROPE_REGISTER("mmrope3d")
+class SeedVRMMRope3D(SeedVRRopeBase):
+    multimodal = True
+    implementation_class = NaMMRotaryEmbedding3d

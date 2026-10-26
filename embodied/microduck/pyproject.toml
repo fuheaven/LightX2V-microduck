@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lightx2v-microduck"
+version = "0.1.0"
+description = "Versioned MicroDuck simulation, policy evaluation and data tooling"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = ["numpy==2.4.1", "PyYAML==6.0.3", "Pillow==12.1.1"]
+
+[project.optional-dependencies]
+sim = ["mujoco==3.10.0", "onnxruntime==1.24.4"]
+community = ["gymnasium==1.3.0"]
+test = ["pytest==8.4.2"]
+train = ["torch==2.11.0", "safetensors>=0.5", "transformers==5.5.4"]
+
+[project.scripts]
+microduck = "lightx2v_microduck.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+lightx2v_microduck = ["resources/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: requires downloaded upstream assets and physics dependencies"]

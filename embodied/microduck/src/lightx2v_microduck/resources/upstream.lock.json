@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "lightx2v_revision": "ca181cab7f454f804ab9c23f8811316a242b1e6c",
+  "default_sources": [
+    "microduck_rl",
+    "microduck-policies"
+  ],
+  "sources": {
+    "microduck": {
+      "kind": "github_archive",
+      "repository": "pollen-robotics/microduck",
+      "revision": "5620aa214e6e304eec00d5c376ac81d3001fb7a3",
+      "url": "https://codeload.github.com/pollen-robotics/microduck/tar.gz/5620aa214e6e304eec00d5c376ac81d3001fb7a3",
+      "license": "Apache-2.0",
+      "archive_sha256": "444704e127129276476a2c63aa0e995dbdb1717b6af9a44e21f2f920018d8bf4",
+      "file_tree_sha256": "64c02d24947bf3600dd8c43f4b57f2e8e1a73e74fa9274b2a56539d0c5fd837f"
+    },
+    "microduck_rl": {
+      "kind": "github_archive",
+      "repository": "pollen-robotics/microduck_rl",
+      "revision": "2b581c641406a48346e696212930ea881c222c52",
+      "url": "https://codeload.github.com/pollen-robotics/microduck_rl/tar.gz/2b581c641406a48346e696212930ea881c222c52",
+      "license": "code: Apache-2.0; robot assets: CC BY-NC-SA (upstream does not specify version)",
+      "archive_sha256": "b60a329683ff94770883f49b69fb910f0819a61c191d6639b94662b8148ede2e",
+      "file_tree_sha256": "aa00551645866b698bf9f5b9ee8ec7a3b6f3962337a21c269331e7981f98045d"
+    },
+    "tinyvla-author-rl": {
+      "kind": "github_archive",
+      "repository": "pollen-robotics/microduck_rl",
+      "revision": "d424a0c899f6b33cbd3daeb279913134349c0b63",
+      "url": "https://codeload.github.com/pollen-robotics/microduck_rl/tar.gz/d424a0c899f6b33cbd3daeb279913134349c0b63",
+      "license": "code: Apache-2.0; robot assets: see upstream",
+      "archive_sha256": "d8f07de4aef79255513992b28e3f33059a8b39c93cff4d5aaac4b2f7cddfb3b9",
+      "file_tree_sha256": "1dc19dca38f53e3607f0df5adf5c89034b21e0cdf074383a4e0078e02ca848aa"
+    },
+    "microduck-ai-world": {
+      "kind": "github_archive",
+      "repository": "shaibuafeez/microduck-ai-world",
+      "revision": "be5742a22678a4cf0fbec8a2ce341b301db3937c",
+      "url": "https://codeload.github.com/shaibuafeez/microduck-ai-world/tar.gz/be5742a22678a4cf0fbec8a2ce341b301db3937c",
+      "license": "code: Apache-2.0; inherited robot/assets: separate terms",
+      "archive_sha256": "359c13098ec1e83399654ea9abef639cc5cf79d0edd6e90bdc1a249775bec96f",
+      "file_tree_sha256": "bf521498a2575f43b65ef810588a4a7275a03d013dae9fd97ee618894e3dd86e"
+    },
+    "microduck-lab": {
+      "kind": "github_archive",
+      "repository": "jonathanhawkins/microduck-lab",
+      "revision": "54989dff8e4ec8735a89ff5969c17e12882bf0c0",
+      "url": "https://codeload.github.com/jonathanhawkins/microduck-lab/tar.gz/54989dff8e4ec8735a89ff5969c17e12882bf0c0",
+      "license": "see upstream LICENSE; inherited robot assets separately",
+      "archive_sha256": "b1dc01563954c364502b6717e1d06a47861ffa275f27871777d189d1c2b19f9b",
+      "file_tree_sha256": "ca95f2abdda2b3369b863cdf076709ed07ac630715770b0deae24e779fd53139"
+    },
+    "microduck-policies": {
+      "kind": "files",
+      "revision": "088524a64e2557dc453256b6071dbb9d23888802",
+      "repository": "pollen-robotics/microduck-policies",
+      "license": "Apache-2.0",
+      "files": [
+        {
+          "path": "alpha_walking.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/alpha_walking.onnx",
+          "sha256": "e36332d383997d51401897734cd3e79cf5038406feddb18b4d57ecfb141daa6c"
+        },
+        {
+          "path": "alpha_stand.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/alpha_stand.onnx",
+          "sha256": "1569268713e40deea795dd2922dba50d3621e15a872855408b6b1b125b1c094b"
+        },
+        {
+          "path": "alpha_sitstand.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/alpha_sitstand.onnx",
+          "sha256": "c6c40e35e726eabd803d633e090d112994f469921152448367953fbaf9799bc8"
+        },
+        {
+          "path": "alpha_ground_pick.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/alpha_ground_pick.onnx",
+          "sha256": "ffbf5109982ff999b0ba53afe86b9ae731bbec679d67fb7f8ab4c52152c88872"
+        },
+        {
+          "path": "ball_kick_left.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/ball_kick_left.onnx",
+          "sha256": "d6928284dccd3dd61e08bf2f760effa74309fbefd97b2b31afb2a60f526d196a"
+        },
+        {
+          "path": "ball_kick_right.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/ball_kick_right.onnx",
+          "sha256": "147a32c388c6b19111b3ac3b550a9a6dc8b8bf267118af4d8c3712522eedb5af"
+        },
+        {
+          "path": "roller.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/roller.onnx",
+          "sha256": "cf05651d2708a2f9364212e86b866c97a70ace8131c492500105e8f28bf99afd"
+        },
+        {
+          "path": "roller_crouch.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/roller_crouch.onnx",
+          "sha256": "a1a084be240469c76ac9d3fa44d4792f16d4b1da60398b3ecd3cfc5e2244d990"
+        },
+        {
+          "path": "roulade.onnx",
+          "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/088524a64e2557dc453256b6071dbb9d23888802/roulade.onnx",
+          "sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b"
+        }
+      ],
+      "file_tree_sha256": "14c57cc6a80005dc040f9f165d71a79219b666acd4d13dbc4ecd52ab4ddc8a5d"
+    },
+    "tinyvla": {
+      "kind": "files",
+      "revision": "603f5045b45126af011418befc899e3c67d04346",
+      "repository": "AlexWortega/tinyvla",
+      "license": "see upstream model card and vendored source NOTICE",
+      "files": [
+        {
+          "path": "ckpt_v4_duckft/config.json",
+          "url": "https://huggingface.co/AlexWortega/tinyvla/resolve/603f5045b45126af011418befc899e3c67d04346/tinyvla_b200/ckpt_v4_duckft/config.json",
+          "sha256": "5c5af60444f65329419f5f4ca9783ef53c1b223018031acc1ef53c085b13f00e"
+        },
+        {
+          "path": "ckpt_v4_duckft/model.safetensors",
+          "url": "https://huggingface.co/AlexWortega/tinyvla/resolve/603f5045b45126af011418befc899e3c67d04346/tinyvla_b200/ckpt_v4_duckft/model.safetensors",
+          "sha256": "48969699447a19219a40119e6c4d66ac7f5d8081309230144b0550be7384b1f6"
+        }
+      ],
+      "file_tree_sha256": "c5c8bb48bfd4eb1e49623c9cb308efa773a1ab74da7d62e9633fa145dbc5e0f9"
+    },
+    "official_simulator-reference": {
+      "kind": "files",
+      "repository": "pollen-robotics/microduck-simulator",
+      "revision": "e81974b932c7ca1819843b7bb3dcd42e2993e98e",
+      "license": "upstream reference source; verify per-file terms before redistribution",
+      "files": [
+        {
+          "path": "README.md",
+          "url": "https://huggingface.co/spaces/pollen-robotics/microduck-simulator/resolve/e81974b932c7ca1819843b7bb3dcd42e2993e98e/README.md",
+          "sha256": "4a874f1601d2f8fc8a2033fa11c326f34a5c623c3f04b86553f868a731b6dbf6"
+        },
+        {
+          "path": "app/src/game/game.js",
+          "url": "https://huggingface.co/spaces/pollen-robotics/microduck-simulator/resolve/e81974b932c7ca1819843b7bb3dcd42e2993e98e/app/src/game/game.js",
+          "sha256": "a746e8b16bd985f90c85f02aac4513f17edca497ab3de1da56b6c32c93cc0730"
+        }
+      ],
+      "file_tree_sha256": "6460f90e56cfc3502f8844cb4a989038ae1c2bb600792d3d3961de9cbbbabae8"
+    },
+    "tinyvla_simulator-reference": {
+      "kind": "files",
+      "repository": "AlexWortega/microduck-vla-simulator",
+      "revision": "1545800ded064082a67766fbc87f5e25aad71c1e",
+      "license": "upstream reference source; verify per-file terms before redistribution",
+      "files": [
+        {
+          "path": "README.md",
+          "url": "https://huggingface.co/spaces/AlexWortega/microduck-vla-simulator/resolve/1545800ded064082a67766fbc87f5e25aad71c1e/README.md",
+          "sha256": "4ad821a42cb084aabbf8c52cab5f749c039741fc6a69990a727524df75afe127"
+        },
+        {
+          "path": "app/src/game/game.js",
+          "url": "https://huggingface.co/spaces/AlexWortega/microduck-vla-simulator/resolve/1545800ded064082a67766fbc87f5e25aad71c1e/app/src/game/game.js",
+          "sha256": "c67e18b6804526b29d7181eef8754c06a1d0f5584faa609c584b8d9e04942052"
+        },
+        {
+          "path": "app/src/game/vla-tasks.js",
+          "url": "https://huggingface.co/spaces/AlexWortega/microduck-vla-simulator/resolve/1545800ded064082a67766fbc87f5e25aad71c1e/app/src/game/vla-tasks.js",
+          "sha256": "cb46278e0a7aebd197342670ed45587eda702c735e0b22b026c5c707a983071d"
+        }
+      ],
+      "file_tree_sha256": "edee6f5ba20a2221fb85ee89cfd9c8d835390242db92c9cfa6bb632b08374576"
+    }
+  },
+  "dependencies": {
+    "bam": {
+      "repository": "Rhoban/bam",
+      "revision": "62bd8ce12154340be97e06f7f41a0ca8f116d967",
+      "distribution": "better-actuator-models",
+      "version": "1.0.1"
+    },
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "numpy": "2.4.1"
+  },
+  "snapshot_references": {
+    "official_simulator": {
+      "repository": "pollen-robotics/microduck-simulator",
+      "revision": "e81974b932c7ca1819843b7bb3dcd42e2993e98e",
+      "source_kind": "huggingface_space",
+      "role": "web_execution_reference_only"
+    },
+    "tinyvla_simulator": {
+      "repository": "AlexWortega/microduck-vla-simulator",
+      "revision": "1545800ded064082a67766fbc87f5e25aad71c1e",
+      "source_kind": "huggingface_space",
+      "role": "web_execution_reference_only"
+    }
+  }
+}

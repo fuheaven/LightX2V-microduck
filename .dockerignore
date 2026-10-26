@@ -1,0 +1,10 @@
+*
+!deploy/
+!deploy/microduck/
+!deploy/microduck/fastwam/
+!deploy/microduck/fastwam/Dockerfile
+!deploy/microduck/fastwam/requirements.lock
+!deploy/microduck/fastwam/verify_bam.py
+!third_party/
+!third_party/bam/
+!third_party/bam/**

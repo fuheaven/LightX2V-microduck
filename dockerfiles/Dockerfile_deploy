@@ -1,0 +1,15 @@
+ARG BASE_TAG=26011201-cu128
+FROM lightx2v/lightx2v:${BASE_TAG} AS base
+
+RUN mkdir /workspace/LightX2V
+WORKDIR /workspace/LightX2V
+ENV PYTHONPATH=/workspace/LightX2V
+
+RUN pip install diffusers==0.37.1 librosa
+
+COPY tools tools
+COPY assets assets
+COPY configs configs
+COPY lightx2v lightx2v
+COPY lightx2v_kernel lightx2v_kernel
+COPY lightx2v_platform lightx2v_platform

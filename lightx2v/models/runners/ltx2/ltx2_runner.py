@@ -1,0 +1,1356 @@
+import os
+import time
+from math import gcd as _gcd
+
+import torch
+import torch.distributed as dist
+
+from lightx2v.common.kvcache.utils import causal_chunk_token_range
+from lightx2v.models.input_encoders.hf.ltx2.model import LTX2TextEncoder
+from lightx2v.models.networks.lora_adapter import LoraAdapter
+from lightx2v.models.networks.ltx2.model import LTX2ARModel, LTX2Model
+from lightx2v.models.runners.default_runner import DefaultRunner
+from lightx2v.models.schedulers.ltx2.scheduler import LTX2ARScheduler, LTX2Scheduler, LatentState
+from lightx2v.models.video_encoders.hf.ltx2.audio_vae.audio_vae import encode_audio
+from lightx2v.models.video_encoders.hf.ltx2.audio_vae.ops import Audio
+from lightx2v.models.video_encoders.hf.ltx2.model import LTX2AudioVAE, LTX2Upsampler, LTX2VideoVAE
+from lightx2v.server.metrics import monitor_cli
+from lightx2v.utils.envs import *
+from lightx2v.utils.input_info import I2AVInputInfo, T2AVInputInfo
+from lightx2v.utils.ltx2_media_io import decode_audio_from_file, load_image_conditioning, load_video_conditioning
+from lightx2v.utils.ltx2_media_io import encode_video as save_video
+from lightx2v.utils.profiler import *
+from lightx2v.utils.registry_factory import RUNNER_REGISTER
+from lightx2v.utils.utils import mux_audio_from_video
+from lightx2v_platform.base.global_var import AI_DEVICE
+
+torch_device_module = getattr(torch, AI_DEVICE)
+
+
+def _ltx2_parse_image_paths(image_path: str) -> list[str]:
+    return [p.strip() for p in image_path.split(",") if p.strip()]
+
+
+def _ltx2_audio_to_stereo(audio: Audio) -> Audio:
+    waveform = audio.waveform
+    if waveform.dim() == 3:
+        if waveform.shape[1] == 1:
+            waveform = waveform.expand(waveform.shape[0], 2, waveform.shape[2]).contiguous()
+        elif waveform.shape[1] > 2:
+            waveform = waveform[:, :2, :].contiguous()
+    elif waveform.dim() == 2:
+        if waveform.shape[0] == 1:
+            waveform = waveform.expand(2, waveform.shape[1]).contiguous()
+        elif waveform.shape[0] > 2:
+            waveform = waveform[:2, :].contiguous()
+    return Audio(waveform=waveform, sampling_rate=audio.sampling_rate)
+
+
+def _ltx2_normalize_image_strengths(image_strength, n: int) -> list[float]:
+    if image_strength is None:
+        return [1.0] * n
+    if not isinstance(image_strength, list):
+        return [float(image_strength)] * n
+    if len(image_strength) == 1:
+        return [float(image_strength[0])] * n
+    if len(image_strength) != n:
+        raise ValueError(f"i2av image_strength: expected 1 or {n} values (scalar or list), got length {len(image_strength)}")
+    return [float(x) for x in image_strength]
+
+
+def _ltx2_resolve_pixel_frame_indices(image_frame_idx, n: int, num_frames: int) -> list[int]:
+    if not image_frame_idx:
+        if n == 1:
+            return [0]
+        if num_frames <= 1:
+            return [0] * n
+        return [round(i * (num_frames - 1) / (n - 1)) for i in range(n)]
+    if len(image_frame_idx) != n:
+        raise ValueError(f"i2av image_frame_idx: expected {n} indices (one per image), got {len(image_frame_idx)}")
+    hi = num_frames - 1
+    return [max(0, min(hi, int(x))) for x in image_frame_idx]
+
+
+def _ltx2_pixel_to_latent_frame_idx(pixel_frame_idx: int, temporal_scale: int) -> int:
+    if pixel_frame_idx == 0:
+        return 0
+    return (pixel_frame_idx - 1) // temporal_scale + 1
+
+
+def _ltx2_resize_video_denoise_mask_for_stage2(mask: torch.Tensor, target_h: int, target_w: int) -> torch.Tensor:
+    """Resize stage-1 unpatchified video denoise mask to stage-2 latent spatial size."""
+    # mask shape: [1, F, H, W] -> [F, 1, H, W] for 2D interpolation
+    m = mask.to(dtype=torch.float32)
+    m = m.permute(1, 0, 2, 3)
+    m = torch.nn.functional.interpolate(m, size=(target_h, target_w), mode="nearest")
+    # back to [1, F, H, W]
+    return m.permute(1, 0, 2, 3).contiguous()
+
+
+@RUNNER_REGISTER("ltx2")
+class LTX2Runner(DefaultRunner):
+    _WARMUP_RESOLUTIONS = ((480, 480), (512, 768))
+    _UPSAMPLER_WARMUP_RESOLUTIONS = ((480, 480), (1024, 1536))
+    transformer_model_class = LTX2Model
+    text_encoder_class = LTX2TextEncoder
+    video_vae_class = LTX2VideoVAE
+    audio_vae_class = LTX2AudioVAE
+    text_encoder_checkpoint_key = None
+    text_encoder_root_key = "gemma_original_ckpt"
+    video_vae_checkpoint_key = None
+    audio_vae_checkpoint_key = None
+
+    def __init__(self, config):
+        super().__init__(config)
+
+    @ProfilingContext4DebugL1("Warmup")
+    def run_warmup(self):
+        if type(self) is not LTX2Runner:
+            raise NotImplementedError(f"LTX2 warmup is not supported for {type(self).__name__}")
+        task = self.config.get("task")
+        if task not in ("t2av", "i2av"):
+            raise NotImplementedError(f"LTX2 warmup does not support task: {task}")
+        if self.config.get("lazy_load", False):
+            raise NotImplementedError("LTX2 warmup does not support lazy_load")
+
+        self._run_warmup()
+        self._maybe_freeze_gc()
+
+    def _run_warmup(self):
+        scheduler = self.model.scheduler
+        stage1_infer_steps = scheduler.infer_steps
+        use_upsampler = bool(self.config.get("use_upsampler"))
+        model_offload = self.config.get("cpu_offload", False) and self.config.get("offload_granularity") == "model"
+        _, spatial_scale_h, spatial_scale_w = self.config["vae_scale_factors"]
+        upsample_scale = 2 if use_upsampler else 1
+        stage_count = 2 if use_upsampler else 1
+        warmup_resolutions = self._UPSAMPLER_WARMUP_RESOLUTIONS if use_upsampler else self._WARMUP_RESOLUTIONS
+        text_encoder_output = None
+        distilled_sigmas = self.config.get("distilled_sigma_values")
+        stage1_sigmas = torch.tensor(distilled_sigmas, dtype=torch.float32, device=AI_DEVICE) if distilled_sigmas is not None else None
+
+        try:
+            for requested_height, requested_width in warmup_resolutions:
+                height = max(1, requested_height // (spatial_scale_h * upsample_scale)) * spatial_scale_h
+                width = max(1, requested_width // (spatial_scale_w * upsample_scale)) * spatial_scale_w
+                if use_upsampler:
+                    logger.info(f"Warmup: requested {requested_height}x{requested_width}, aligned final {height * 2}x{width * 2} (base stage {height}x{width})")
+                elif (height, width) != (requested_height, requested_width):
+                    logger.info(f"Warmup: requested {requested_height}x{requested_width}, aligned to {height}x{width}")
+                else:
+                    logger.info(f"Warmup: {height}x{width}")
+
+                try:
+                    text_encoder_output = self._prepare_warmup_inputs(height, width, text_encoder_output)
+                    scheduler.generator = None
+                    scheduler.infer_steps = stage1_infer_steps
+                    if stage1_sigmas is not None:
+                        scheduler.reset_sigmas(stage1_sigmas)
+                    self._prepare_scheduler()
+
+                    for stage_index in range(stage_count):
+                        if stage_index:
+                            self.run_upsampler(v_latent, a_latent, prepare_only=True)
+                        # Step 0 matches the first real request; the final step
+                        # unpatchifies latents so they can continue to Stage 2/VAE.
+                        last_step = scheduler.infer_steps - 1
+                        step_indices = (0,) if last_step == 0 else (0, last_step)
+                        for step_index in step_indices:
+                            scheduler.step_pre(step_index=step_index)
+                            self.model.infer(self.inputs)
+                            scheduler.step_post()
+                        v_latent = scheduler.video_latent_state.latent
+                        a_latent = scheduler.audio_latent_state.latent
+
+                    video, audio = self.run_vae_decoder(v_latent, a_latent)
+                    del audio
+                    # Video decoding is lazy; consuming it is what actually warms the VAE.
+                    for decoded_chunk in video:
+                        del decoded_chunk
+                    torch_device_module.synchronize()
+                finally:
+                    v_latent = a_latent = video = None
+                    if model_offload:
+                        self.model.to_cpu()
+                    self.clear_warmup_state()
+        finally:
+            scheduler.infer_steps = stage1_infer_steps
+
+        logger.info("[Warmup] Warmup completed")
+
+    def _prepare_warmup_inputs(self, height, width, text_encoder_output=None):
+        task = self.config["task"]
+        input_cls = T2AVInputInfo if task == "t2av" else I2AVInputInfo
+        self.input_info = input_cls(
+            seed=0,
+            prompt="warmup",
+            negative_prompt=" " if self.config["enable_cfg"] else "",
+            target_shape=[height, width],
+            target_video_length=self.config["target_video_length"],
+        )
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()
+        self.video_denoise_mask = None
+        self.initial_video_latent = None
+        self._i2av_guiding_keyframe_meta = None
+        self._i2av_first_frame_meta = None
+
+        if text_encoder_output is None:
+            text_encoder_output = self.run_text_encoder(self.input_info)
+
+        if task == "i2av":
+            latent_shape = self.input_info.video_latent_shape
+            dtype = GET_DTYPE()
+            image = torch.zeros((1, 3, 1, height, width), dtype=dtype, device=AI_DEVICE)
+            with torch.no_grad():
+                encoded_latent = self.video_vae.encode(image).squeeze(0)
+
+            self.initial_video_latent = torch.zeros(latent_shape, dtype=dtype, device=AI_DEVICE)
+            self.initial_video_latent[:, :1] = encoded_latent
+            self.video_denoise_mask = torch.ones((1, *latent_shape[1:]), dtype=torch.float32, device=AI_DEVICE)
+            self.video_denoise_mask[:, 0] = 0
+
+        self.inputs = {"text_encoder_output": text_encoder_output}
+        return text_encoder_output
+
+    def clear_warmup_state(self):
+        self.model.scheduler.clear()
+        for name in (
+            "video_denoise_mask",
+            "initial_video_latent",
+            "audio_denoise_mask",
+            "initial_audio_latent",
+            "_i2av_guiding_keyframe_meta",
+            "_i2av_first_frame_meta",
+        ):
+            setattr(self, name, None)
+        self.input_info = None
+        self.__dict__.pop("inputs", None)
+
+    def init_modules(self):
+        super().init_modules()
+        if self.config["task"] == "ltx2_s2v":
+            self.run_input_encoder = self._run_input_encoder_local_ltx2_s2v
+        elif self.config["task"] == "v2av":
+            self.run_input_encoder = self._run_input_encoder_local_v2av
+
+    def init_scheduler(self):
+        self.scheduler = LTX2Scheduler(self.config)
+
+    @ProfilingContext4DebugL2("Load models")
+    def load_model(self):
+        self.model = self.load_transformer()
+        self.text_encoders = self.load_text_encoder()
+        self.video_vae, self.audio_vae = self.load_vae()
+        if self.config.get("use_upsampler", False):
+            self.upsampler = self.load_upsampler()
+
+    def load_transformer(self, use_distilled_lora=False):
+        ltx2_model_kwargs = {
+            "model_path": self.config["model_path"],
+            "config": self.config,
+            "device": self.init_device,
+        }
+        model = self.transformer_model_class(**ltx2_model_kwargs)
+        lora_configs = self.config.get("lora_configs")
+        if lora_configs:
+            lora_adapter = LoraAdapter(model, model_prefix="model.diffusion_model.")
+            lora_adapter.apply_lora(lora_configs)
+        return model
+
+    def load_upsampler(self):
+        if self.config.get("upsampler_original_ckpt", None) is not None:
+            ckpt_path = self.config["upsampler_original_ckpt"]
+        else:
+            ckpt_path = os.path.join(self.config["model_path"], "latent_upsampler")
+
+        upsampler = LTX2Upsampler(
+            checkpoint_path=ckpt_path,
+            device=self.init_device,
+            dtype=GET_DTYPE(),
+            cpu_offload=self.config.get("cpu_offload", False),
+        )
+        return upsampler
+
+    def _component_checkpoint_path(self):
+        if self.config.get("dit_original_ckpt") is not None:
+            return self.config["dit_original_ckpt"]
+        if self.config.get("dit_quantized_ckpt") is not None:
+            return self.config["dit_quantized_ckpt"]
+        return os.path.join(self.config["model_path"], "transformer")
+
+    def _checkpoint_path_for(self, config_key):
+        if config_key and self.config.get(config_key) is not None:
+            return self.config[config_key]
+        return self._component_checkpoint_path()
+
+    def _video_vae_extra_kwargs(self):
+        return {}
+
+    def load_text_encoder(self):
+        # offload config
+        text_encoder_offload = self.config.get("gemma_cpu_offload", self.config.get("cpu_offload", False))
+        if text_encoder_offload:
+            text_encoder_device = torch.device("cpu")
+        else:
+            text_encoder_device = torch.device(AI_DEVICE)
+
+        ckpt_path = self._checkpoint_path_for(self.text_encoder_checkpoint_key)
+        gemma_ckpt = self.config.get(self.text_encoder_root_key, self.config["model_path"])
+
+        text_encoder = self.text_encoder_class(
+            checkpoint_path=ckpt_path,
+            gemma_root=gemma_ckpt,
+            device=text_encoder_device,
+            dtype=GET_DTYPE(),
+            cpu_offload=text_encoder_offload,
+            gemma_attn_implementation=self.config.get("gemma_attn_implementation"),
+        )
+
+        # Apply LoRA to text encoder if configured
+        lora_configs = self.config.get("lora_configs")
+        if lora_configs:
+            text_encoder.apply_lora(lora_configs)
+
+        text_encoders = [text_encoder]
+        return text_encoders
+
+    def load_vae(self):
+        """Load video and audio VAE decoders."""
+        # offload config
+        vae_offload = self.config.get("vae_cpu_offload", self.config.get("cpu_offload", False))
+        if vae_offload:
+            vae_device = torch.device("cpu")
+        else:
+            vae_device = torch.device(AI_DEVICE)
+
+        # Video VAE
+        video_vae = self.video_vae_class(
+            checkpoint_path=self._checkpoint_path_for(self.video_vae_checkpoint_key),
+            device=vae_device,
+            dtype=GET_DTYPE(),
+            load_encoder=self.config["task"] in ("i2av", "ltx2_s2v", "v2av") or self.config.get("use_upsampler", False),
+            use_tiling=self.config.get("use_tiling_vae", False),
+            cpu_offload=vae_offload,
+            **self._video_vae_extra_kwargs(),
+        )
+
+        # Audio VAE
+        audio_vae = self.audio_vae_class(
+            checkpoint_path=self._checkpoint_path_for(self.audio_vae_checkpoint_key),
+            device=vae_device,
+            dtype=GET_DTYPE(),
+            cpu_offload=vae_offload,
+        )
+
+        return video_vae, audio_vae
+
+    def get_latent_shape_with_target_hw(self):
+        if self.input_info.target_shape:
+            target_height = self.input_info.target_shape[0]
+            target_width = self.input_info.target_shape[1]
+        else:
+            if self.config.get("use_upsampler", False):
+                target_height = self.config["target_height"] // 2
+                target_width = self.config["target_width"] // 2
+            else:
+                target_height = self.config["target_height"]
+                target_width = self.config["target_width"]
+            self.input_info.target_shape = [target_height, target_width]
+
+        target_video_length = self.input_info.target_video_length or self.config["target_video_length"]
+        video_latent_shape = (
+            self.config.get("num_channels_latents", 128),
+            (target_video_length - 1) // self.config["vae_scale_factors"][0] + 1,
+            int(target_height) // self.config["vae_scale_factors"][1],
+            int(target_width) // self.config["vae_scale_factors"][2],
+        )
+
+        duration = float(target_video_length) / float(self.config["fps"])
+        latents_per_second = float(self.config["audio_sampling_rate"]) / float(self.config["audio_hop_length"]) / float(self.config["audio_scale_factor"])
+        audio_frames = round(duration * latents_per_second)
+
+        audio_latent_shape = (
+            8,
+            audio_frames,
+            self.config["audio_mel_bins"],
+        )
+
+        return video_latent_shape, audio_latent_shape
+
+    def _clear_ltx2_reference_audio_state(self) -> None:
+        """Avoid leaking ltx2_s2v audio conditioning into t2av/i2av runs on a reused runner."""
+        self.initial_audio_latent = None
+        self.audio_denoise_mask = None
+        self._ltx2_s2v_mux_audio = None
+
+    @ProfilingContext4DebugL2("Run Encoders")
+    def _run_input_encoder_local_t2av(self):
+        self._clear_ltx2_reference_audio_state()
+        self._clear_ltx2_reference_video_state()
+        self.video_denoise_mask = None
+        self.initial_video_latent = None
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()  # Important: set latent_shape in input_info
+        text_encoder_output = self.run_text_encoder(self.input_info)
+        self.maybe_empty_cache()
+        return {
+            "text_encoder_output": text_encoder_output,
+            "image_encoder_output": None,
+        }
+
+    def _normalize_i2av_input_fields(self) -> None:
+        info = self.input_info
+        if isinstance(info.image_strength, str):
+            p = [float(x.strip()) for x in info.image_strength.split(",") if x.strip()]
+            info.image_strength = 1.0 if not p else (p[0] if len(p) == 1 else p)
+        if isinstance(info.image_frame_idx, str):
+            p = [int(x.strip()) for x in info.image_frame_idx.split(",") if x.strip()]
+            info.image_frame_idx = p or None
+        n = len(_ltx2_parse_image_paths(info.image_path or ""))
+        if n == 0:
+            return
+        st, fi = info.image_strength, info.image_frame_idx
+        if isinstance(st, list) and len(st) not in (1, n):
+            raise ValueError(f"i2av image_strength: need 1 or {n} values, got {len(st)}")
+        if fi is not None and len(fi) != n:
+            raise ValueError(f"i2av image_frame_idx: need {n} indices, got {len(fi)}")
+
+    @ProfilingContext4DebugL2("Run Encoders")
+    def _run_input_encoder_local_i2av(self):
+        self._clear_ltx2_reference_audio_state()
+        self._clear_ltx2_reference_video_state()
+        self._normalize_i2av_input_fields()
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()
+        text_encoder_output = self.run_text_encoder(self.input_info)
+        self.video_denoise_mask, self.initial_video_latent = self.run_vae_encoder()
+        self.maybe_empty_cache()
+
+        return {
+            "text_encoder_output": text_encoder_output,
+        }
+
+    def _clear_ltx2_reference_video_state(self):
+        """Avoid leaking reference-video latents into non-v2av runs on a reused runner,
+        and avoid re-appending reference tokens in stage-2 upsampling."""
+        self._ref_video_latent = None
+
+    def _get_ref_downscale_factor(self) -> float:
+        """Read IC-LoRA reference-video downscale factor.
+
+        Priority: config["ref_downscale_factor"] > 1.0 (i.e. same resolution as the generated video).
+        """
+        v = self.config.get("ref_downscale_factor", 1.0)
+        try:
+            v = float(v)
+        except (TypeError, ValueError):
+            v = 1.0
+        return v if v > 0 else 1.0
+
+    @staticmethod
+    def _probe_video_hw(path: str) -> tuple[int, int] | None:
+        """
+        Return (height, width) of the first video stream in ``path``, or None.
+        """
+        if not path or not os.path.exists(path):
+            return None
+        try:
+            import av  # noqa: PLC0415 - lazy import; PyAV is already required.
+
+            with av.open(path) as container:
+                for stream in container.streams:
+                    if stream.type == "video":
+                        h = int(stream.codec_context.height or 0)
+                        w = int(stream.codec_context.width or 0)
+                        if h > 0 and w > 0:
+                            return h, w
+        except Exception as e:  # noqa: BLE001 - probing must never break inference.
+            logger.warning(f"  ⚠ Could not probe pose-video resolution from {path!r}: {e}")
+        return None
+
+    def _override_target_hw_from_ref_video(self) -> None:
+        """v2av: set ``input_info.target_shape`` from probed ``video_path`` (control mp4).
+
+        Skip if ``target_shape`` already set. Base H/W = final//2 when upsampler else final;
+        snap to VAE grid (spatial 32) vs ``ref_downscale_factor``. Probe/config miss → no-op.
+        """
+        if self.input_info.target_shape:
+            return
+
+        ref_path = (getattr(self.input_info, "video_path", None) or "").strip()
+        hw = self._probe_video_hw(ref_path)
+        if hw is None:
+            return
+        final_h, final_w = hw
+
+        use_upsampler = bool(self.config.get("use_upsampler", False))
+        base_h = final_h // 2 if use_upsampler else final_h
+        base_w = final_w // 2 if use_upsampler else final_w
+
+        vae_spatial_scale = 32
+        ref_factor = self._get_ref_downscale_factor()
+        base_div = int(round(vae_spatial_scale / max(ref_factor, 1e-6)))
+        if base_div % vae_spatial_scale != 0:
+            base_div = base_div * vae_spatial_scale // _gcd(base_div, vae_spatial_scale)
+
+        def _snap_nearest(x: int, d: int) -> int:
+            return max(d, ((int(x) + d // 2) // d) * d)
+
+        base_h = _snap_nearest(base_h, base_div)
+        base_w = _snap_nearest(base_w, base_div)
+
+        old_h = int(self.config.get("target_height", 0) or 0)
+        old_w = int(self.config.get("target_width", 0) or 0)
+        eff_final_h = base_h * 2 if use_upsampler else base_h
+        eff_final_w = base_w * 2 if use_upsampler else base_w
+        logger.info(
+            f"  ↪ v2av: output size from control video "
+            f"(config {old_w}x{old_h} → final {eff_final_w}x{eff_final_h}, "
+            f"base-gen {base_w}x{base_h}, base_div={base_div}, "
+            f"ref_downscale_factor={ref_factor}, use_upsampler={use_upsampler})."
+        )
+        self.input_info.target_shape = [base_h, base_w]
+
+    @ProfilingContext4DebugL2("Run Encoders")
+    def _run_input_encoder_local_v2av(self):
+        """
+        LTX-2.3 IC-LoRA video-to-audio-video.
+        """
+        self._clear_ltx2_reference_audio_state()
+        self._normalize_i2av_input_fields()
+        self._override_target_hw_from_ref_video()
+        if not self.input_info.target_shape:
+            if self.config.get("use_upsampler", False):
+                self.input_info.target_shape = [
+                    self.config["target_height"] // 2,
+                    self.config["target_width"] // 2,
+                ]
+            else:
+                self.input_info.target_shape = [
+                    self.config["target_height"],
+                    self.config["target_width"],
+                ]
+
+        # Reference/control video → pixel tensor, then align temporal length with
+        # the clip (official-style: decode up to ``num_frames`` cap, actual length
+        # follows the shorter of cap vs. on-disk frames). Only then derive
+        # ``target_video_length`` / latent shapes so audio and denoising match.
+        ref_path = (getattr(self.input_info, "video_path", None) or "").strip()
+        if not ref_path:
+            raise ValueError("v2av requires a non-empty video_path (pre-processed control / reference video).")
+
+        ref_downscale_factor = self._get_ref_downscale_factor()
+        target_h = self.input_info.target_shape[0]
+        target_w = self.input_info.target_shape[1]
+        ref_h = max(int(round(target_h * ref_downscale_factor)), 1)
+        ref_w = max(int(round(target_w * ref_downscale_factor)), 1)
+        ref_h = ref_h - (ref_h % 2)
+        ref_w = ref_w - (ref_w % 2)
+
+        length_cap = int(self.input_info.target_video_length or self.config.get("target_video_length", 1))
+        ref_extra = getattr(self.input_info, "reference_video_frame_cap", None)
+        if ref_extra and int(ref_extra) > 0:
+            read_cap = min(length_cap, int(ref_extra))
+        else:
+            read_cap = length_cap
+
+        logger.info(f"  🎞️  Loading reference video: {ref_path} resize=({ref_w}x{ref_h}) read_cap={read_cap} (max_output_frames cap) ref_downscale_factor={ref_downscale_factor}")
+
+        ref_pixels = load_video_conditioning(
+            video_path=ref_path,
+            height=ref_h,
+            width=ref_w,
+            frame_cap=read_cap,
+            dtype=GET_DTYPE(),
+            device=AI_DEVICE,
+        )
+        if ref_pixels is None:
+            raise ValueError(f"v2av: failed to decode reference video from {ref_path!r}.")
+
+        ref_T = ref_pixels.shape[2]
+        snapped_T = max(((ref_T - 1) // 8) * 8 + 1, 1)
+        if snapped_T != ref_T:
+            logger.info(f"  ↪ Reference video has {ref_T} decoded frame(s); trimming to {snapped_T} for LTX-2.3 VAE (pixel length must be 1 + 8k).")
+            ref_pixels = ref_pixels[:, :, :snapped_T]
+        if ref_pixels.shape[2] < 1:
+            raise ValueError(f"v2av: reference video {ref_path!r} produced no usable frames (decoded {ref_T}, snapped to {snapped_T}).")
+
+        if snapped_T != length_cap:
+            logger.info(f"  ↪ v2av: setting target_video_length={snapped_T} from reference (decoded {ref_T} frame(s) within read_cap={read_cap}; configured max was {length_cap}).")
+        # Config is a LockableDict and is locked after init_modules; only mutate input_info.
+        self.input_info.target_video_length = snapped_T
+
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()
+
+        # Reference VAE encode before the text encoder: long clips at full resolution
+        # can take many minutes on one forward; doing this first avoids looking
+        # "stuck" right after Run Text Encoder in the logs.
+        b, c, t, h, w = ref_pixels.shape
+        logger.info(
+            f"  ⏳ VAE-encoding reference video (single forward, often minutes for long 1080p clips): pixels BCHW=({b},{c},{t},{h},{w}), cpu_offload={getattr(self.video_vae, 'cpu_offload', False)}"
+        )
+        t0 = time.perf_counter()
+        with torch.no_grad():
+            ref_latent = self.video_vae.encode(ref_pixels)
+        if ref_latent.dim() == 5:
+            ref_latent = ref_latent.squeeze(0)
+        logger.info(f"  ✓ Reference VAE encode finished in {time.perf_counter() - t0:.1f}s → latent {tuple(ref_latent.shape)}")
+
+        text_encoder_output = self.run_text_encoder(self.input_info)
+
+        # Optional image conditioning (character image / keyframes).
+        if _ltx2_parse_image_paths(self.input_info.image_path or ""):
+            self.video_denoise_mask, self.initial_video_latent = self.run_vae_encoder()
+        else:
+            self.video_denoise_mask = None
+            self.initial_video_latent = None
+            self._i2av_guiding_keyframe_meta = None
+            self._i2av_first_frame_meta = None
+
+        ref_strength = float(
+            getattr(self.input_info, "reference_video_strength", None) if getattr(self.input_info, "reference_video_strength", None) is not None else self.config.get("reference_video_strength", 1.0)
+        )
+        ref_strength = max(0.0, min(1.0, ref_strength))
+
+        self._ref_video_latent = (ref_latent, ref_strength, ref_downscale_factor)
+        logger.info(f"  ✓ Reference IC-LoRA latent ready (strength={ref_strength}, ref_downscale_factor={ref_downscale_factor})")
+
+        self.maybe_empty_cache()
+        return {
+            "text_encoder_output": text_encoder_output,
+        }
+
+    @ProfilingContext4DebugL2("Run Encoders")
+    def _run_input_encoder_local_ltx2_s2v(self):
+        """Reference audio (frozen in latent) + optional reference images; mux original waveform when saving."""
+        self._clear_ltx2_reference_video_state()
+        self._normalize_i2av_input_fields()
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()
+
+        ap = (getattr(self.input_info, "audio_path", None) or "").strip()
+        if not ap:
+            raise ValueError("ltx2_s2v requires a non-empty audio_path.")
+
+        num_frames = self.input_info.target_video_length or self.config.get("target_video_length", 1)
+        fps = float(self.config["fps"])
+        max_duration = num_frames / fps
+
+        enc_device = next(self.audio_vae.encoder.parameters()).device
+        use_real_mel_spectrogram = self.config.get("use_real_mel_spectrogram", False)
+        decoded = decode_audio_from_file(ap, enc_device, 0.0, max_duration)
+        if decoded is None:
+            raise ValueError(f"ltx2_s2v: failed to decode audio from {ap!r}.")
+        decoded = _ltx2_audio_to_stereo(decoded)
+
+        with torch.no_grad():
+            encoded = encode_audio(
+                decoded,
+                self.audio_vae.encoder,
+                use_real_mel_spectrogram=use_real_mel_spectrogram,
+            )
+        if encoded.dim() == 4:
+            encoded = encoded.squeeze(0)
+
+        _, f_audio, mel_bins = self.input_info.audio_latent_shape
+        t_enc = encoded.shape[1]
+        if t_enc < f_audio:
+            pad = f_audio - t_enc
+            z = torch.zeros(
+                encoded.shape[0],
+                pad,
+                encoded.shape[2],
+                device=encoded.device,
+                dtype=encoded.dtype,
+            )
+            encoded = torch.cat([encoded, z], dim=1)
+        elif t_enc > f_audio:
+            encoded = encoded[:, :f_audio, :]
+
+        self.initial_audio_latent = encoded.to(dtype=GET_DTYPE(), device=AI_DEVICE)
+        self.audio_denoise_mask = torch.zeros(
+            1,
+            f_audio,
+            mel_bins,
+            dtype=torch.float32,
+            device=AI_DEVICE,
+        )
+
+        w = decoded.waveform.float()
+        if w.dim() == 3:
+            w = w.squeeze(0)
+        if w.shape[0] == 1:
+            w = w.expand(2, w.shape[1]).contiguous()
+        self._ltx2_s2v_mux_audio = Audio(waveform=w.cpu(), sampling_rate=int(decoded.sampling_rate))
+
+        text_encoder_output = self.run_text_encoder(self.input_info)
+
+        if len(_ltx2_parse_image_paths(self.input_info.image_path or "")) == 0:
+            self.video_denoise_mask = None
+            self.initial_video_latent = None
+            self._i2av_guiding_keyframe_meta = None
+        else:
+            self.video_denoise_mask, self.initial_video_latent = self.run_vae_encoder()
+
+        self.maybe_empty_cache()
+        return {
+            "text_encoder_output": text_encoder_output,
+        }
+
+    @ProfilingContext4DebugL1(
+        "Run VAE Encoder",
+        recorder_mode=GET_RECORDER_MODE(),
+        metrics_func=monitor_cli.lightx2v_run_vae_encoder_image_duration,
+        metrics_labels=["LTX2Runner"],
+    )
+    def run_vae_encoder(self):
+        """
+        Prepare image conditioning by loading images and encoding them to latents.
+
+        Returns:
+            tuple: (video_denoise_mask, initial_video_latent)
+                - video_denoise_mask: Mask indicating which frames to denoise (unpatchified, shape [1, F, H, W])
+                - initial_video_latent: Initial latent with conditioned frames (unpatchified, shape [C, F, H, W])
+        """
+        # Get latent shape
+        C, F, H, W = self.input_info.video_latent_shape
+
+        target_height = self.input_info.target_shape[0]
+        target_width = self.input_info.target_shape[1]
+        # Initialize denoise mask (1 = denoise, 0 = keep original)
+        # Shape: [1, F, H, W]
+        video_denoise_mask = torch.ones(
+            1,
+            F,
+            H,
+            W,
+            dtype=torch.float32,
+            device=AI_DEVICE,
+        )
+
+        # Initialize initial latent as zeros
+        initial_video_latent = torch.zeros(
+            C,
+            F,
+            H,
+            W,
+            dtype=GET_DTYPE(),
+            device=AI_DEVICE,
+        )
+
+        image_paths = _ltx2_parse_image_paths(self.input_info.image_path)
+        n = len(image_paths)
+        if n == 0:
+            if self.config["task"] == "i2av":
+                logger.warning("i2av: image_path is empty, skipping image conditioning")
+            else:
+                logger.info("ltx2_s2v: image_path empty, audio-only conditioning")
+            self._i2av_guiding_keyframe_meta = None
+            self._i2av_first_frame_meta = None
+            return video_denoise_mask, initial_video_latent
+
+        num_frames = self.input_info.target_video_length or self.config.get("target_video_length", 1)
+        strengths = _ltx2_normalize_image_strengths(self.input_info.image_strength, n)
+        raw_frame_idx = getattr(self.input_info, "image_frame_idx", None)
+        pixel_frame_indices = _ltx2_resolve_pixel_frame_indices(raw_frame_idx, n, num_frames)
+        temporal_scale = int(self.config["vae_scale_factors"][0])
+
+        guiding_keyframe_meta: list[tuple[str, int, float]] = []
+        self._i2av_first_frame_meta = None
+
+        for i, image_path in enumerate(image_paths):
+            strength = strengths[i]
+            pixel_frame_idx = pixel_frame_indices[i]
+            logger.info(f"  📷 Loading image: {image_path} pixel_frame={pixel_frame_idx} strength={strength} ({i + 1}/{n})")
+
+            # Load and preprocess image
+            image = load_image_conditioning(
+                image_path=image_path,
+                height=target_height,
+                width=target_width,
+                dtype=GET_DTYPE(),
+                device=AI_DEVICE,
+                crf=int(self.config.get("image_conditioning_crf", 33)),
+            )
+
+            with torch.no_grad():
+                encoded_latent = self.video_vae.encode(image)
+
+            encoded_latent = encoded_latent.squeeze(0)
+
+            # Pixel frame 0 → write into the latent time slot; other frames → guiding tokens appended in the scheduler.
+            if pixel_frame_idx != 0:
+                guiding_keyframe_meta.append((image_path, pixel_frame_idx, strength))
+                continue
+            self._i2av_first_frame_meta = (image_path, strength)
+
+            # Get the latent frame index by converting pixel frame to latent frame
+            # For LTX2, temporal compression is 8x, so latent_frame_idx = (frame_idx - 1) // 8 + 1 for frame_idx > 0
+            # or 0 for frame_idx == 0
+            latent_frame_idx = _ltx2_pixel_to_latent_frame_idx(pixel_frame_idx, temporal_scale)
+
+            if latent_frame_idx >= F:
+                logger.warning(f"⚠️  Latent frame index {latent_frame_idx} out of range [0, {F - 1}], skipping")
+                continue
+
+            # Set the latent at the specified frame
+            # encoded_latent shape: [C, 1, H_latent, W_latent]
+            initial_video_latent[:, latent_frame_idx : latent_frame_idx + 1, :, :] = encoded_latent
+
+            # Update denoise mask based on strength
+            # strength = 1.0 means keep original (don't denoise)
+            # strength = 0.0 means fully denoise
+            video_denoise_mask[:, latent_frame_idx, :, :] = 1.0 - strength
+
+            logger.info(f"  ✓ Encoded image to latent frame {latent_frame_idx}")
+        self._i2av_guiding_keyframe_meta = guiding_keyframe_meta
+
+        logger.info(f"✓ Image conditioning prepared successfully")
+
+        return video_denoise_mask, initial_video_latent
+
+    def _build_i2av_video_guiding_latents(self):
+        """Encode guiding keyframe images at current target_shape for scheduler.append (stage 1 / 2)."""
+        meta = getattr(self, "_i2av_guiding_keyframe_meta", None)
+        if not meta:
+            return None
+        th, tw = self.input_info.target_shape[0], self.input_info.target_shape[1]
+        out = []
+        for path, pixel_idx, strength in meta:
+            image = load_image_conditioning(
+                image_path=path,
+                height=th,
+                width=tw,
+                dtype=GET_DTYPE(),
+                device=AI_DEVICE,
+                crf=int(self.config.get("image_conditioning_crf", 33)),
+            )
+            with torch.no_grad():
+                enc = self.video_vae.encode(image).squeeze(0)
+            out.append((enc, pixel_idx, strength))
+        return out
+
+    def _build_i2av_video_clean_latent(self, base_latent):
+        """Replace stage-2 frame zero with a final-resolution VAE encoding."""
+        meta = getattr(self, "_i2av_first_frame_meta", None)
+        if meta is None:
+            return None
+
+        path, _strength = meta
+        th, tw = self.input_info.target_shape[0], self.input_info.target_shape[1]
+        image = load_image_conditioning(
+            image_path=path,
+            height=th,
+            width=tw,
+            dtype=GET_DTYPE(),
+            device=AI_DEVICE,
+            crf=int(self.config.get("image_conditioning_crf", 33)),
+        )
+        with torch.no_grad():
+            encoded = self.video_vae.encode(image).squeeze(0)
+
+        clean_latent = base_latent.clone()
+        if encoded.shape != clean_latent[:, :1].shape:
+            raise ValueError(f"Stage-2 frame-zero conditioning shape must match the upsampled latent: {tuple(encoded.shape)} != {tuple(clean_latent[:, :1].shape)}")
+        clean_latent[:, :1] = encoded
+        return clean_latent
+
+    @ProfilingContext4DebugL1(
+        "Run Text Encoder",
+        recorder_mode=GET_RECORDER_MODE(),
+        metrics_func=monitor_cli.lightx2v_run_text_encode_duration,
+        metrics_labels=["WanRunner"],
+    )
+    def run_text_encoder(self, input_info):
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            self.text_encoders = self.load_text_encoder()
+
+        prompt = input_info.prompt
+        neg_prompt = input_info.negative_prompt
+
+        v_context_p, a_context_p, v_context_n, a_context_n = self.text_encoders[0].infer(
+            prompt=prompt,
+            negative_prompt=neg_prompt,
+        )
+        text_encoder_output = {
+            "v_context_p": v_context_p,
+            "a_context_p": a_context_p,
+            "v_context_n": v_context_n,
+            "a_context_n": a_context_n,
+        }
+
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            del self.text_encoders[0]
+            self.maybe_empty_cache()
+
+        return text_encoder_output
+
+    @ProfilingContext4DebugL1(
+        "Run VAE Decoder",
+        recorder_mode=GET_RECORDER_MODE(),
+        metrics_func=monitor_cli.lightx2v_run_vae_decode_duration,
+        metrics_labels=["LTX2Runner"],
+    )
+    def run_vae_decoder(self, v_latent, a_latent):
+        """Decode video and audio latents to frames and waveform."""
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            self.video_vae, self.audio_vae = self.load_vae()
+
+        # Decode video latents (returns iterator)
+        video = self.video_vae.decode(
+            v_latent.unsqueeze(0).to(GET_DTYPE()),
+            generator=self.model.scheduler.generator,
+        )
+        # S2V preserves the conditioning audio in the final artifact. Decoding
+        # the generated audio latent here would be discarded by
+        # end_run_segment/process_images_after_vae_decoder, so avoid that
+        # unnecessary decoder/vocoder work.
+        mux_audio = getattr(self, "_ltx2_s2v_mux_audio", None)
+        if self.config.get("task") == "ltx2_s2v" and mux_audio is not None:
+            audio = mux_audio
+        else:
+            audio = self.audio_vae.decode(a_latent.unsqueeze(0).to(GET_DTYPE()))
+
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            del self.video_vae
+            del self.audio_vae
+            self.maybe_empty_cache()
+
+        return video, audio
+
+    def run_upsampler(self, v_latent, a_latent, prepare_only=False):
+        """Run Stage 2: Upsampling and high-resolution refinement.
+
+        This method handles the upsampling and scheduler preparation, then delegates
+        the denoising loop to run_segment to reduce code duplication.
+
+        Warmup uses ``prepare_only`` and runs selected denoising steps itself.
+        """
+        logger.info("🚀 Starting Stage 2: Upsampling and high-resolution refinement")
+
+        upsample_distilled_sigmas = torch.tensor(self.config.get("distilled_sigma_values_upsample"), dtype=torch.float32, device=AI_DEVICE)
+        self.model.scheduler.reset_sigmas(upsample_distilled_sigmas)
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            self.upsampler = self.load_upsampler()
+
+        upsampled_v_latent = self.upsampler.upsample(v_latent, self.video_vae.encoder).squeeze(0)
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            del self.upsampler
+            self.maybe_empty_cache()
+
+        self.input_info.target_shape = [self.input_info.target_shape[0] * 2, self.input_info.target_shape[1] * 2]
+        self.input_info.video_latent_shape, self.input_info.audio_latent_shape = self.get_latent_shape_with_target_hw()
+        _, _, stage2_h, stage2_w = self.input_info.video_latent_shape
+        stage2_video_denoise_mask = None
+        if hasattr(self, "video_denoise_mask") and self.video_denoise_mask is not None:
+            stage2_video_denoise_mask = _ltx2_resize_video_denoise_mask_for_stage2(self.video_denoise_mask, stage2_h, stage2_w)
+
+        # Drop the reference-video latent before stage-2 so IC-LoRA reference tokens are
+        # not appended twice (stage-1 already attached them; stage-2 only refines).
+        self._clear_ltx2_reference_video_state()
+
+        # Prepare scheduler using the shared method
+        stage2_audio_mask = getattr(self, "audio_denoise_mask", None)
+
+        stage2_clean_video_latent = self._build_i2av_video_clean_latent(upsampled_v_latent)
+        self._prepare_scheduler(
+            initial_video_latent=upsampled_v_latent,  # Use upsampled video latent
+            clean_video_latent=stage2_clean_video_latent,
+            initial_audio_latent=a_latent,  # Keep audio from stage 1 (aligned with distilled.py:183)
+            video_denoise_mask=stage2_video_denoise_mask,  # Keep keyframe constraints in stage 2
+            audio_denoise_mask=stage2_audio_mask,
+            noise_scale=upsample_distilled_sigmas[0].item(),  # Use first sigma as noise_scale (aligned with distilled.py:181)
+        )
+        if prepare_only:
+            return None
+
+        # Delegate denoising loop to run_segment with stage_name for logging
+        logger.info(f"🔄 Stage 2 - Running {self.model.scheduler.infer_steps} denoising steps")
+        v_latent, a_latent = self.run_segment(segment_idx=None, stage_name="Stage 2", cleanup_inputs=True)
+
+        logger.info("✅ Stage 2 completed")
+        return v_latent, a_latent
+
+    def _prepare_scheduler(
+        self,
+        initial_video_latent=None,
+        clean_video_latent=None,
+        initial_audio_latent=None,
+        video_denoise_mask=None,
+        audio_denoise_mask=None,
+        noise_scale=None,
+    ):
+        """
+        Prepare scheduler with given latents and masks.
+
+        Args:
+            initial_video_latent: Base video latent to noise, such as stage-1 output after upsampling.
+            clean_video_latent: Clean video latent after applying image conditioning.
+            initial_audio_latent: Initial audio latent. If None, uses self.initial_audio_latent when set.
+            video_denoise_mask: Video denoise mask. If None, uses self.video_denoise_mask.
+            audio_denoise_mask: Audio denoise mask (0 = frozen). If None, uses self.audio_denoise_mask when set.
+            noise_scale: Noise scale for scheduler. If None, not passed to scheduler.
+        """
+        prepare_kwargs = {
+            "seed": self.input_info.seed,
+            "video_latent_shape": self.input_info.video_latent_shape,
+            "audio_latent_shape": self.input_info.audio_latent_shape,
+        }
+        if initial_video_latent is not None:
+            prepare_kwargs["initial_video_latent"] = initial_video_latent
+        if clean_video_latent is not None:
+            prepare_kwargs["clean_video_latent"] = clean_video_latent
+        elif initial_video_latent is None and self.initial_video_latent is not None:
+            prepare_kwargs["clean_video_latent"] = self.initial_video_latent
+
+        ia = initial_audio_latent
+        if ia is None and getattr(self, "initial_audio_latent", None) is not None:
+            ia = self.initial_audio_latent
+        if ia is not None:
+            prepare_kwargs["initial_audio_latent"] = ia
+
+        adm = audio_denoise_mask
+        if adm is None and getattr(self, "audio_denoise_mask", None) is not None:
+            adm = self.audio_denoise_mask
+        if adm is not None:
+            prepare_kwargs["audio_denoise_mask"] = adm
+
+        if video_denoise_mask is not None:
+            # Explicitly provided mask (not None)
+            prepare_kwargs["video_denoise_mask"] = video_denoise_mask
+        elif hasattr(self, "video_denoise_mask") and self.video_denoise_mask is not None:
+            # video_denoise_mask was not explicitly provided, check if we should use self.video_denoise_mask
+            # Only use self.video_denoise_mask if we're in Stage 1 (not Stage 2 upsampler)
+            # Stage 2 passes explicit initial_video_latent (high-res), so mask should match high-res
+            # Stage 1 uses self.initial_video_latent (low-res), so mask matches low-res
+            if initial_video_latent is None or initial_video_latent is self.initial_video_latent:
+                # Stage 1: use the mask (low-res matches low-res latent)
+                prepare_kwargs["video_denoise_mask"] = self.video_denoise_mask
+            # Stage 2: don't pass mask, let scheduler create a full mask (all 1s) matching the high-res latent
+        # If video_denoise_mask is explicitly None and no self.video_denoise_mask exists,
+        # scheduler will create a full mask (all 1s) matching the latent shape
+
+        if noise_scale is not None:
+            prepare_kwargs["noise_scale"] = noise_scale
+
+        vg = self._build_i2av_video_guiding_latents()
+        if vg:
+            prepare_kwargs["video_guiding_latents"] = vg
+
+        ref_video_latent = getattr(self, "_ref_video_latent", None)
+        if ref_video_latent is not None:
+            prepare_kwargs["reference_video_latent"] = ref_video_latent
+
+        self.model.scheduler.prepare(**prepare_kwargs)
+
+    def init_run(self):
+        self.gen_video_final = None
+        self.get_video_segment_num()
+
+        if self.config.get("lazy_load", False) or self.config.get("unload_modules", False):
+            self.model = self.load_transformer()
+            self.model.set_scheduler(self.scheduler)
+
+        if self.config.get("distilled_sigma_values") is not None:
+            stage1_sigmas = torch.tensor(self.config["distilled_sigma_values"], dtype=torch.float32, device=AI_DEVICE)
+            self.model.scheduler.reset_sigmas(stage1_sigmas)
+
+        # Image conditioning (if any) is already prepared in run_input_encoder
+        # and stored in self.video_denoise_mask and self.initial_video_latent
+        self._prepare_scheduler()
+
+    @ProfilingContext4DebugL2("Run DiT")
+    def run_main(self):
+        self.init_run()
+        for segment_idx in range(self.video_segment_num):
+            logger.info(f"🔄 start segment {segment_idx + 1}/{self.video_segment_num}")
+            with ProfilingContext4DebugL1(
+                f"segment end2end {segment_idx + 1}/{self.video_segment_num}",
+                recorder_mode=GET_RECORDER_MODE(),
+                metrics_func=monitor_cli.lightx2v_run_segments_end2end_duration,
+                metrics_labels=["DefaultRunner"],
+            ):
+                self.check_stop()
+                # 1. default do nothing
+                self.init_run_segment(segment_idx)
+                # 2. main inference loop
+                v_latent, a_latent = self.run_segment(segment_idx)
+
+                ## upsample latent
+                if self.config.get("use_upsampler", False):
+                    v_latent, a_latent = self.run_upsampler(v_latent, a_latent)
+                # 3. vae decoder
+                self.gen_video, self.gen_audio = self.run_vae_decoder(v_latent, a_latent)
+
+                # 4. default do nothing
+                self.end_run_segment(segment_idx)
+        gen_video_final = self.process_images_after_vae_decoder()
+        self.end_run()
+        return gen_video_final
+
+    def end_run_segment(self, segment_idx=None):
+        self.gen_video_final = self.gen_video
+        self.gen_audio_final = self.gen_audio
+        mux = getattr(self, "_ltx2_s2v_mux_audio", None)
+        if self.config.get("task") == "ltx2_s2v" and mux is not None:
+            self.gen_audio_final = mux
+
+    def process_images_after_vae_decoder(self):
+        if self.input_info.return_result_tensor:
+            return {"video": self.gen_video_final, "audio": self.gen_audio_final}
+        elif self.input_info.save_result_path is not None:
+            if not dist.is_initialized() or dist.get_rank() == 0:
+                logger.info(f"🎬 Start to save video 🎬")
+                save_audio = self.gen_audio_final
+                if self.config.get("task") == "ltx2_s2v" and getattr(self, "_ltx2_s2v_mux_audio", None) is not None:
+                    save_audio = self._ltx2_s2v_mux_audio
+                out_path = self.input_info.save_result_path
+                save_video(
+                    video=self.gen_video_final,
+                    fps=self.config.get("fps", 24),
+                    audio=save_audio,
+                    output_path=out_path,
+                    video_chunks_number=1,
+                )
+
+                mux_src = (getattr(self.input_info, "mux_audio_video_path", None) or "").strip()
+                if self.config.get("task") == "v2av" and mux_src:
+                    muxed = mux_audio_from_video(mux_src, out_path)
+                    if muxed:
+                        logger.info(f"Audio muxed from --mux_audio_video_path: {mux_src}")
+                    else:
+                        logger.warning("v2av: --mux_audio_video_path was set but mux failed or source had no audio; output keeps audio from generation only.")
+
+                logger.info(f"✅ Video saved successfully to: {out_path} ✅")
+            return {"video": None}
+
+    def run_segment(self, segment_idx=0, stage_name=None, cleanup_inputs=None):
+        """
+        Run denoising loop for a segment.
+
+        Args:
+            segment_idx: Segment index (0-based). Use None for upsampler stage.
+            stage_name: Optional stage name for logging (e.g., "Stage 2"). If None, uses default logging.
+            cleanup_inputs: Whether to cleanup inputs after completion. If None, uses default logic:
+                - For upsampler (segment_idx=None): always cleanup
+                - For regular segments: cleanup only if last segment and not using upsampler
+        """
+        infer_steps = self.model.scheduler.infer_steps
+
+        # Determine cleanup behavior
+        if cleanup_inputs is None:
+            # Default logic: cleanup only for last segment when not using upsampler
+            cleanup_inputs = not self.config.get("use_upsampler", False) and segment_idx is not None and segment_idx == self.video_segment_num - 1
+        elif cleanup_inputs is True and segment_idx is None:
+            # Explicit cleanup for upsampler stage
+            cleanup_inputs = True
+
+        for step_index in range(infer_steps):
+            # only for single segment, check stop signal every step
+            with ProfilingContext4DebugL1(
+                f"Run Dit every step",
+                recorder_mode=GET_RECORDER_MODE(),
+                metrics_func=monitor_cli.lightx2v_run_per_step_dit_duration,
+                metrics_labels=[step_index + 1, infer_steps],
+            ):
+                if self.video_segment_num == 1:
+                    self.check_stop()
+
+                # Use stage_name for logging if provided, otherwise use default
+                if stage_name:
+                    logger.info(f"==> {stage_name} step_index: {step_index + 1} / {infer_steps}")
+                else:
+                    logger.info(f"==> step_index: {step_index + 1} / {infer_steps}")
+
+                with ProfilingContext4DebugL1("step_pre"):
+                    self.model.scheduler.step_pre(step_index=step_index)
+
+                with ProfilingContext4DebugL1("🚀 infer_main"):
+                    self.model.infer(self.inputs)
+
+                with ProfilingContext4DebugL1("step_post"):
+                    self.model.scheduler.step_post()
+
+                # Progress callback only for regular segments (not upsampler)
+                if self.progress_callback and segment_idx is not None:
+                    current_step = segment_idx * infer_steps + step_index + 1
+                    total_all_steps = self.video_segment_num * infer_steps
+                    self.progress_callback((current_step / total_all_steps) * 100, 100)
+
+        # Cleanup inputs if needed
+        if cleanup_inputs:
+            del self.inputs
+            self.maybe_empty_cache()
+
+        return self.model.scheduler.video_latent_state.latent, self.model.scheduler.audio_latent_state.latent
+
+
+@RUNNER_REGISTER("ltx2_ar")
+class LTX2ARRunner(LTX2Runner):
+    """Chunkwise autoregressive LTX2.3 runner for teacher-forcing checkpoints."""
+
+    def init_scheduler(self):
+        self.scheduler = LTX2ARScheduler(self.config)
+
+    def load_transformer(self, use_distilled_lora=False):
+        model_kwargs = {
+            "model_path": self.config["model_path"],
+            "config": self.config,
+            "device": self.init_device,
+        }
+        model = LTX2ARModel(**model_kwargs)
+        lora_configs = self.config.get("lora_configs")
+        if lora_configs:
+            LoraAdapter(model, model_prefix="model.diffusion_model.").apply_lora(lora_configs)
+        return model
+
+    def get_video_segment_num(self):
+        self.video_segment_num = 1
+
+    def init_run(self):
+        self._validate_ar_config()
+        super().init_run()
+        self._prepare_ar_states()
+
+    def _validate_ar_config(self):
+        if self.config.get("task") != "t2av":
+            raise NotImplementedError("ltx2_ar currently supports task=t2av only.")
+        if self.config.get("use_upsampler", False):
+            raise NotImplementedError("ltx2_ar does not support the latent upsampler.")
+        chunk = int(self.config.get("ar_config", {}).get("num_frame_per_chunk", 0))
+        if chunk <= 0:
+            raise ValueError("ltx2_ar requires ar_config.num_frame_per_chunk > 0.")
+
+    @staticmethod
+    def _slice_latent_state(state, start, end, *, clone_latent=True):
+        latent = state.latent[start:end]
+        return LatentState(
+            latent=latent.clone() if clone_latent else latent,
+            denoise_mask=state.denoise_mask[start:end],
+            positions=state.positions[..., start:end, :],
+            clean_latent=state.clean_latent[start:end],
+        )
+
+    def _prepare_ar_states(self):
+        scheduler = self.model.scheduler
+        video_state = scheduler.video_latent_state
+        audio_state = scheduler.audio_latent_state
+        _, video_frames, video_height, video_width = scheduler.video_latent_shape_orig
+        audio_channels, _, audio_mel_bins = scheduler.audio_latent_shape_orig
+        chunk_frames = int(self.config["ar_config"]["num_frame_per_chunk"])
+
+        video_main_tokens = int(getattr(scheduler, "_video_main_num_tokens", video_state.latent.shape[0]))
+        if video_main_tokens != video_state.latent.shape[0]:
+            raise NotImplementedError("ltx2_ar does not support appended guiding/reference video tokens.")
+        if video_main_tokens % video_frames != 0:
+            raise ValueError(f"Video token count {video_main_tokens} is not divisible by latent frames {video_frames}.")
+
+        keep_video_frames = (video_frames // chunk_frames) * chunk_frames
+        if keep_video_frames <= 0:
+            raise ValueError(f"LTX2 AR latent frames={video_frames} is smaller than chunk size={chunk_frames}.")
+        video_tokens_per_frame = video_main_tokens // video_frames
+        keep_video_tokens = keep_video_frames * video_tokens_per_frame
+        keep_audio_tokens = max(1, audio_state.latent.shape[0] * keep_video_frames // video_frames)
+
+        if keep_video_frames != video_frames:
+            output_frames = 1 + (keep_video_frames - 1) * int(scheduler.video_scale_factors[0])
+            logger.warning(
+                f"ltx2_ar trims latent frames from {video_frames} to {keep_video_frames} so they are divisible by num_frame_per_chunk={chunk_frames}; decoded video length becomes {output_frames}."
+            )
+            self.input_info.target_video_length = output_frames
+
+        self._ar_video_state = self._slice_latent_state(video_state, 0, keep_video_tokens, clone_latent=False)
+        self._ar_audio_state = self._slice_latent_state(audio_state, 0, keep_audio_tokens, clone_latent=False)
+        self._ar_video_frames = keep_video_frames
+        self._ar_video_tokens_per_frame = video_tokens_per_frame
+        self._ar_num_chunks = keep_video_frames // chunk_frames
+        if keep_audio_tokens < self._ar_num_chunks:
+            raise ValueError(f"LTX2 AR audio tokens={keep_audio_tokens} is smaller than chunk count={self._ar_num_chunks}.")
+        self._ar_chunk_ranges = []
+        for chunk_idx in range(self._ar_num_chunks):
+            video_start = chunk_idx * chunk_frames * video_tokens_per_frame
+            video_end = (chunk_idx + 1) * chunk_frames * video_tokens_per_frame
+            audio_start, audio_end = causal_chunk_token_range(chunk_idx, self._ar_num_chunks, keep_audio_tokens)
+            self._ar_chunk_ranges.append((video_start, video_end, audio_start, audio_end))
+
+        scheduler.video_latent_shape_orig = (
+            scheduler.video_latent_shape_orig[0],
+            keep_video_frames,
+            video_height,
+            video_width,
+        )
+        scheduler.audio_latent_shape_orig = (audio_channels, keep_audio_tokens, audio_mel_bins)
+        self.input_info.video_latent_shape = scheduler.video_latent_shape_orig
+        self.input_info.audio_latent_shape = scheduler.audio_latent_shape_orig
+        if self.config.get("distilled_sigma_values") is None:
+            scheduler.set_timesteps(infer_steps=scheduler.infer_steps, latent=self._ar_video_state.latent)
+
+        max_audio_chunk_tokens = max(audio_end - audio_start for _, _, audio_start, audio_end in self._ar_chunk_ranges)
+        audio_tokens_per_frame = max(1, (keep_audio_tokens + keep_video_frames - 1) // keep_video_frames)
+        self.model.configure_ar_cache(
+            video_total_tokens=keep_video_tokens,
+            audio_total_tokens=keep_audio_tokens,
+            video_chunk_tokens=chunk_frames * video_tokens_per_frame,
+            audio_chunk_tokens=max_audio_chunk_tokens,
+            video_tokens_per_frame=video_tokens_per_frame,
+            audio_tokens_per_frame=audio_tokens_per_frame,
+            dtype=self._ar_video_state.latent.dtype,
+            device=self._ar_video_state.latent.device,
+        )
+        logger.info(
+            f"LTX2 AR initialized: chunks={self._ar_num_chunks}, latent_frames_per_chunk={chunk_frames}, "
+            f"video_tokens_per_chunk={chunk_frames * video_tokens_per_frame}, audio_tokens={keep_audio_tokens}"
+        )
+
+    def _load_ar_chunk(self, video_start, video_end, audio_start, audio_end):
+        self.model.scheduler.video_latent_state = self._slice_latent_state(self._ar_video_state, video_start, video_end)
+        self.model.scheduler.audio_latent_state = self._slice_latent_state(self._ar_audio_state, audio_start, audio_end)
+        self.model.scheduler.mm_last_v_pred = None
+        self.model.scheduler.mm_last_a_pred = None
+        self.model.set_ar_chunk(video_start=video_start, audio_start=audio_start)
+
+    def run_segment(self, segment_idx=0, stage_name=None, cleanup_inputs=None):
+        infer_steps = self.model.scheduler.infer_steps
+        video_chunks = []
+        audio_chunks = []
+
+        for chunk_idx, (video_start, video_end, audio_start, audio_end) in enumerate(self._ar_chunk_ranges):
+            self.check_stop()
+            self._load_ar_chunk(video_start, video_end, audio_start, audio_end)
+            logger.info(f"LTX2 AR chunk {chunk_idx + 1}/{self._ar_num_chunks}")
+
+            for step_index in range(infer_steps):
+                logger.info(f"==> chunk: {chunk_idx + 1}/{self._ar_num_chunks}, step: {step_index + 1}/{infer_steps}")
+                with ProfilingContext4DebugL1("step_pre"):
+                    self.model.scheduler.step_pre(step_index=step_index, is_rerun=False)
+                with ProfilingContext4DebugL1("infer_main"):
+                    self.model.infer(self.inputs)
+                with ProfilingContext4DebugL1("step_post"):
+                    self.model.scheduler.step_post()
+
+                if self.progress_callback:
+                    current_step = chunk_idx * infer_steps + step_index + 1
+                    total_steps = self._ar_num_chunks * infer_steps
+                    self.progress_callback((current_step / total_steps) * 100, 100)
+
+            with ProfilingContext4DebugL1("step_pre_in_rerun"):
+                self.model.scheduler.step_pre(step_index=infer_steps - 1, is_rerun=True)
+            with ProfilingContext4DebugL1("infer_main_in_rerun"):
+                self.model.infer(self.inputs)
+
+            video_chunks.append(self.model.scheduler.video_latent_state.latent)
+            audio_chunks.append(self.model.scheduler.audio_latent_state.latent)
+
+        video_tokens = torch.cat(video_chunks, dim=0)
+        audio_tokens = torch.cat(audio_chunks, dim=0)
+        video_shape = self.model.scheduler.video_latent_shape_orig
+        audio_shape = self.model.scheduler.audio_latent_shape_orig
+        video_latent = self.model.scheduler.video_patchifier.unpatchify(
+            video_tokens,
+            frames=video_shape[1],
+            height=video_shape[2],
+            width=video_shape[3],
+        )
+        audio_latent = self.model.scheduler.audio_patchifier.unpatchify(
+            audio_tokens,
+            channels=audio_shape[0],
+            mel_bins=audio_shape[2],
+        )
+        return video_latent, audio_latent

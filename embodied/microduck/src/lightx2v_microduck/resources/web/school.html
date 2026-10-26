@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鸭子学校 · MicroDuck</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#101719;color:#e9efeb}*{box-sizing:border-box}body{margin:0}main{max-width:1160px;margin:auto;padding:28px}h1{font-size:30px;margin:12px 0 6px}h2{font-size:21px;margin:0 0 14px}p{color:#bbcbc2;line-height:1.7}a{color:#a9e9bd}section{padding:24px;background:#19271f;border:1px solid #334e3f;border-radius:12px;margin:22px 0}button,select,input,textarea{font:inherit;color:inherit;background:#23382b;border:1px solid #587760;border-radius:7px;padding:10px;max-width:100%}button{cursor:pointer}button.primary{background:#3f7653}button:disabled{opacity:.45;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #b4f4c9;outline-offset:3px}textarea{display:block;width:100%;margin:10px 0;resize:vertical;line-height:1.6}label{display:flex;flex-direction:column;gap:8px}small{color:#b0c5b8;line-height:1.6}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.row label{min-width:130px}.examples{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.examples button{font-size:14px}.preview{border-left:3px solid #8dcca3;padding:8px 18px;margin:18px 0;white-space:pre-line}.error{color:#ffb6a7;white-space:pre-wrap}.muted{color:#adc1b4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}#live-frame{width:100%;max-height:550px;object-fit:contain;background:#0b110e;border-radius:10px}#chart{width:100%;height:180px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}td,th{padding:12px 8px;text-align:left;border-bottom:1px solid #34513f}td button{font-size:13px;padding:7px;margin:3px}details{margin-top:18px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}#skills article{padding:16px;border-bottom:1px solid #34513f}#skills h3{margin:0 0 8px;font-size:16px}.badge{display:inline-block;background:#294634;border-radius:5px;padding:3px 8px;font-size:12px}.warning{color:#f1cf90}#status{min-height:24px}[hidden]{display:none!important}@media(max-width:700px){main{padding:16px}.grid{grid-template-columns:1fr}section{padding:17px}.row label{min-width:110px}}
+</style>
+<main>
+<a href="/">← 返回 Simulator</a>
+<h1>鸭子学校</h1>
+<p>描述一个目标，让鸭子通过仿真试验学习上层控制。底层行走保持官方策略，学到的技能可保存、测试和实时运行。</p>
+<section>
+<h2>1 · 今天学什么</h2>
+<div id="examples" class="examples"></div>
+<form id="lesson-form">
+<label for="instruction">课程目标</label>
+<textarea id="instruction" rows="2" required maxlength="300">走到前方 0.8 米的标记并停下</textarea>
+<button type="submit">预览课程</button>
+<small>支持中英课程语法、数字与颜色。首版通过规则解析，无需配置语言模型。</small>
+</form>
+<div id="preview" class="preview" hidden></div>
+<p id="error" class="error" role="alert"></p>
+<div class="row">
+<label>教学预算<select id="budget"><option value="60">1 分钟 · 快速检查</option><option value="600" selected>10 分钟 · 推荐</option><option value="1800">30 分钟</option></select></label>
+<label>实验 seed<input id="seed" type="number" min="0" max="999999" value="0"></label>
+<button class="primary" id="teach" disabled>开始教学</button>
+</div>
+<p><small>每次在多个起点和目标布局中尝试。CEM 学习 15 个命令系数；RGB 检测和课程结构固定。预算到期会保存进度，测试未完成时会明确标注。</small></p>
+</section>
+<section id="session" hidden>
+<div class="row"><h2>2 · 当前教学 / 运行</h2><button id="cancel">停止当前任务</button></div>
+<p id="status" role="status" aria-live="polite"></p>
+<svg id="chart" role="img" aria-label="训练奖励与验证奖励曲线" viewBox="0 0 800 180"></svg>
+<small id="chart-note">绿色：训练候选最高奖励；蓝色：选中控制器验证奖励。奖励不是任务成功率。</small>
+<div id="live-area" hidden><label>实时视角<select id="view"><option value="observer">鸭子与周围环境</option><option value="camera">鸭子摄像头</option></select></label><p id="live-status"></p><img id="live-frame" alt="当前 MuJoCo 实时画面"></div>
+<div id="report"></div>
+<details><summary>实验依据和详细结果</summary><pre id="evidence"></pre></details>
+</section>
+<section>
+<h2>3 · 已保存的技能与实验</h2>
+<div class="row"><label>课程类别<select id="filter"><option value="all">全部课程</option></select></label><button id="refresh">刷新</button></div>
+<div id="skills"></div>
+<div class="row"><button id="previous">上一页</button><span id="page"></span><button id="next">下一页</button></div>
+<p><small>“通过小规模测试”要求至少 10 个独立场景、成功率 ≥80%。真值课程依赖仿真坐标；RGB 课程仅使用相机和本体状态。全部技能尚未进行真机验证。</small></p>
+</section>
+</main><script src="/school.js"></script>
+</html>

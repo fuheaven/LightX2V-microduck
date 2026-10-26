@@ -1,0 +1,28 @@
+{
+  "schema": "microduck_mission_cohort_v1",
+  "comparison_contract": "microduck_navigation_forward04_v1",
+  "scope": "Three ordered two-goal diagnostic missions in one fixed layout; not independent acceptance or unseen-layout evidence.",
+  "cases": [
+    {
+      "id": "red-blue",
+      "instruction": "Find the red ball, stop near it for two seconds, then find the blue ball and stop near it for two seconds. Avoid obstacles and declare when the mission is complete.",
+      "expected_targets": ["red", "blue"],
+      "scene": "room_clear",
+      "seed": 1011
+    },
+    {
+      "id": "blue-yellow",
+      "instruction": "Find the blue ball, stop near it for two seconds, then find the yellow ball and stop near it for two seconds. Avoid obstacles and declare when the mission is complete.",
+      "expected_targets": ["blue", "yellow"],
+      "scene": "room_clear",
+      "seed": 1011
+    },
+    {
+      "id": "yellow-red",
+      "instruction": "Find the yellow ball, stop near it for two seconds, then find the red ball and stop near it for two seconds. Avoid obstacles and declare when the mission is complete.",
+      "expected_targets": ["yellow", "red"],
+      "scene": "room_clear",
+      "seed": 1011
+    }
+  ]
+}

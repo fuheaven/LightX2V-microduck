@@ -1,0 +1,23 @@
+{
+  "tasks": [
+    "find_red_ball",
+    "find_blue_ball",
+    "find_yellow_ball"
+  ],
+  "goal_tasks": [
+    "find_red_ball",
+    "find_blue_ball",
+    "find_yellow_ball"
+  ],
+  "episodes": 100,
+  "max_steps": 1500,
+  "action_horizon": 50,
+  "execute_steps": 5,
+  "mode": "teacher",
+  "seed": 0,
+  "split_fractions": [
+    0.8,
+    0.1,
+    0.1
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "schema": "microduck_locomotion_tool_response_v1",
+  "profile": "official_bam",
+  "embodiment": "legs",
+  "report_sha256": "ebc7e740967745379cd8b0a76af6c00b2d9adb61250467e616a4c468a6001a31",
+  "report_relative_path": "artifacts/autonomy-harness/tool-response-calibration-v1/result/report.json",
+  "source_sha256": {
+    "env.py": "e23b3568d7958a3abda26dea5dd3de3d1c722ad72d759a525ad1db09d88c8ab6",
+    "physics.py": "0f691bd9aca0f6dbe9e78ae061f88d461ab7c88b78b799d78209df8460922e93",
+    "policies.py": "9ebf8ecec357d9a7dc2ef0ae9b5d576c84c79b1bdc2ac17d195a13a54566691b",
+    "contracts.py": "5e5ff2a6237d69a2c2156601fcf4a9f15f7638f74ce1e9ad05183e8cab87ad25",
+    "navigation.py": "a878e0aa85987386e905326777b85f7515b6723e93bc8cb92e5cb8d15bf83069"
+  },
+  "robot_signature_sha256": "c84586273415452a4f4b87dfb525506cc31938b84d1c07b69ee4d0512e179c29",
+  "policy_files": {
+    "alpha_walking.onnx": "e36332d383997d51401897734cd3e79cf5038406feddb18b4d57ecfb141daa6c"
+  },
+  "scope": "Three seeds change ball layouts but all commands produce identical robot trajectories across seeds; nominal tool calibration only.",
+  "horizon_s": 3.0,
+  "initial_state": "50 stand ticks after official reset",
+  "measured_commands": [
+    {
+      "command": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        -0.0014570839751783546,
+        0.0004955355639064303
+      ],
+      "yaw_change_rad": -0.024547718783928293,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.15,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.003934330141384313,
+        0.0014351262162852364
+      ],
+      "yaw_change_rad": -0.03577417480928916,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.2,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.006643275342880519,
+        0.002061122143809784
+      ],
+      "yaw_change_rad": -0.03994182972470137,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.25,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.17349396196876368,
+        -0.006867458351054543
+      ],
+      "yaw_change_rad": -0.23898189287439636,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.3,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.2925202116911851,
+        -0.01854646754084967
+      ],
+      "yaw_change_rad": -0.2160257062223549,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.4,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.4491485852218069,
+        -0.07916745797515447
+      ],
+      "yaw_change_rad": -0.36303647314862497,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.0,
+        0.0,
+        1.1,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        -0.00014053356573683016,
+        0.002133885698551627
+      ],
+      "yaw_change_rad": 0.2051276662677728,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.15,
+        0.0,
+        1.1,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.09688147554397046,
+        0.07323430642211914
+      ],
+      "yaw_change_rad": 1.3079012398833065,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        0.3,
+        0.0,
+        1.1,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        0.15784391814706794,
+        0.2089653648869126
+      ],
+      "yaw_change_rad": 1.916076311882048,
+      "collision": false,
+      "ever_fallen": false
+    },
+    {
+      "command": [
+        -0.15,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_frame_displacement_m": [
+        -0.002830655321332287,
+        0.00039671753588315056
+      ],
+      "yaw_change_rad": -0.014429753349652427,
+      "collision": false,
+      "ever_fallen": false
+    }
+  ],
+  "actor_notes": [
+    "These are nominal simulator measurements of the official locomotion tool, not current target positions or a navigation plan. They are not hardware or robustness validation.",
+    "From rest, a straight walk command vx=0.20 produced only about 0.007 m forward displacement in 3 seconds; vx=0.30 produced about 0.293 m and vx=0.40 about 0.449 m. Small nonzero velocity requests may not start useful walking. Requested speed is not measured speed or guaranteed displacement.",
+    "With vx=0 and yaw_rate=1.1, yaw changed only about 0.205 rad in 3 seconds. With vx=0.15 and yaw_rate=1.1 it changed about 1.308 rad while translating about 0.12 m. Turning can require translational clearance; this is not an in-place rotation guarantee.",
+    "The negative straight command vx=-0.15 produced only about 0.003 m backward displacement in 3 seconds. Do not assume small reverse commands provide useful escape motion.",
+    "Inspect fresh images and execution feedback to check actual progress. Motion changes the viewing direction; head yaw changes the view without guaranteeing a body turn. Use only the currently permitted actions and bounds."
+  ]
+}
