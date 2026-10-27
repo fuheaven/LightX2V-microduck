@@ -1,0 +1,6 @@
+-r ../fastwam/requirements.lock
+-r web.lock
+# Torch 2.7.1/cu128 is supplied by the pinned base image.
+torchvision==0.22.1
+termcolor==2.5.0
+rich==14.2.0

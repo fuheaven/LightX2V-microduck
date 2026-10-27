@@ -55,3 +55,7 @@ lightx2v_kernel_xpu/_cmake_build
 *.pem
 *.key
 .env.*
+
+# Standalone Studio frontend
+node_modules/
+apps/microduck-studio/dist/

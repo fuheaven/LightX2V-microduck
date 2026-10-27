@@ -163,8 +163,14 @@ class FastWAMPolicy:
         # LIBERO post-processes the single gripper channel; RoboTwin (dual-arm qpos) does not.
         self.gripper_postprocess = (self.policy_profile == "libero") if gripper_postprocess is None else bool(gripper_postprocess)
         if self.policy_profile == "microduck_navigation":
-            if (self.action_dim, self.robot_state_dim) != (5, 48):
-                raise ValueError("MicroDuck navigation requires 5 decision channels and 48 proprioception channels")
+            observation = config.get("studio_observation")
+            expected_state = 48
+            if observation is not None:
+                if observation != "rgb_history_300_150_50_0+proprio48+tof64+valid64_v1":
+                    raise ValueError("unsupported Studio observation contract")
+                expected_state = 176
+            if (self.action_dim, self.robot_state_dim) != (5, expected_state):
+                raise ValueError("MicroDuck dimensions must match its explicit observation contract")
             history = config.get("navigation_history")
             expected_size = 256
             if history is not None:

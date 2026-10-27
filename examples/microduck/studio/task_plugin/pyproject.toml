@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "microduck-studio-example-task"
+version = "0.1.0"
+requires-python = ">=3.11"
+[project.entry-points."microduck.studio.tasks"]
+my_find_object = "example_task:MyFindObject"
+[tool.setuptools]
+py-modules = ["example_task"]

@@ -4,6 +4,8 @@
 |---|---|---|
 | LightX2V | ModelTC/LightX2V，完整 commit 见 source-provenance.json | 保留 Apache-2.0、上游源码与文件声明 |
 | FastWAM 参考路线 | https://github.com/yuantianyuan01/FastWAM；参考源码快照在历史评测中单独记录 | MIT，保留 [FastWAM 作者许可](licenses/FastWAM-LICENSE)；本部署使用 LightX2V 原生实现，不要求额外安装作者训练仓库；不含其原始模型权重 |
+| Studio FastWAM 训练架构 | 同仓库 `7faa71108368fbb3b6885649f112af607427a2d4` | `third_party/fastwam` 保留原始 `src`、MIT LICENSE 和逐文件 SHA256；用于 176D 训练与参考检查，推理仍通过 LightX2V |
+| Studio 图标 / 前端 | Phosphor Icons React 2.1.7，React 19.1.0 | 包管理器固定版本及原始 MIT 许可；模板静物插画为本项目生成素材，不是训练效果 |
 | MicroDuck runtime 契约 | pollen-robotics/microduck `5620aa214e6e304eec00d5c376ac81d3001fb7a3` | 关节/观测/动作契约按来源注明，代码 Apache-2.0 |
 | MicroDuck RL 本体 | pollen-robotics/microduck_rl `2b581c641406a48346e696212930ea881c222c52` | 代码与机器人 3D 资产许可不同；资产上游标为 CC BY-NC-SA，不包含在 Git 分发中；下载后保留原条款 |
 | 官方 ONNX 策略 | pollen-robotics/microduck-policies `088524a64e2557dc453256b6071dbb9d23888802` | 按 upstream.lock.json 下载并校验，保留上游模型说明 |

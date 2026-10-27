@@ -28,12 +28,13 @@ EVALUATOR_SOURCE_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest(
 
 
 class MicroDuckEnv:
-    def __init__(self, profile="official_bam", scene="room", asset_root=None, render=True, *, image_size=256, action_delay_ticks=None, daemon_backend=None, camera_offsamples=None):
+    def __init__(self, profile="official_bam", scene="room", asset_root=None, render=True, *, image_size=256, action_delay_ticks=None, daemon_backend=None, camera_offsamples=None, scene_builder=None):
         if profile not in PROFILES:
             raise ValueError(f"unknown profile {profile!r}")
         if profile == "official_daemon" and daemon_backend is None:
             raise ValueError("official_daemon requires an actual robotd/duck-body daemon_backend; start duck-sim and use the daemon client")
         self.profile, self.scene = profile, str(scene)
+        self.scene_builder = scene_builder
         self.camera_offsamples = validate_camera_offsamples(camera_offsamples)
         if daemon_backend is not None and camera_offsamples is not None:
             raise ValueError("camera_offsamples applies only to the local MuJoCo renderer")
@@ -59,7 +60,7 @@ class MicroDuckEnv:
             return self.daemon_backend.reset(seed=seed, task=task, options=options)
         self.seed = int(seed)
         self.rng = np.random.default_rng(self.seed)
-        self.task = get_task(task)
+        self.task = task if isinstance(task, TaskSpec) else get_task(task)
         if self.task.task_id == "run_roll_recover":
             from .tricks import roll_trigger_tick
             self.task = replace(self.task, duration_s=(roll_trigger_tick(self.seed) + 225) * .02)
@@ -69,13 +70,15 @@ class MicroDuckEnv:
         if self.physics is not None:
             self.physics.close()
         seeded_room = self.scene == "room_randomized" or self.scene in CURRICULUM_ROOMS
-        spec, self.description = build_scene(self.asset_root, self.profile, self.scene, self.task, obstacle_layout=self.seed if seeded_room else self.seed % 2)
+        spec, self.description = (self.scene_builder or build_scene)(self.asset_root, self.profile, self.scene, self.task, obstacle_layout=self.seed if seeded_room else self.seed % 2)
         tof_source = self.asset_root / "microduck_rl/src/mjlab_microduck/sim/tof.py"
         self.physics = Physics(spec, profile=self.profile, image_size=self.image_size, robot_prefix=self.description.robot_prefix, tof_source=tof_source if tof_source.is_file() else None, camera_offsamples=self.camera_offsamples)
         ball_positions = sample_ball_positions(self.description, self.rng)
         program = PROGRAMS.get(self.task.task_id)
         basketball = self.task.suite == "community_basketball"
         self.physics.reset(
+            robot_xy=(options or {}).get("robot_xy", (0., 0.)),
+            robot_yaw=(options or {}).get("robot_yaw", 0.),
             ball_positions=ball_positions,
             kick_side=None if program is None else program.ball_side,
             seed=self.seed,
@@ -475,7 +478,7 @@ class MicroDuckEnv:
             self._recovery_events += 1
         if self.task.suite == "visual_goal":
             target = self._ball_positions()[self.task.target_color]
-            distance = np.linalg.norm(target[:2] - data.xpos[self.physics.trunk, :2]) - 0.035
+            distance = self.target_surface_distance(target, data.xpos[self.physics.trunk])
             speed = np.linalg.norm(data.qvel[self.physics.trunk_qvel : self.physics.trunk_qvel + 2])
             recent = np.asarray(self._trajectory[-11:])
             # Net heading motion over 200 ms rejects circling while tolerating
@@ -505,6 +508,10 @@ class MicroDuckEnv:
                     self.task.task_id, np.asarray(self._trajectory), self._contact_events, collision=self._collision, recoveries=self._recovery_events, ball_displacement_m=displacement
                 )
                 self._success = self._strict_result["success"]
+
+    def target_surface_distance(self, target, robot):
+        """Task plugins may supply actual object geometry; legacy balls remain unchanged."""
+        return np.linalg.norm(target[:2] - robot[:2]) - 0.035
 
     def _preset_success(self):
         values = np.asarray(self._trajectory)

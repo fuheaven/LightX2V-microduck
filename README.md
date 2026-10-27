@@ -1,8 +1,8 @@
-# LightX2V × MicroDuck：FastWAM 推理与仿真交接
+# LightX2V × MicroDuck：技能工作室与 FastWAM 仿真
 
 给希望复现、分析和优化 **FastWAM 在 MicroDuck 上的视觉寻球决策** 的开发者。模型接收头部相机历史、指令和自身状态，输出移动、转头、停止命令；官方 ONNX 策略继续负责 50Hz 行走和平衡。
 
-**本仓库交接已训练模型的推理与仿真代码，不启动新训练。部署权重由 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck) 分发，不放入 Git。** 所有能力证据来自仿真开发集，尚未完成独立正式验收或真机验证。
+仓库包含已训练模型的推理交接，以及新的 **[MicroDuck Studio 技能工作室](docs/microduck/studio.md)**：独立 React 页面、场景编辑、教师检查、采集、双后端训练、评测及技能包。训练需由用户明确提交，启动服务不会自动开始训练。部署权重由 [lightx2v/microduck](https://huggingface.co/lightx2v/microduck) 分发，不放入 Git。历史能力证据来自仿真开发集，新平台与新模型分别验证。
 
 ```mermaid
 flowchart LR
@@ -16,7 +16,7 @@ flowchart LR
 
 ## 从哪里开始
 
-0. **[MicroDuck Studio 可视化服务](docs/microduck/visualization.md)**：全新独立页面，观看成功/失败录屏，按类别查看训练效果，并启动实时仿真。
+0. **[新的技能工作室（8771）](docs/microduck/studio.md)**：从技能模板到训练、评测、发布与复用。**[原录屏展厅（8770）](docs/microduck/visualization.md)** 独立保留。
 1. [部署说明](docs/microduck/deployment.md)：独立 Docker、模型准备、固定输入测速、MuJoCo 闭环。
 2. [优化交接](docs/microduck/optimization.md)：代码入口、加速开关、Profiler、数值与闭环回归。
 3. [已实现能力与证据](docs/microduck/capabilities.md)：成绩对应的任务、部署和局限。

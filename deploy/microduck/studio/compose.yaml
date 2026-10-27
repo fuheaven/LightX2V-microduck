@@ -1,0 +1,59 @@
+name: microduck-studio
+x-worker: &worker
+  image: ${STUDIO_WORKER_IMAGE:-microduck-studio-worker:v1}
+  build:
+    context: ../../..
+    dockerfile: deploy/microduck/studio/Worker.Dockerfile
+  user: "${STUDIO_UID:-1000}:${STUDIO_GID:-1000}"
+  init: true
+  restart: unless-stopped
+  stop_grace_period: 75s
+  shm_size: 8gb
+  volumes:
+    - ${STUDIO_WORKSPACE_DIR:?Set STUDIO_WORKSPACE_DIR}:/workspace-artifacts
+    - ${STUDIO_DATA_DIR:?Set STUDIO_DATA_DIR}:/data
+  environment: &worker-env
+    STUDIO_WORKER_TOKEN: ${STUDIO_WORKER_TOKEN:?Set a random worker token}
+    STUDIO_WORKER_IMAGE: ${STUDIO_WORKER_IMAGE:-microduck-studio-worker:v1}
+    MUJOCO_GL: osmesa
+    STUDIO_VLM_LOCAL_URL: ${STUDIO_VLM_LOCAL_URL:-}
+    STUDIO_VLM_LOCAL_MODEL: ${STUDIO_VLM_LOCAL_MODEL:-}
+    STUDIO_VLM_LOCAL_KEY: ${STUDIO_VLM_LOCAL_KEY:-}
+    STUDIO_VLM_CLOUD_URL: ${STUDIO_VLM_CLOUD_URL:-}
+    STUDIO_VLM_CLOUD_MODEL: ${STUDIO_VLM_CLOUD_MODEL:-}
+    STUDIO_VLM_CLOUD_KEY: ${STUDIO_VLM_CLOUD_KEY:-}
+services:
+  web:
+    image: microduck-studio-web:v1
+    build:
+      context: ../../..
+      dockerfile: deploy/microduck/studio/Web.Dockerfile
+    user: "${STUDIO_UID:-1000}:${STUDIO_GID:-1000}"
+    init: true
+    restart: unless-stopped
+    ports: ["${STUDIO_BIND:-127.0.0.1}:${STUDIO_PORT:-8771}:8771"]
+    volumes:
+      - ${STUDIO_WORKSPACE_DIR:?Set STUDIO_WORKSPACE_DIR}:/workspace-artifacts
+      - ${STUDIO_DATA_DIR:?Set STUDIO_DATA_DIR}:/data:ro
+    environment:
+      STUDIO_WORKER_TOKEN: ${STUDIO_WORKER_TOKEN:?Set a random worker token}
+      STUDIO_WORKER_IMAGE: ${STUDIO_WORKER_IMAGE:-microduck-studio-worker:v1}
+      STUDIO_TOKEN: ${STUDIO_TOKEN:-}
+      STUDIO_MODEL_ROOT: /data
+  cpu:
+    <<: *worker
+    command: ["python","-m","lightx2v_microduck.studio.worker","--server","${STUDIO_SERVER:-http://web:8771}","--workspace","/workspace-artifacts","--id","cpu-0","--device","cpu"]
+  gpu:
+    <<: *worker
+    profiles: [gpu]
+    environment:
+      <<: *worker-env
+      MUJOCO_GL: egl
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["${STUDIO_GPU_ID:-0}"]
+              capabilities: [gpu]
+    command: ["python","-m","lightx2v_microduck.studio.worker","--server","${STUDIO_SERVER:-http://web:8771}","--workspace","/workspace-artifacts","--id","gpu-${STUDIO_GPU_ID:-0}","--device","cuda"]
