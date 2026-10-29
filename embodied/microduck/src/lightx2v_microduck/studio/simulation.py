@@ -11,6 +11,7 @@ from .dataset import sensor_state, historical_indices
 from .schema import CATEGORIES, COLORS, digest, write_json
 from .scene import sample_scene, layout_identity
 from .plugins import plugin, PixelRule
+from .assets import asset_identity
 
 
 def cases(skill, split, count, seed=0, groups=None):
@@ -94,6 +95,8 @@ def run_episode(skill, case, out, *, policy_kind="teacher", runtime=None, realti
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     buffer = NavigationBuffer(max_age_ticks=max(1, ttl_ms // 20), max_wall_age_s=ttl_ms / 1000)
     writer = None
+    head_writer = observer_writer = visual_recorder = None
+    source = {"execution_source": "initializing"}
     report = None
 
     def submit_prediction(values, source, current):
@@ -126,6 +129,9 @@ def run_episode(skill, case, out, *, policy_kind="teacher", runtime=None, realti
                 break
             obs = env.step(intent_from_action([0, 0, 0, 0, 1], episode_id=env.episode_id, tick=env.tick))
         env.begin_task_at_current_pose()
+        from .visual_state import VisualRecorder
+
+        visual_recorder = VisualRecorder(env, out)
         buffer.reset(env.episode_id)
         teacher = task_plugin.teacher(env) if policy_kind == "teacher" else PixelRule(case["color"]) if policy_kind == "rule" else None
         held = np.array([0, 0, 0, 0, 1], np.float32)
@@ -154,10 +160,15 @@ def run_episode(skill, case, out, *, policy_kind="teacher", runtime=None, realti
                 view = env.render_observer()
                 atomic_image(out / "observer.jpg", view)
                 atomic_image(out / "head.jpg", obs.rgb)
+                visual_recorder.capture(env, source["execution_source"])
                 if writer is None:
                     import imageio.v2 as imageio
 
                     writer = imageio.get_writer(str(out / "recording.mp4"), fps=10, codec="libx264", macro_block_size=1)
+                    head_writer = imageio.get_writer(str(out / "head.mp4"), fps=10, codec="libx264", macro_block_size=1)
+                    observer_writer = imageio.get_writer(str(out / "observer.mp4"), fps=10, codec="libx264", macro_block_size=1)
+                head_writer.append_data(obs.rgb)
+                observer_writer.append_data(view)
                 display = Image.fromarray(view).resize((round(view.shape[1] * 256 / view.shape[0] / 2) * 2, 256))
                 writer.append_data(np.concatenate((np.asarray(display), obs.rgb), axis=1))
                 if preview:
@@ -283,6 +294,7 @@ def run_episode(skill, case, out, *, policy_kind="teacher", runtime=None, realti
                 "policy_reported_complete": policy_stop_ticks * 0.02 >= skill["task"]["hold_s"],
                 "robot_signature": env._robot_signature,
                 "scene_sha256": digest(case["scene"]),
+                "environment": {"scene_sha256": digest(case["scene"]), "assets_sha256": asset_identity(case["scene"])},
             }
             if frames:
                 np.savez_compressed(
@@ -294,7 +306,8 @@ def run_episode(skill, case, out, *, policy_kind="teacher", runtime=None, realti
         return report
     finally:
         buffer.reset("")
-        if writer is not None:
-            writer.close()
+        for recording in (writer, head_writer, observer_writer, visual_recorder):
+            if recording is not None:
+                recording.close()
         pool.shutdown(wait=True, cancel_futures=True)
         env.close()

@@ -38,6 +38,7 @@ def main():
     p.add_argument("--workspace", required=True)
     p.add_argument("--id", required=True)
     p.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    p.add_argument("--role", choices=("simulation", "video"), default="simulation")
     p.add_argument("--image", default=os.environ.get("STUDIO_WORKER_IMAGE", "local-development"))
     p.add_argument("--once", action="store_true")
     args = p.parse_args()
@@ -51,6 +52,25 @@ def main():
     client = httpx.Client(base_url=args.server, headers=headers, timeout=20)
     stopping = False
     receipt = runtime_receipt(args.image, args.device)
+    gpu_uuid = None
+    if args.device == "cuda":
+        import torch
+
+        if torch.cuda.device_count() != 1:
+            raise ValueError("Expose exactly one GPU to a Studio worker")
+        gpu_uuid = str(torch.cuda.get_device_properties(0).uuid)
+        if not gpu_uuid.startswith(("GPU-", "MIG-")):
+            raise ValueError("Cannot resolve the physical CUDA device UUID")
+        receipt["gpu_uuid"] = gpu_uuid
+    elif args.role == "video":
+        raise ValueError("Video worker requires a CUDA device")
+    if args.device == "cpu":
+        try:
+            from .visual_state import prepare_robot
+
+            prepare_robot(root, source_identity(repo))
+        except Exception as exc:
+            write_json(root / "assets/robot-error.json", {"reason": str(exc)[:500]})
 
     def terminate(*_):
         nonlocal stopping
@@ -59,23 +79,50 @@ def main():
     signal.signal(signal.SIGTERM, terminate)
     signal.signal(signal.SIGINT, terminate)
     while not stopping:
+        gpu_lock = None
+        busy = False
+        if gpu_uuid:
+            gpu_lock = (root / f"device-{gpu_uuid}.lock").open("a")
+            try:
+                fcntl.flock(gpu_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                busy = True
+                gpu_lock.close()
+                gpu_lock = None
+        video_status = {}
+        if args.role == "video":
+            from .video import readiness
+
+            video_status = readiness()
         try:
             res = client.post(
                 "/api/worker/claim",
                 json={
                     "id": args.id,
-                    "capabilities": ["cpu"] + (["gpu"] if args.device == "cuda" else []),
-                    "provenance": {"image": args.image, "source_sha256": source_identity(repo), "device": args.device},
+                    "capabilities": ["cpu"] + (["gpu"] if args.device == "cuda" else []) + (["video"] if args.role == "video" else []),
+                    "provenance": {
+                        "image": args.image,
+                        "source_sha256": source_identity(repo),
+                        "device": args.device,
+                        "gpu_uuid": gpu_uuid,
+                        "exclusive_device_lock": gpu_lock is not None,
+                        "device_busy": busy,
+                        **video_status,
+                    },
                 },
             )
             res.raise_for_status()
             job = res.json()
         except httpx.HTTPError:
+            if gpu_lock:
+                gpu_lock.close()
             if args.once:
                 raise
             time.sleep(5)
             continue
         if job is None:
+            if gpu_lock:
+                gpu_lock.close()
             if args.once:
                 break
             time.sleep(3)
@@ -87,7 +134,12 @@ def main():
         env = {**os.environ, "STUDIO_DEVICE": args.device}
         log = (out / "worker.log").open("a")
         proc = subprocess.Popen(
-            [sys.executable, "-m", "lightx2v_microduck.studio.pipeline", "--workspace", str(root), "--run", job["id"]], stdout=log, stderr=subprocess.STDOUT, env=env, start_new_session=True
+            [sys.executable, "-m", "lightx2v_microduck.studio.pipeline", "--workspace", str(root), "--run", job["id"]],
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            env=env,
+            start_new_session=True,
+            pass_fds=(gpu_lock.fileno(),) if gpu_lock else (),
         )
         last_ok = time.monotonic()
         cancel_at = None
@@ -123,6 +175,8 @@ def main():
                 os.killpg(proc.pid, signal.SIGKILL)
                 proc.wait()
             log.close()
+            if gpu_lock:
+                gpu_lock.close()
         if args.once:
             break
 

@@ -17,6 +17,7 @@ flowchart LR
 ## 从哪里开始
 
 0. **[新的技能工作室（8771）](docs/microduck/studio.md)**：从技能模板到训练、评测、发布与复用。**[原录屏展厅（8770）](docs/microduck/visualization.md)** 独立保留。
+   - **[三维环境与视频实验室](docs/microduck/studio-world.md)**：Three.js 编辑、官方 MuJoCo 位姿、家具与环境包、可选语言布局及 H3 离线视频审核。[分阶段验证记录](docs/microduck/studio-world-validation.md) 区分已实测功能与待模型验证部分。
 1. [部署说明](docs/microduck/deployment.md)：独立 Docker、模型准备、固定输入测速、MuJoCo 闭环。
 2. [优化交接](docs/microduck/optimization.md)：代码入口、加速开关、Profiler、数值与闭环回归。
 3. [已实现能力与证据](docs/microduck/capabilities.md)：成绩对应的任务、部署和局限。

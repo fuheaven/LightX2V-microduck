@@ -6,6 +6,28 @@ from dataclasses import replace
 import numpy as np
 
 from .schema import SceneSpec, TaskConfig, digest
+from .assets import parts
+
+
+def collision_boxes(obj):
+    """World XY projections of the very same boxes compiled into MuJoCo.
+
+    All heights are conservatively occupied for the planar teacher; it will
+    not plan under furniture. Physics still uses the actual multipart shape.
+    """
+    if not obj.get("asset_id"):
+        return [{"id": obj["id"], "xy": [obj["x"], obj["y"]], "half_size": envelope(obj).tolist(), "height": obj["height"]}]
+    a = math.radians(obj["yaw"])
+    rot = np.array([[math.cos(a), -math.sin(a)], [math.sin(a), math.cos(a)]])
+    return [
+        {
+            "id": f"{obj['id']}_{i}",
+            "xy": (rot @ np.array(p["pos"][:2]) + [obj["x"], obj["y"]]).tolist(),
+            "half_size": (np.abs(rot) @ (np.array(p["size"][:2]) / 2)).tolist(),
+            "height": p["pos"][2] + p["size"][2] / 2,
+        }
+        for i, p in enumerate(parts(obj))
+    ]
 
 
 def envelope(obj):
@@ -55,7 +77,7 @@ def validate_scene(value):
     from ..teachers import plan_grid_path
 
     goal = next(o for o in scene["objects"] if o["id"] == scene["target_id"])
-    obstacles = [{"xy": [o["x"], o["y"]], "half_size": envelope(o).tolist()} for o in scene["objects"] if o["id"] != scene["target_id"]]
+    obstacles = [b for o in scene["objects"] if o["id"] != scene["target_id"] for b in collision_boxes(o)]
     found = False
     for a in np.linspace(-math.pi, math.pi, 24, endpoint=False):
         stop = np.array([goal["x"], goal["y"]]) + (0.325 + max(goal["width"], goal["depth"]) / 2) * np.array([math.cos(a), math.sin(a)])
@@ -94,7 +116,7 @@ def sample_scene(value, seed, *, group=None, category=None, color=None, split="t
         for k in ("width", "depth", "height"):
             goal[k] = max(0.04, min(0.5, goal[k] * scale))
         if group in ("clear", "outside_view"):
-            scene["objects"] = [o for o in scene["objects"] if o["kind"] != "obstacle"]
+            scene["objects"] = [o for o in scene["objects"] if o["kind"] != "obstacle" or o.get("asset_id")]
         if group in ("outside_view", "occlusion"):
             delta = np.array([goal["x"] - spawn["x"], goal["y"] - spawn["y"]])
             spawn["yaw"] = float(((math.degrees(math.atan2(delta[1], delta[0])) + (180 if group == "outside_view" else 0) + 180) % 360) - 180)
@@ -127,7 +149,12 @@ def build_spec(scene, asset_root, profile, task):
         # Static task objects; no hidden teleports/reset during an episode.
         body = spec.worldbody.add_body(name="studio_" + obj["id"], pos=(obj["x"], obj["y"], 0), quat=(math.cos(a), 0, 0, math.sin(a)))
         kwargs = dict(rgba=colors[obj["color"]], friction=(0.8, 0.01, 0.001))
-        if obj["kind"] == "ball":
+        if obj.get("asset_id"):
+            for i, part in enumerate(parts(obj)):
+                body.add_geom(
+                    name=f"studio_geom_{obj['id']}_{i}", type=mujoco.mjtGeom.mjGEOM_BOX, size=tuple(v / 2 for v in part["size"]), pos=part["pos"], rgba=part["rgba"], friction=kwargs["friction"]
+                )
+        elif obj["kind"] == "ball":
             radius = max(w, d) / 2
             body.add_geom(name="studio_geom_" + obj["id"], type=mujoco.mjtGeom.mjGEOM_SPHERE, size=(radius, 0, 0), pos=(0, 0, radius), **kwargs)
         elif obj["kind"] == "toy":
@@ -138,7 +165,7 @@ def build_spec(scene, asset_root, profile, task):
         else:
             body.add_geom(name="studio_geom_" + obj["id"], type=mujoco.mjtGeom.mjGEOM_BOX, size=(w / 2, d / 2, h / 2), pos=(0, 0, h / 2), **kwargs)
         if obj["id"] != scene["target_id"]:
-            obstacles.append(Obstacle(obj["id"], (obj["x"], obj["y"]), tuple(envelope(obj)), h))
+            obstacles.extend(Obstacle(b["id"], tuple(b["xy"]), tuple(b["half_size"]), b["height"]) for b in collision_boxes(obj))
     return spec, replace(description, name="studio", room_bounds=(-half, half, -half, half), obstacles=tuple(obstacles), layout_id=digest(scene), geometry_hash=digest(scene))
 
 

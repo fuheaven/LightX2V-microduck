@@ -29,7 +29,17 @@ def create_app(workspace=None):
     app.state.store = store
     worker_token = os.environ.get("STUDIO_WORKER_TOKEN")
     app_token = os.environ.get("STUDIO_TOKEN")
-    provenance = {"source_sha256": source_identity(REPO), "worker_image": os.environ.get("STUDIO_WORKER_IMAGE", "local-development")}
+    provenance = {
+        "source_sha256": source_identity(REPO),
+        "worker_image": os.environ.get("STUDIO_WORKER_IMAGE", "local-development"),
+        "video_image": os.environ.get("STUDIO_VIDEO_IMAGE", "microduck-studio-video:v1"),
+    }
+    from .scene_api import install as install_scene_api
+
+    install_scene_api(app, store, provenance)
+    from .video_api import install as install_video_api
+
+    install_video_api(app, store)
 
     @app.middleware("http")
     async def security(request, call_next):
@@ -274,6 +284,7 @@ def create_app(workspace=None):
                 "run_id": row["id"],
                 "task_contract": row["snapshot"]["skill"]["task"],
                 "skill_snapshot": row["snapshot"]["skill"],
+                "environment": row["snapshot"].get("environment"),
                 "provenance": row["snapshot"]["provenance"],
                 "recipe": row["snapshot"]["request"]["recipe"],
                 "hardware_validated": False,
@@ -386,7 +397,10 @@ def main():
     parser.add_argument("--port", type=int, default=8771)
     parser.add_argument("--workspace", default="artifacts/studio")
     args = parser.parse_args()
-    uvicorn.run(create_app(args.workspace), host=args.host, port=args.port)
+    # SSE/MJPEG connections otherwise keep the old process and its SQLite
+    # connection alive indefinitely during a restart. Clients reconnect to the
+    # current episode; workers retain their lease across a brief Web outage.
+    uvicorn.run(create_app(args.workspace), host=args.host, port=args.port, timeout_graceful_shutdown=3)
 
 
 if __name__ == "__main__":

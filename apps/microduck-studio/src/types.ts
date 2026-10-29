@@ -9,8 +9,12 @@ export type Obj = {
   depth: number;
   height: number;
   jitter: number;
+  asset_id?: string;
+  asset_version?: string;
+  material?: string;
 };
 export type Scene = {
+  version?: number;
   name: string;
   size: number;
   spawn: {
@@ -69,6 +73,14 @@ export type Version = {
   report: Record<string, any>;
 };
 export const labels: Record<string, string> = {
+  table: "桌子",
+  chair: "椅子",
+  sofa: "沙发",
+  cabinet: "柜子",
+  partition: "隔断",
+  scene_draft: "布局草案",
+  video_enhance: "视频增强",
+  layout_draft: "生成布局草案",
   historical: "历史 FastWAM 实时运行",
   ball: "球",
   box: "盒子",

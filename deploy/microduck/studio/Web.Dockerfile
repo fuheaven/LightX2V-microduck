@@ -7,6 +7,7 @@ RUN npm run build
 
 FROM python:3.12.13-slim-bookworm
 WORKDIR /workspace
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 COPY deploy/microduck/studio/web.lock /tmp/web.lock
 RUN pip install --no-cache-dir -r /tmp/web.lock && pip freeze --all > /installed-packages.txt
 COPY . .

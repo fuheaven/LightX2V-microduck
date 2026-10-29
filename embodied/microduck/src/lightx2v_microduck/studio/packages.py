@@ -41,9 +41,12 @@ def export_bundle(store, version_id, *, offline=False, dependency_root=None):
     folder.mkdir(exist_ok=True)
     target = folder / (version_id + ("-offline" if offline else "") + ".tar")
     with tempfile.TemporaryDirectory(dir=folder) as temp:
+        from .environments import export_environment
+
         manifest = {
             "schema": "studio_skill_package_v1",
             "skill": v["skill_snapshot"],
+            "environment": export_environment(v["skill_snapshot"]["scene"]),
             "version": {k: value for k, value in v.items() if k not in ("id", "skill_id", "model_path")},
             "files": {n: {"sha256": file_hash(p), "bytes": p.stat().st_size} for n, p in files.items()},
             "backbone": {"repo": "lightx2v/microduck", "revision": "dad4beaf998780df1f7c17aba46c63ecf2a4e72d"} if spec["backend"] == "fastwam" else None,
@@ -102,6 +105,11 @@ def import_bundle(store, path):
                 raise ValueError("model member checksum/path mismatch")
         # Imported third-party evidence remains unverified; never inherit an accepted badge.
         spec = manifest["skill"].copy()
+        if "environment" in manifest:
+            from .environments import import_environment
+
+            if import_environment(manifest["environment"]) != spec["scene"]:
+                raise ValueError("skill/environment mismatch")
         spec.pop("id", None)
         skill = store.save_skill(spec)
         identifier = digest(manifest)

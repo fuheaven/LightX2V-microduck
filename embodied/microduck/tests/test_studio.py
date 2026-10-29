@@ -75,7 +75,8 @@ def test_source_image_and_gpu_are_required(store):
     assert store.claim("cpu", ["cpu"], W) is None
     assert store.claim("gpu", ["gpu"], {**W, "image": "floating"}) is None
     assert store.claim("gpu", ["gpu"], {**W, "source_sha256": "dirty"}) is None
-    assert store.claim("gpu", ["gpu"], W)["id"] == a["id"]
+    assert store.claim("gpu", ["gpu"], W) is None  # Physical identity/lock now required.
+    assert store.claim("gpu", ["gpu"], {**W, "gpu_uuid": "GPU-test", "exclusive_device_lock": True})["id"] == a["id"]
 
 
 def test_teacher_gate_cannot_be_bypassed_by_process_exit(store):

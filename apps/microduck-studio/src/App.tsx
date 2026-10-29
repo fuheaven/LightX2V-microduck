@@ -26,6 +26,8 @@ import {
   ChartLine,
 } from "@phosphor-icons/react";
 import SceneEditor from "./SceneEditor";
+import { SimulationViewport, SensorCamera } from "./WorldViewport";
+import VideoEnhancement from "./VideoEnhancement";
 import { api, media, tr, requestId } from "./types";
 import type { Skill, Run, Version, Recipe } from "./types";
 
@@ -535,6 +537,7 @@ export default function App() {
                       scene={skill.scene}
                       onChange={(scene) => setSkill({ ...skill, scene })}
                       onPreview={() => submit({ kind: "preview" })}
+                      onSave={save}
                     />
                     <div className="stage-footer">
                       <button onClick={() => perform(save, "场景已校验并保存")}>
@@ -1746,7 +1749,9 @@ function RunDialog({
           <div>
             {active(run) && (
               <button
-                onClick={() => action(() => api(`/api/runs/${run.id}/cancel`))}
+                onClick={() =>
+                  action(() => api(`/api/runs/${run.id}/cancel`, {}))
+                }
               >
                 <Stop />
                 取消作业
@@ -1754,7 +1759,9 @@ function RunDialog({
             )}
             {["cancelled", "failed", "interrupted"].includes(run.status) && (
               <button
-                onClick={() => action(() => api(`/api/runs/${run.id}/resume`))}
+                onClick={() =>
+                  action(() => api(`/api/runs/${run.id}/resume`, {}))
+                }
               >
                 <ArrowClockwise />
                 恢复训练
@@ -1794,33 +1801,16 @@ function RunDialog({
               run.snapshot.request.kind === "preview" ? (
               <>
                 <div className="live-grid">
+                  <SimulationViewport
+                    runId={run.id}
+                    path={path}
+                    active={active(run)}
+                  />
                   <figure>
-                    <img
-                      src={
-                        active(run)
-                          ? `/api/runs/${run.id}/stream/observer`
-                          : media(path + "/observer.jpg") +
-                            "?t=" +
-                            Math.floor(Date.now() / 2000)
-                      }
-                      alt="MuJoCo 观察者视角"
-                    />
-                    <figcaption>观察者视角 · 用于展示</figcaption>
-                  </figure>
-                  <figure>
-                    <img
-                      src={
-                        active(run)
-                          ? `/api/runs/${run.id}/stream/head`
-                          : media(
-                              path +
-                                "/" +
-                                (run.progress.head_file || "head.jpg"),
-                            ) +
-                            "?t=" +
-                            Math.floor(Date.now() / 2000)
-                      }
-                      alt="头部摄像头观察"
+                    <SensorCamera
+                      runId={run.id}
+                      active={active(run)}
+                      path={path + "/" + (run.progress.head_file || "head.jpg")}
                     />
                     <figcaption>机器人头部 RGB</figcaption>
                   </figure>
@@ -1846,6 +1836,10 @@ function RunDialog({
                   转向，空格停止。松键或窗口失焦停止；纠错另行记录。
                 </Info>
               )}
+            {!active(run) && <VideoEnhancement run={run} />}
+            {active(run) && run.snapshot.request.kind === "video_enhance" && (
+              <VideoEnhancement run={run} />
+            )}
             {chart.length > 0 && (
               <div className="loss-chart">
                 <h3>

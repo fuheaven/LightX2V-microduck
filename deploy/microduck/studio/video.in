@@ -1,0 +1,20 @@
+# Independent reference-video environment. Torch is supplied by the base image.
+pydantic==2.14.1
+numpy==2.2.6
+pillow==12.0.0
+httpx==0.28.1
+PyYAML==6.0.3
+diffusers @ git+https://github.com/huggingface/diffusers.git@d42ebf9c6e0b46103b74283f5324357a67acaa04
+torch==2.8.0
+torchvision==0.23.0
+transformers==5.5.4
+accelerate==1.10.1
+sentencepiece==0.2.1
+ftfy==6.3.1
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+av==15.1.0
+einops==0.8.1
+soundfile==0.13.1
+scipy==1.16.1
+librosa==0.11.0

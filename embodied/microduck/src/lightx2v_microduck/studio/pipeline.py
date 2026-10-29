@@ -118,7 +118,15 @@ class Job:
                 )
             write_json(
                 data / "index.json",
-                {"schema": "studio_dataset_v1", "observation": OBSERVATION, "action": ACTION, "task_sha256": digest(self.skill), "teacher_report_sha256": digest(teacher_report), "episodes": entries},
+                {
+                    "schema": "studio_dataset_v1",
+                    "observation": OBSERVATION,
+                    "action": ACTION,
+                    "task_sha256": digest(self.skill),
+                    "environment": self.snapshot.get("environment"),
+                    "teacher_report_sha256": digest(teacher_report),
+                    "episodes": entries,
+                },
             )
             self.progress({"phase": "collection", "completed": sum(collected.values()), "total": sum(quotas.values()), "attempts": len(entries), "eligible": sum(r["eligible"] for r in entries)})
         report = audit_dataset(data)
@@ -248,6 +256,14 @@ class Job:
     def execute(self):
         req = self.request
         kind = req["kind"]
+        if kind == "scene_draft":
+            from .scene_jobs import generate
+
+            return generate(self)
+        if kind == "video_enhance":
+            from .video import generate
+
+            return generate(self)
         if kind == "historical":
             return self.historical()
         if kind == "teacher":

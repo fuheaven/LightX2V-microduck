@@ -15,6 +15,9 @@ x-worker: &worker
   environment: &worker-env
     STUDIO_WORKER_TOKEN: ${STUDIO_WORKER_TOKEN:?Set a random worker token}
     STUDIO_WORKER_IMAGE: ${STUDIO_WORKER_IMAGE:-microduck-studio-worker:v1}
+    STUDIO_SCENE_LLM_URL: ${STUDIO_SCENE_LLM_URL:-}
+    STUDIO_SCENE_LLM_MODEL: ${STUDIO_SCENE_LLM_MODEL:-}
+    STUDIO_SCENE_LLM_KEY: ${STUDIO_SCENE_LLM_KEY:-}
     MUJOCO_GL: osmesa
     STUDIO_VLM_LOCAL_URL: ${STUDIO_VLM_LOCAL_URL:-}
     STUDIO_VLM_LOCAL_MODEL: ${STUDIO_VLM_LOCAL_MODEL:-}
@@ -39,6 +42,9 @@ services:
       STUDIO_WORKER_TOKEN: ${STUDIO_WORKER_TOKEN:?Set a random worker token}
       STUDIO_WORKER_IMAGE: ${STUDIO_WORKER_IMAGE:-microduck-studio-worker:v1}
       STUDIO_TOKEN: ${STUDIO_TOKEN:-}
+      STUDIO_VIDEO_IMAGE: ${STUDIO_VIDEO_IMAGE:-microduck-studio-video:v1}
+      STUDIO_SCENE_LLM_URL: ${STUDIO_SCENE_LLM_URL:-}
+      STUDIO_SCENE_LLM_MODEL: ${STUDIO_SCENE_LLM_MODEL:-}
       STUDIO_MODEL_ROOT: /data
   cpu:
     <<: *worker
@@ -57,3 +63,22 @@ services:
               device_ids: ["${STUDIO_GPU_ID:-0}"]
               capabilities: [gpu]
     command: ["python","-m","lightx2v_microduck.studio.worker","--server","${STUDIO_SERVER:-http://web:8771}","--workspace","/workspace-artifacts","--id","gpu-${STUDIO_GPU_ID:-0}","--device","cuda"]
+  video:
+    <<: *worker
+    profiles: [video]
+    image: ${STUDIO_VIDEO_IMAGE:-microduck-studio-video:v1}
+    build:
+      context: ../../..
+      dockerfile: deploy/microduck/studio/Video.Dockerfile
+    environment:
+      STUDIO_WORKER_TOKEN: ${STUDIO_WORKER_TOKEN:?Set a random worker token}
+      STUDIO_H3_MODEL: /data/models/MiniMax-H3
+      STUDIO_H3_MIN_FREE_GIB: ${STUDIO_H3_MIN_FREE_GIB:-100}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["${STUDIO_VIDEO_GPU_ID:-0}"]
+              capabilities: [gpu]
+    command: ["python","-m","lightx2v_microduck.studio.worker","--server","${STUDIO_SERVER:-http://web:8771}","--workspace","/workspace-artifacts","--id","video-${STUDIO_VIDEO_GPU_ID:-0}","--device","cuda","--role","video","--image","${STUDIO_VIDEO_IMAGE:-microduck-studio-video:v1}"]

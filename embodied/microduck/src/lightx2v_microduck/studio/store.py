@@ -17,10 +17,7 @@ TERMINAL = {"complete", "failed", "blocked", "cancelled", "interrupted"}
 class Store:
     def __init__(self, root):
         if (3, 51, 0) <= sqlite3.sqlite_version_info < (3, 51, 2):
-            raise RuntimeError(
-                "SQLite 3.51.0/3.51.1 has a Unix locking deadlock; use a patched SQLite runtime "
-                "(recommended 3.51.3 or newer) or the Studio Web container."
-            )
+            raise RuntimeError("SQLite 3.51.0/3.51.1 has a Unix locking deadlock; use a patched SQLite runtime (recommended 3.51.3 or newer) or the Studio Web container.")
         self.root = Path(root).resolve()
         # One Web process owns SQLite. Serialize short transactions, including
         # connection close/checkpoint, across its request threads.
@@ -41,6 +38,8 @@ class Store:
                 CREATE TABLE IF NOT EXISTS events(seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, at REAL, body TEXT);
                 CREATE TABLE IF NOT EXISTS workers(id TEXT PRIMARY KEY, body TEXT NOT NULL, heartbeat REAL NOT NULL);
                 CREATE TABLE IF NOT EXISTS versions(id TEXT PRIMARY KEY, skill_id TEXT NOT NULL, body TEXT NOT NULL, created REAL);
+                CREATE TABLE IF NOT EXISTS gpu_allocations(uuid TEXT PRIMARY KEY, run_id TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS video_reviews(seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, at REAL, body TEXT);
             """)
 
     @contextlib.contextmanager
@@ -72,6 +71,21 @@ class Store:
         with self.connect() as db:
             return [{"id": r["id"], **json.loads(r["body"])} for r in db.execute("SELECT * FROM skills ORDER BY updated DESC")]
 
+    def apply_scene_draft(self, skill_id, scene, base_sha):
+        from .scene import validate_scene
+        scene = validate_scene(scene)
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT body FROM skills WHERE id=?", (skill_id,)).fetchone()
+            if not row:
+                raise KeyError("unknown skill")
+            body = json.loads(row["body"])
+            if digest(body["scene"]) != base_sha:
+                raise ValueError("原场景已被编辑，请基于新版本重新生成草案")
+            body["scene"] = scene
+            db.execute("UPDATE skills SET body=?,updated=? WHERE id=?", (canonical(body), time.time(), skill_id))
+        return {"id": skill_id, **body}
+
     def skill(self, key):
         return next((s for s in self.skills() if s["id"] == key), None)
 
@@ -80,6 +94,8 @@ class Store:
         if skill is None:
             raise KeyError("unknown skill")
         req = RunRequest.model_validate(request).model_dump()
+        if req["kind"] in ("scene_draft", "video_enhance") and not req["prompt"].strip():
+            raise ValueError("请输入描述")
         if req["kind"] in ("train",) and not req["data_run"]:
             raise ValueError("training requires a frozen dataset run")
         if req["kind"] == "collect" and not req["teacher_run"]:
@@ -107,6 +123,13 @@ class Store:
         if version and version.get("task_contract") != skill["task"]:
             raise ValueError("task contract changed since publication; create and validate a new model version")
         snap = {"schema": "studio_run_v1", "skill": skill, "request": req, "provenance": provenance, "dependencies": dependencies, "model_version": version}
+        from .assets import asset_identity
+
+        snap["environment"] = {"scene_sha256": digest(skill["scene"]), "assets_sha256": asset_identity(skill["scene"])}
+        if req["kind"] == "video_enhance":
+            from .video import freeze_source
+
+            snap["video_source"] = freeze_source(self, skill_id, req["video"])
         key = uuid.uuid4().hex[:16]
         idem = f"{skill_id}:{req['idempotency_key']}" if req["idempotency_key"] else None
         now = time.time()
@@ -161,16 +184,33 @@ class Store:
             db.execute("UPDATE runs SET status='interrupted',lease=NULL,updated=? WHERE status='running' AND heartbeat<?", (now, now - 90))
             if db.execute("SELECT 1 FROM runs WHERE worker=? AND status='running'", (worker,)).fetchone():
                 return None
+            if provenance.get("device_busy"):
+                return None
             for row in db.execute("SELECT * FROM runs WHERE status='queued' ORDER BY created"):
                 snap = json.loads(row["snapshot"])
                 req = snap["request"]
-                gpu = req["kind"] in ("train", "pipeline", "optimize", "historical") or (req["kind"] in ("evaluate", "live", "correction") and req["policy"] in ("fastwam", "vlm_local"))
+                video = req["kind"] == "video_enhance"
+                if video != ("video" in capabilities):
+                    continue
+                gpu = video or req["kind"] in ("train", "pipeline", "optimize", "historical") or (req["kind"] in ("evaluate", "live", "correction") and req["policy"] in ("fastwam", "vlm_local"))
                 if gpu and "gpu" not in capabilities:
+                    continue
+                if "gpu" in capabilities and not gpu:
                     continue
                 if snap["provenance"]["source_sha256"] != provenance.get("source_sha256"):
                     continue
-                if snap["provenance"]["worker_image"] != provenance.get("image"):
+                expected_image = snap["provenance"].get("video_image") if video else snap["provenance"]["worker_image"]
+                if expected_image != provenance.get("image"):
                     continue
+                if gpu:
+                    device = provenance.get("gpu_uuid")
+                    if not device or not provenance.get("exclusive_device_lock"):
+                        continue
+                    allocation = db.execute("SELECT runs.status FROM gpu_allocations JOIN runs ON runs.id=run_id WHERE uuid=?", (device,)).fetchone()
+                    if allocation and allocation["status"] == "running":
+                        continue
+                    # The inherited OS lock proves any expired previous child has exited.
+                    db.execute("INSERT INTO gpu_allocations VALUES(?,?) ON CONFLICT(uuid) DO UPDATE SET run_id=excluded.run_id", (device, row["id"]))
                 lease = secrets.token_hex(24)
                 db.execute("UPDATE runs SET status='running',worker=?,lease=?,heartbeat=?,updated=? WHERE id=?", (worker, lease, now, now, row["id"]))
                 return {**self.decode(row), "lease": lease, "status": "running"}
@@ -192,7 +232,18 @@ class Store:
             )
             if progress is not None and canonical(progress) != row["progress"]:
                 db.execute("INSERT INTO events(run_id,at,body) VALUES(?,?,?)", (key, now, canonical(progress)))
+            if status in TERMINAL:
+                db.execute("DELETE FROM gpu_allocations WHERE run_id=?", (key,))
             return {"cancel": bool(row["cancel"])}
+
+    def video_reviews(self, run_id):
+        with self.connect() as db:
+            return [{"id": r["seq"], "at": r["at"], **json.loads(r["body"])} for r in db.execute("SELECT * FROM video_reviews WHERE run_id=? ORDER BY seq", (run_id,))]
+
+    def add_video_review(self, run_id, body):
+        with self.connect() as db:
+            db.execute("INSERT INTO video_reviews(run_id,at,body) VALUES(?,?,?)", (run_id, time.time(), canonical(body)))
+        return self.video_reviews(run_id)[-1]
 
     def workers(self):
         with self.connect() as db:

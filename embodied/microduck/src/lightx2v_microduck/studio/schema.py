@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator, model_serializer
 
 CATEGORIES = ("ball", "box", "toy")
 COLORS = ("red", "blue", "yellow")
@@ -51,10 +51,30 @@ class ObjectSpec(Strict):
     x: float = Field(default=0.8, ge=-3, le=3)
     y: float = Field(default=0.3, ge=-3, le=3)
     yaw: float = Field(default=0, ge=-180, le=180)
-    width: float = Field(default=0.08, ge=0.04, le=0.8)
-    depth: float = Field(default=0.08, ge=0.04, le=0.8)
-    height: float = Field(default=0.08, ge=0.04, le=0.8)
+    width: float = Field(default=0.08, ge=0.04, le=3)
+    depth: float = Field(default=0.08, ge=0.04, le=3)
+    height: float = Field(default=0.08, ge=0.04, le=2)
     jitter: float = Field(default=0.15, ge=0, le=1)
+    asset_id: Literal["table", "chair", "sofa", "cabinet", "partition"] | None = None
+    asset_version: Literal["1.0.0"] | None = None
+    material: Literal["wood", "fabric", "slate"] | None = None
+
+    @model_validator(mode="after")
+    def asset(self):
+        if self.asset_id:
+            if self.kind != "obstacle" or self.asset_version != "1.0.0" or self.material is None:
+                raise ValueError("furniture requires obstacle kind, asset version and material")
+        elif self.asset_version or self.material or max(self.width, self.depth, self.height) > 0.8:
+            raise ValueError("primitive objects keep the v1 dimensions and material contract")
+        return self
+
+    @model_serializer(mode="wrap")
+    def portable(self, handler):
+        data = handler(self)
+        if self.asset_id is None:
+            for k in ("asset_id", "asset_version", "material"):
+                data.pop(k, None)
+        return data
 
 
 class Spawn(Strict):
@@ -66,6 +86,7 @@ class Spawn(Strict):
 
 
 class SceneSpec(Strict):
+    version: Literal[1, 2] = 1
     name: str = Field(default="我的房间", min_length=1, max_length=80)
     size: float = Field(default=3, ge=2, le=6)
     spawn: Spawn = Field(default_factory=Spawn)
@@ -74,6 +95,8 @@ class SceneSpec(Strict):
 
     @model_validator(mode="after")
     def unique(self):
+        if self.version == 1 and any(o.asset_id for o in self.objects):
+            raise ValueError("furniture requires scene version 2")
         ids = [o.id for o in self.objects]
         if len(set(ids)) != len(ids) or self.target_id not in ids:
             raise ValueError("object IDs must be unique and include target_id")
@@ -83,6 +106,13 @@ class SceneSpec(Strict):
         if sum((o.kind, o.color) == (target.kind, target.color) for o in self.objects) != 1:
             raise ValueError("ambiguous target: duplicate class/color")
         return self
+
+    @model_serializer(mode="wrap")
+    def portable(self, handler):
+        data = handler(self)
+        if self.version == 1:
+            data.pop("version", None)
+        return data
 
 
 class TaskConfig(Strict):
@@ -134,8 +164,21 @@ class SkillDraft(Strict):
     scene: SceneSpec = Field(default_factory=SceneSpec)
 
 
+class VideoOptions(Strict):
+    source_run: str = Field(pattern=r"^[a-f0-9]{16}$")
+    source_file: str = Field(max_length=300)
+    start_s: float = Field(default=0, ge=0)
+    duration_s: float = Field(default=5, ge=5, le=15)
+    width: int = Field(default=960, ge=256, le=1920, multiple_of=32)
+    height: int = Field(default=544, ge=256, le=1920, multiple_of=32)
+    steps: int = Field(default=30, ge=1, le=100)
+    seed: int = Field(default=42, ge=0, le=2147483647)
+
+
 class RunRequest(Strict):
-    kind: Literal["preview", "teacher", "collect", "train", "pipeline", "evaluate", "live", "correction", "optimize", "historical"] = "preview"
+    kind: Literal["preview", "teacher", "collect", "train", "pipeline", "evaluate", "live", "correction", "optimize", "historical", "scene_draft", "video_enhance"] = "preview"
+    prompt: str = Field(default="", max_length=3000)
+    video: VideoOptions | None = None
     recipe: Recipe = Field(default_factory=Recipe)
     version: str | None = None
     data_run: str | None = None
